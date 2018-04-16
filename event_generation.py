@@ -1,5 +1,4 @@
 import basf2
-
 from modularAnalysis import outputMdst
 from reconstruction import add_reconstruction
 from simulation import add_simulation
