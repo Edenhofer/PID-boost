@@ -1,2 +1,5 @@
+# Disregard editor configurations
+.vscode/
+
 # Ignore ROOT data files
 *.root
