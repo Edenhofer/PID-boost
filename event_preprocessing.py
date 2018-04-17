@@ -20,10 +20,11 @@ for i, p in enumerate(particles_of_interest):
         variables.variables.addAlias('daughter' + str(i) + '_' + n, 'daughter(' + str(i) + ', ' + n + ')')
         rootVars += ['daughter' + str(i) + '_' + n]
     for d in detector_list:
-        var_list += ['pidLogLikelihoodValueExpert_' + 'daughter' + str(i) + '_' + d + 'Detector']
-        variables.variables.addAlias(var_list[-1], 'daughter(' + str(i) + ', ' + 'pidLogLikelihoodValueExpert(' + str(pdg.from_name('K-')) + ', ' + str(d) + ')' + ')')
+        for i_2, p_2 in enumerate(particles_of_interest):
+            var_list += ['pidLogLikelihoodValueExpert_' + d + 'Detector' + '_daughter' + str(i) + 'asDaughter' + str(i_2)]
+            variables.variables.addAlias(var_list[-1], 'daughter(' + str(i) + ', ' + 'pidLogLikelihoodValueExpert(' + str(pdg.from_name(p_2)) + ', ' + str(d) + ')' + ')')
 
-variables.variables.addCollection('pidLogLikelihoodValueExpertDaughtersByDetector', variables.std_vector(*var_list)) 
+variables.variables.addCollection('pidLogLikelihoodValueExpertByDetectorDaughterMatrix', variables.std_vector(*var_list)) 
 rootVars += ['pidLogLikelihoodValueExpertDaughtersByDetector']
 
 modularAnalysis.inputMdstList("default", ['sample.mdst.root'], path=path)
