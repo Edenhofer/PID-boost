@@ -1,41 +1,31 @@
 import basf2
 import modularAnalysis
 import pdg
-import variables
 
 path = basf2.create_path()
-rootVars = []
 
-# Specify the decay of interest
-vertex_parent = 'D0'
-particles_of_interest = ['K-', 'pi+']
-decay = vertex_parent + ' -> ' + ' '.join(particles_of_interest)
-
+# Base definitions of stable particles and detector data
+particle_list = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'd']
+particleID_list = ['kaonID', 'pionID','electronID',  'muonID', 'protonID', 'deuteronID']
 detector_list = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
-particleID_list = ['kaonID', 'pionID']
 
-var_list = []
-for i, p in enumerate(particles_of_interest):
-    for n in particleID_list:
-        variables.variables.addAlias('daughter' + str(i) + '_' + n, 'daughter(' + str(i) + ', ' + n + ')')
-        rootVars += ['daughter' + str(i) + '_' + n]
-    for d in detector_list:
-        for i_2, p_2 in enumerate(particles_of_interest):
-            var_list += ['pidLogLikelihoodValueExpert_' + d + 'Detector' + '_daughter' + str(i) + 'asDaughter' + str(i_2)]
-            variables.variables.addAlias(var_list[-1], 'daughter(' + str(i) + ', ' + 'pidLogLikelihoodValueExpert(' + str(pdg.from_name(p_2)) + ', ' + str(d) + ')' + ')')
+# Default list of variables which should be exported to the root file
+root_vars = ['isSignal', 'mcErrors']
+root_vars += particleID_list
 
-variables.variables.addCollection('pidLogLikelihoodValueExpertByDetectorDaughterMatrix', variables.std_vector(*var_list))
-rootVars += ['pidLogLikelihoodValueExpertByDetectorDaughterMatrix']
-
+# Import mdst file and fill particle list without applying any cuts
 modularAnalysis.inputMdstList("default", ['sample.mdst.root'], path=path)
-modularAnalysis.fillParticleLists([(p, '') for p in particles_of_interest], path=path)
-modularAnalysis.reconstructDecay(decay, '', path=path)
-modularAnalysis.fitVertex(vertex_parent, 0., path=path)
-modularAnalysis.matchMCTruth(vertex_parent, path=path)
+modularAnalysis.fillParticleLists([(p, '') for p in particle_list], path=path)
 
-# Export variables of the analysis to NTuple root file
-# Inspect the value using modularAnalysis.printVariableValues('K+', `varName(varArg)`, path=path)
-rootVars += ['isSignal', 'mcErrors']
-modularAnalysis.variablesToNTuple(vertex_parent, rootVars, filename='sample.root', path=path)
+for p in particle_list:
+    child_vars = []
+    for d in detector_list:
+        for p_2 in particle_list:
+            child_vars += ['pidLogLikelihoodValueExpert(' + str(pdg.from_name(p_2)) + ', ' + str(d) + ')' + ')']
+
+    # Export variables of the analysis to NTuple root file
+    # Inspect the value using modularAnalysis.printVariableValues('K+', `varName(varArg)`, path=path)
+    modularAnalysis.matchMCTruth(p, path=path)
+    modularAnalysis.variablesToNTuple(p, root_vars + child_vars, filename=p + '.root', path=path)
 
 basf2.process(path)
