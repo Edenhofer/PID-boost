@@ -18,9 +18,9 @@ for d in detector_list:
     for i, p in enumerate(particles_of_interest):
         for i_2, p_2 in enumerate(particles_of_interest):
             plt.subplot(len(particles_of_interest), len(particles_of_interest), i*len(particles_of_interest)+i_2+1)
-            plt.title('%s as %s'%(p, p_2))
+            plt.title('Identified %s as %s'%(p, p_2))
             column = 'pidLogLikelihoodValueExpert_' + d + 'Detector_daughter' + str(i) + 'asDaughter' + str(i_2)
             print(data[column].describe())
-            data[column].hist(bins=nbins)
+            data[column][data['isSignal'] == 1].hist(bins=nbins)
 
     plt.show()
