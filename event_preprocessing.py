@@ -24,8 +24,8 @@ for i, p in enumerate(particles_of_interest):
             var_list += ['pidLogLikelihoodValueExpert_' + d + 'Detector' + '_daughter' + str(i) + 'asDaughter' + str(i_2)]
             variables.variables.addAlias(var_list[-1], 'daughter(' + str(i) + ', ' + 'pidLogLikelihoodValueExpert(' + str(pdg.from_name(p_2)) + ', ' + str(d) + ')' + ')')
 
-variables.variables.addCollection('pidLogLikelihoodValueExpertByDetectorDaughterMatrix', variables.std_vector(*var_list)) 
-rootVars += ['pidLogLikelihoodValueExpertDaughtersByDetector']
+variables.variables.addCollection('pidLogLikelihoodValueExpertByDetectorDaughterMatrix', variables.std_vector(*var_list))
+rootVars += ['pidLogLikelihoodValueExpertByDetectorDaughterMatrix']
 
 modularAnalysis.inputMdstList("default", ['sample.mdst.root'], path=path)
 modularAnalysis.fillParticleLists([(p, '') for p in particles_of_interest], path=path)
