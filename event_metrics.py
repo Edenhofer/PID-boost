@@ -1,8 +1,8 @@
+import matplotlib.pyplot as plt
+import numpy as np
 import root_pandas as rpd
 import scipy
 import scipy.stats
-import numpy as np
-import matplotlib.pyplot as plt
 
 nbins = 50
 
@@ -24,4 +24,3 @@ for d in detector_list:
             data[column].hist(bins=nbins)
 
     plt.show()
-
