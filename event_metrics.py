@@ -35,15 +35,15 @@ detector_list = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 data = {}
 for p in particle_list:
     data[p] = rpd.read_root(p + '.root')
-    print(data[p].keys())
 
-particleID_cut = 0.1
+particleID_cuts = np.arange(0, 1, 0.1)
 stat = {}
-for p in particle_list:
-    stat[p] = {}
-    stat[p]['sensitivity'] = data[p][(data[p]['isSignal'] == 1) & (data[p][particleID_list[p]] > particleID_cut)].size / data[p][data[p]['isSignal'] == 1].size
-    stat[p]['fpr'] = data[p][(data[p]['isSignal'] == 0) & (data[p][particleID_list[p]] > particleID_cut)].size / data[p][(data[p]['isSignal'] == 0) | (data[p][particleID_list[p]] > particleID_cut)].size
-    print('Particle %10s has a sensitivity of %6.6f and a False Positive Rate (FPR) of %6.6f'%(p, stat[p]['sensitivity'], stat[p]['fpr']))
+for cut in particleID_cuts:
+    for p in particle_list:
+        stat[p] = {}
+        stat[p]['sensitivity'] = data[p][(data[p]['isSignal'] == 1) & (data[p][particleID_list[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size
+        stat[p]['fpr'] = data[p][(data[p]['isSignal'] == 0) & (data[p][particleID_list[p]] > cut)].size / data[p][(data[p]['isSignal'] == 0) | (data[p][particleID_list[p]] > cut)].size
+        print('Particle %10s has a sensitivity of %6.6f and a False Positive Rate (FPR) of %6.6f at a cut of %4.4f'%(p, stat[p]['sensitivity'], stat[p]['fpr'], cut))
 
 nbins = 50
 for d in detector_list:
@@ -53,8 +53,6 @@ for d in detector_list:
             plt.subplot(len(particle_list), len(particle_list), i*len(particle_list)+i_2+1)
             plt.title('Identified %s as %s'%(p, p_2))
             column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
-            print(data[p][column].describe())
             data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
 
     plt.show()
-
