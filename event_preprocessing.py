@@ -6,12 +6,11 @@ path = basf2.create_path()
 
 # Base definitions of stable particles and detector data
 particle_list = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
-particleID_list = ['kaonID', 'pionID','electronID',  'muonID', 'protonID', 'deuteronID']
 detector_list = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 
 # Default list of variables which should be exported to the root file
 root_vars = ['isSignal', 'mcErrors', 'mcPDG']
-root_vars += particleID_list
+root_vars += ['kaonID', 'pionID','electronID',  'muonID', 'protonID', 'deuteronID']
 
 # Import mdst file and fill particle list without applying any cuts
 modularAnalysis.inputMdstList("default", ['sample.mdst.root'], path=path)
