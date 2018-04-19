@@ -33,7 +33,7 @@ def basf2_Code(particle):
 
 def stats():
     stat = {}
-    cuts = np.arange(0, 1, 0.1)
+    cuts = np.arange(0, 1, 0.01)
     for p in particle_list:
         stat[p] = {'tpr': [], 'fpr': []}
         for cut in cuts:
@@ -41,11 +41,11 @@ def stats():
             stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleID_list[p]] > cut)].size / data[p][(data[p]['isSignal'] == 0) | (data[p][particleID_list[p]] > cut)].size]
             print('Particle %10s has a tpr of %6.6f and a False Positive Rate (FPR) of %6.6f with a cut of %4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], cut))
 
-    plt.plot(stat['K+']['tpr'], stat['K+']['fpr'])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver Operating Characteristic')
-    plt.show()
+        plt.plot(stat[p]['tpr'], stat[p]['fpr'])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('Receiver Operating Characteristic (ROC) curve for particle %s'%(p))
+        plt.show()
 
 
 def confusion_graph(nbins=50):
