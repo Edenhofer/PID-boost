@@ -21,7 +21,7 @@ for p in particle_list:
     child_vars = []
     for d in detector_list:
         for p_2 in particle_list:
-            child_vars += ['pidLogLikelihoodValueExpert(' + str(pdg.from_name(p_2)) + ', ' + str(d) + ')' + ')']
+            child_vars += ['pidLogLikelihoodValueExpert(' + str(pdg.from_name(p_2)) + ', ' + str(d) + ')']
 
     # Export variables of the analysis to NTuple root file
     # Inspect the value using modularAnalysis.printVariableValues('K+', `varName(varArg)`, path=path)
