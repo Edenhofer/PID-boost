@@ -36,14 +36,20 @@ data = {}
 for p in particle_list:
     data[p] = rpd.read_root(p + '.root')
 
-particleID_cuts = np.arange(0, 1, 0.1)
 stat = {}
-for cut in particleID_cuts:
-    for p in particle_list:
-        stat[p] = {}
-        stat[p]['sensitivity'] = data[p][(data[p]['isSignal'] == 1) & (data[p][particleID_list[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size
-        stat[p]['fpr'] = data[p][(data[p]['isSignal'] == 0) & (data[p][particleID_list[p]] > cut)].size / data[p][(data[p]['isSignal'] == 0) | (data[p][particleID_list[p]] > cut)].size
-        print('Particle %10s has a sensitivity of %6.6f and a False Positive Rate (FPR) of %6.6f at a cut of %4.4f'%(p, stat[p]['sensitivity'], stat[p]['fpr'], cut))
+cuts = np.arange(0, 1, 0.1)
+for p in particle_list:
+    stat[p] = {'sensitivity': [], 'fpr': []}
+    for cut in cuts:
+        stat[p]['sensitivity'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][particleID_list[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size]
+        stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleID_list[p]] > cut)].size / data[p][(data[p]['isSignal'] == 0) | (data[p][particleID_list[p]] > cut)].size]
+        print('Particle %10s has a sensitivity of %6.6f and a False Positive Rate (FPR) of %6.6f with a cut of %4.4f'%(p, stat[p]['sensitivity'][-1], stat[p]['fpr'][-1], cut))
+
+plt.plot(stat['K+']['sensitivity'], stat['K+']['fpr'])
+plt.xlabel('False Positive Rate')
+plt.ylabel('Sensitivity')
+plt.title('Receiver Operating Characteristic')
+plt.show()
 
 nbins = 50
 for d in detector_list:
