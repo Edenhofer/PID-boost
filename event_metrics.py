@@ -31,9 +31,9 @@ def basf2_Code(particle):
         raise ValueError('Something unexpected happened while converting the input to an escaped pdgCode.')
 
 
-def stats():
+def stats(cut_min=0, cut_max=1, ncuts=50):
     stat = {}
-    cuts = np.arange(0, 1, 0.01)
+    cuts = np.arange(cut_min, cut_max, (cut_max-cut_min)/ncuts)
     for p in particle_list:
         stat[p] = {'tpr': [], 'fpr': []}
         for cut in cuts:
