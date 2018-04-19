@@ -28,7 +28,7 @@ def basf2_Code(particle):
 
 # Base definitions of stable particles and detector data
 particle_list = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
-particleID_list = ['kaonID', 'pionID','electronID',  'muonID', 'protonID', 'deuteronID']
+particleID_list = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
 detector_list = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 
 # Read in all the particle's information into a dictionary of panda frames
@@ -36,6 +36,14 @@ data = {}
 for p in particle_list:
     data[p] = rpd.read_root(p + '.root')
     print(data[p].keys())
+
+particleID_cut = 0.1
+stat = {}
+for p in particle_list:
+    stat[p] = {}
+    stat[p]['sensitivity'] = data[p][(data[p]['isSignal'] == 1) & (data[p][particleID_list[p]] > particleID_cut)].size / data[p][data[p]['isSignal'] == 1].size
+    stat[p]['fpr'] = data[p][(data[p]['isSignal'] == 0) & (data[p][particleID_list[p]] > particleID_cut)].size / data[p][(data[p]['isSignal'] == 0) | (data[p][particleID_list[p]] > particleID_cut)].size
+    print('Particle %10s has a sensitivity of %6.6f and a False Positive Rate (FPR) of %6.6f'%(p, stat[p]['sensitivity'], stat[p]['fpr']))
 
 # Variables for altering the visual representation of the data
 nbins = 50
@@ -51,3 +59,4 @@ for d in detector_list:
             data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
 
     plt.show()
+
