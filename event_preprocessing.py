@@ -5,7 +5,7 @@ import pdg
 path = basf2.create_path()
 
 # Base definitions of stable particles and detector data
-particle_list = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'd']
+particle_list = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
 particleID_list = ['kaonID', 'pionID','electronID',  'muonID', 'protonID', 'deuteronID']
 detector_list = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 
