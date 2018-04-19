@@ -39,12 +39,12 @@ def stats(cut_min=0, cut_max=1, ncuts=50):
         for cut in cuts:
             stat[p]['tpr'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][particleID_list[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size]
             stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleID_list[p]] > cut)].size / data[p][data[p]['isSignal'] == 0].size]
-            print('Particle %10s has a tpr of %6.6f and a False Positive Rate (FPR) of %6.6f with a cut of %4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], cut))
+            print('Particle %10s has a TPR of %6.6f and a FPR of %6.6f with a cut of %4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], cut))
 
         plt.plot(stat[p]['fpr'], stat[p]['tpr'])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title('Receiver Operating Characteristic (ROC) curve for particle %s'%(p))
+        plt.title('Receiver Operating Characteristic (ROC) curve for %s identification'%(p))
         plt.show()
 
 
