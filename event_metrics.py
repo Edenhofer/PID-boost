@@ -33,6 +33,28 @@ def basf2_Code(particle):
 
 
 def stats(cut_min=0, cut_max=1, ncuts=50):
+    """Calculate, print and plot various values from statistics for further analysis and finally return some values.
+
+    Args:
+        cut_min: Lower bound of the cut (default: 0).
+        cut_max: Upper bound of the cut (default: 1).
+        ncuts: Number of cuts to perform on the interval (default: 50).
+
+    Returns:
+        A dictionary of dictionaries containing arrays themselfs.
+
+        Each particle has an entry in the dictionary and each particle's dictionary has a dictionary of values from statistics for each cut:
+
+            {
+                'K+': {
+                    'tpr': [True Positive Rate for each cut],
+                    'fpr': [False Positive Rate for each cut],
+                    'tnr': [True Negative Rate for each cut]
+                },
+                ...
+            }
+
+    """
     stat = {}
     cuts = np.arange(cut_min, cut_max, (cut_max-cut_min)/ncuts)
     for p in particle_list:
@@ -48,6 +70,8 @@ def stats(cut_min=0, cut_max=1, ncuts=50):
         plt.ylabel('True Positive Rate')
         plt.title('Receiver Operating Characteristic (ROC) curve for %s identification'%(p))
         plt.show()
+
+    return stat
 
 
 def confusion_graph(nbins=50):
