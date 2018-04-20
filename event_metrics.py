@@ -114,6 +114,23 @@ def epsilonPID_matrix(cut=0.3):
     plt.show()
 
 
+def logLikelihood_by_detector(nbins=50):
+    for p in particles:
+        plt.suptitle('Binned pidLogLikelihood for particle %s'%(particle_formats[p]))
+        for i, d in enumerate(detectors + pseudo_detectors):
+            plt.subplot(2, len(detectors + pseudo_detectors), i+1)
+            plt.title('Detector %s with signal'%(d))
+            column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
+            data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
+
+            plt.subplot(2, len(detectors + pseudo_detectors), i+1+len(detectors + pseudo_detectors))
+            plt.title('Detector %s with no signal'%(d))
+            column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
+            data[p][data[p]['isSignal'] == 0][column].hist(bins=nbins)
+
+        plt.show()
+
+
 # Base definitions of stable particles and detector data
 particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
 particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
@@ -130,6 +147,7 @@ parser = argparse.ArgumentParser(description='Calculating and visualizing metric
 parser.add_argument('--stats', dest='run_stats', action='store_true', default=False, help='Print out and visualize some statistics (default: False)')
 parser.add_argument('--confusion-graph', dest='run_confusion_graph', action='store_true', default=False, help='Plot a matrix of binned likelihoods graphs (default: False)')
 parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matirx of every events (default: False)')
+parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
 
 args = parser.parse_args()
 if args.run_stats:
@@ -138,3 +156,5 @@ if args.run_confusion_graph:
     confusion_graph()
 if args.run_epsilonPID_matrix:
     epsilonPID_matrix()
+if args.run_logLikelihood_by_detector:
+    logLikelihood_by_detector()
