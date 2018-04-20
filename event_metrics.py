@@ -65,7 +65,11 @@ def stats(cut_min=0., cut_max=1., ncuts=50):
             stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p]['isSignal'] == 0].size]
             stat[p]['tnr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleIDs[p]] < cut)].size / data[p][data[p]['isSignal'] == 0].size]
             stat[p]['ppv'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p][particleIDs[p]] > cut].size]
-            print('Particle %10s has a TPR of %6.6f, a FPR of %6.6f and a TNR of %6.6f with a cut of %4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], cut))
+
+            if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
+                print('VALUES INCONSISTENT: ', end='')
+
+            print('Particle %10s: TPR=%6.6f; FPR=%6.6f; TNR=%6.6f; PPV=%6.6f; cut=%4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], stat[p]['ppv'][-1], cut))
 
         plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate')
         plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
