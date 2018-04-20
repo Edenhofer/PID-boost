@@ -32,7 +32,7 @@ def basf2_Code(particle):
         raise ValueError('Something unexpected happened while converting the input to an escaped pdgCode.')
 
 
-def stats(cut_min=0, cut_max=1, ncuts=50):
+def stats(cut_min=0., cut_max=1., ncuts=50):
     """Calculate, print and plot various values from statistics for further analysis and finally return some values.
 
     Args:
@@ -56,7 +56,7 @@ def stats(cut_min=0, cut_max=1, ncuts=50):
 
     """
     stat = {}
-    cuts = np.arange(cut_min, cut_max, (cut_max-cut_min)/ncuts)
+    cuts = np.linspace(cut_min, cut_max, num=ncuts)
     for p in particle_list:
         stat[p] = {'tpr': [], 'fpr': [], 'tnr': []}
         for cut in cuts:
