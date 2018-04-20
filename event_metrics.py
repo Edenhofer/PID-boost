@@ -119,6 +119,7 @@ particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
 particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
 particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
+pseudo_detectors = ['all', 'default']
 
 # Read in all the particle's information into a dictionary of panda frames
 data = {}

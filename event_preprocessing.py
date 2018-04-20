@@ -6,7 +6,7 @@ path = basf2.create_path()
 
 # Base definitions of stable particles and detector data
 particle = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
-detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
+detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm', 'all', 'default']
 
 # Default list of variables which should be exported to the root file
 root_vars = ['isSignal', 'mcErrors', 'mcPDG']
