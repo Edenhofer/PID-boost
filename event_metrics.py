@@ -70,6 +70,12 @@ def epsilonPID_matrix(cut=0.3):
 
     print("Confusion matrix:\n%s"%(epsilonPIDs))
     plt.imshow(epsilonPIDs, cmap='hot')
+    plt.xlabel('Predicted Particle')
+    plt.xticks(range(len(particle_list)), particle_list)
+    plt.ylabel('True Particle')
+    plt.yticks(range(len(particle_list)), particle_list)
+    plt.colorbar()
+    plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at %.2f'%(cut))
     plt.show()
 
 
