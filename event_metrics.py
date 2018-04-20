@@ -5,6 +5,7 @@ import argparse
 
 import matplotlib.pyplot as plt
 import numpy as np
+#import pandas as pd
 import root_pandas as rpd
 import scipy
 import scipy.stats
@@ -61,6 +62,17 @@ def confusion_graph(nbins=50):
         plt.show()
 
 
+def epsilonPID_matrix(cut=0.3):
+    epsilonPIDs = np.zeros(shape=(len(particle_list), len(particle_list)))
+    for i, i_p in enumerate(particle_list):
+        for j, j_p in enumerate(particle_list):
+            epsilonPIDs[i][j] = data[i_p][(data[i_p]['mcPDG'] == pdg.from_name(i_p)) & (data[i_p][particleID_list[j_p]] > cut)].size / data[i_p][data[i_p]['mcPDG'] == pdg.from_name(i_p)].size
+
+    print("Confusion matrix:\n%s"%(epsilonPIDs))
+    plt.imshow(epsilonPIDs, cmap='hot')
+    plt.show()
+
+
 # Base definitions of stable particles and detector data
 particle_list = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
 particleID_list = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
@@ -74,9 +86,12 @@ for p in particle_list:
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
 parser.add_argument('--stats', dest='run_stats', action='store_true', default=False, help='Print out and visualize some statistics (default: False)')
 parser.add_argument('--confusion-graph', dest='run_confusion_graph', action='store_true', default=False, help='Plot a matrix of binned likelihoods graphs (default: False)')
+parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matirx of every events (default: False)')
 
 args = parser.parse_args()
 if args.run_stats:
     stats()
 if args.run_confusion_graph:
     confusion_graph()
+if args.run_epsilonPID_matrix:
+    epsilonPID_matrix()
