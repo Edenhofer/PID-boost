@@ -83,19 +83,6 @@ def stats(cut_min=0., cut_max=1., ncuts=50):
     return stat
 
 
-def confusion_graph(nbins=50):
-    for d in detectors:
-        plt.suptitle('Binned pidLogLikelihood for detector %s'%(d))
-        for i, p in enumerate(particles):
-            for i_2, p_2 in enumerate(particles):
-                plt.subplot(len(particles), len(particles), i*len(particles)+i_2+1)
-                plt.title('Identified %s as %s'%(particle_formats[p], particle_formats[p_2]))
-                column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
-                data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
-
-        plt.show()
-
-
 def epsilonPID_matrix(cut=0.3):
     epsilonPIDs = np.zeros(shape=(len(particles), len(particles)))
     for i, i_p in enumerate(particles):
@@ -112,6 +99,19 @@ def epsilonPID_matrix(cut=0.3):
     plt.colorbar()
     plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
     plt.show()
+
+
+def logLikelihood_by_particle(nbins=50):
+    for d in detectors:
+        plt.suptitle('Binned pidLogLikelihood for detector %s'%(d))
+        for i, p in enumerate(particles):
+            for i_2, p_2 in enumerate(particles):
+                plt.subplot(len(particles), len(particles), i*len(particles)+i_2+1)
+                plt.title('Identified %s as %s'%(particle_formats[p], particle_formats[p_2]))
+                column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
+                data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
+
+        plt.show()
 
 
 def logLikelihood_by_detector(nbins=50):
@@ -145,15 +145,15 @@ for p in particles:
 
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
 parser.add_argument('--stats', dest='run_stats', action='store_true', default=False, help='Print out and visualize some statistics (default: False)')
-parser.add_argument('--confusion-graph', dest='run_confusion_graph', action='store_true', default=False, help='Plot a matrix of binned likelihoods graphs (default: False)')
+parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False, help='Plot the binned logLikelihood for each particle (default: False)')
 parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matirx of every events (default: False)')
 parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
 
 args = parser.parse_args()
 if args.run_stats:
     stats()
-if args.run_confusion_graph:
-    confusion_graph()
+if args.run_logLikelihood_by_particle:
+    logLikelihood_by_particle()
 if args.run_epsilonPID_matrix:
     epsilonPID_matrix()
 if args.run_logLikelihood_by_detector:
