@@ -69,7 +69,7 @@ def stats(cut_min=0., cut_max=1., ncuts=50):
         plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
         plt.xlabel('False Positive Rate')
         plt.ylabel('Particle Rates')
-        plt.title('Receiver Operating Characteristic (ROC) curve for %s identification'%(p))
+        plt.title('Receiver Operating Characteristic (ROC) curve for %s identification'%(particle_format_list[p]))
         plt.legend()
         plt.show()
 
@@ -82,7 +82,7 @@ def confusion_graph(nbins=50):
         for i, p in enumerate(particle_list):
             for i_2, p_2 in enumerate(particle_list):
                 plt.subplot(len(particle_list), len(particle_list), i*len(particle_list)+i_2+1)
-                plt.title('Identified %s as %s'%(p, p_2))
+                plt.title('Identified %s as %s'%(particle_format_list[p], particle_format_list[p_2]))
                 column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
                 data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
 
@@ -99,17 +99,18 @@ def epsilonPID_matrix(cut=0.3):
     print("Confusion matrix:\n%s"%(epsilonPIDs))
     plt.imshow(epsilonPIDs, cmap='hot')
     plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(particle_list)), particle_list)
+    plt.xticks(range(len(particle_list)), [particle_format_list[p] for p in particle_list])
     plt.ylabel('True Particle')
-    plt.yticks(range(len(particle_list)), particle_list)
+    plt.yticks(range(len(particle_list)), [particle_format_list[p] for p in particle_list])
     plt.colorbar()
-    plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at %.2f'%(cut))
+    plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
     plt.show()
 
 
 # Base definitions of stable particles and detector data
 particle_list = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
 particleID_list = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
+particle_format_list = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
 detector_list = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 
 # Read in all the particle's information into a dictionary of panda frames
