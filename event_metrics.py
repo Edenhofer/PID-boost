@@ -102,7 +102,7 @@ def epsilonPID_matrix(cut=0.3):
 
 
 def logLikelihood_by_particle(nbins=50):
-    for d in detectors:
+    for d in detectors + pseudo_detectors:
         plt.suptitle('Binned pidLogLikelihood for detector %s'%(d))
         for i, p in enumerate(particles):
             for i_2, p_2 in enumerate(particles):
