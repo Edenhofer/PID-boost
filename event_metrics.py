@@ -66,6 +66,7 @@ def epsilonPID_matrix(cut=0.3):
     epsilonPIDs = np.zeros(shape=(len(particle_list), len(particle_list)))
     for i, i_p in enumerate(particle_list):
         for j, j_p in enumerate(particle_list):
+            # BUG: the deuterium code is not properly stored in the mcPDG variable and hence might lead to misleading visuals
             epsilonPIDs[i][j] = data[i_p][(data[i_p]['mcPDG'] == pdg.from_name(i_p)) & (data[i_p][particleID_list[j_p]] > cut)].size / data[i_p][data[i_p]['mcPDG'] == pdg.from_name(i_p)].size
 
     print("Confusion matrix:\n%s"%(epsilonPIDs))
