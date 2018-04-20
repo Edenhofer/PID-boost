@@ -57,19 +57,19 @@ def stats(cut_min=0., cut_max=1., ncuts=50):
     """
     stat = {}
     cuts = np.linspace(cut_min, cut_max, num=ncuts)
-    for p in particle_list:
+    for p in particles:
         stat[p] = {'tpr': [], 'fpr': [], 'tnr': []}
         for cut in cuts:
-            stat[p]['tpr'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][particleID_list[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size]
-            stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleID_list[p]] > cut)].size / data[p][data[p]['isSignal'] == 0].size]
-            stat[p]['tnr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleID_list[p]] < cut)].size / data[p][data[p]['isSignal'] == 0].size]
+            stat[p]['tpr'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size]
+            stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p]['isSignal'] == 0].size]
+            stat[p]['tnr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleIDs[p]] < cut)].size / data[p][data[p]['isSignal'] == 0].size]
             print('Particle %10s has a TPR of %6.6f, a FPR of %6.6f and a TNR of %6.6f with a cut of %4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], cut))
 
         plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate')
         plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
         plt.xlabel('False Positive Rate')
         plt.ylabel('Particle Rates')
-        plt.title('Receiver Operating Characteristic (ROC) curve for %s identification'%(particle_format_list[p]))
+        plt.title('Receiver Operating Characteristic (ROC) curve for %s identification'%(particle_formats[p]))
         plt.legend()
         plt.show()
 
@@ -77,12 +77,12 @@ def stats(cut_min=0., cut_max=1., ncuts=50):
 
 
 def confusion_graph(nbins=50):
-    for d in detector_list:
+    for d in detectors:
         plt.suptitle('Binned pidLogLikelihood for detector %s'%(d))
-        for i, p in enumerate(particle_list):
-            for i_2, p_2 in enumerate(particle_list):
-                plt.subplot(len(particle_list), len(particle_list), i*len(particle_list)+i_2+1)
-                plt.title('Identified %s as %s'%(particle_format_list[p], particle_format_list[p_2]))
+        for i, p in enumerate(particles):
+            for i_2, p_2 in enumerate(particles):
+                plt.subplot(len(particles), len(particles), i*len(particles)+i_2+1)
+                plt.title('Identified %s as %s'%(particle_formats[p], particle_formats[p_2]))
                 column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
                 data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
 
@@ -90,32 +90,32 @@ def confusion_graph(nbins=50):
 
 
 def epsilonPID_matrix(cut=0.3):
-    epsilonPIDs = np.zeros(shape=(len(particle_list), len(particle_list)))
-    for i, i_p in enumerate(particle_list):
-        for j, j_p in enumerate(particle_list):
+    epsilonPIDs = np.zeros(shape=(len(particles), len(particles)))
+    for i, i_p in enumerate(particles):
+        for j, j_p in enumerate(particles):
             # BUG: the deuterium code is not properly stored in the mcPDG variable and hence might lead to misleading visuals
-            epsilonPIDs[i][j] = data[i_p][(data[i_p]['mcPDG'] == pdg.from_name(i_p)) & (data[i_p][particleID_list[j_p]] > cut)].size / data[i_p][data[i_p]['mcPDG'] == pdg.from_name(i_p)].size
+            epsilonPIDs[i][j] = data[i_p][(data[i_p]['mcPDG'] == pdg.from_name(i_p)) & (data[i_p][particleIDs[j_p]] > cut)].size / data[i_p][data[i_p]['mcPDG'] == pdg.from_name(i_p)].size
 
     print("Confusion matrix:\n%s"%(epsilonPIDs))
     plt.imshow(epsilonPIDs, cmap='hot')
     plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(particle_list)), [particle_format_list[p] for p in particle_list])
+    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
     plt.ylabel('True Particle')
-    plt.yticks(range(len(particle_list)), [particle_format_list[p] for p in particle_list])
+    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
     plt.colorbar()
     plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
     plt.show()
 
 
 # Base definitions of stable particles and detector data
-particle_list = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
-particleID_list = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
-particle_format_list = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
-detector_list = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
+particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
+particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
+particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
+detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 
 # Read in all the particle's information into a dictionary of panda frames
 data = {}
-for p in particle_list:
+for p in particles:
     data[p] = rpd.read_root(p + '.root')
 
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
