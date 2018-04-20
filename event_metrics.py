@@ -49,7 +49,8 @@ def stats(cut_min=0., cut_max=1., ncuts=50):
                 'K+': {
                     'tpr': [True Positive Rate for each cut],
                     'fpr': [False Positive Rate for each cut],
-                    'tnr': [True Negative Rate for each cut]
+                    'tnr': [True Negative Rate for each cut],
+                    'ppv': [Positive Predicted Value for each cut]
                 },
                 ...
             }
@@ -58,15 +59,17 @@ def stats(cut_min=0., cut_max=1., ncuts=50):
     stat = {}
     cuts = np.linspace(cut_min, cut_max, num=ncuts)
     for p in particles:
-        stat[p] = {'tpr': [], 'fpr': [], 'tnr': []}
+        stat[p] = {'tpr': [], 'fpr': [], 'tnr': [], 'ppv': []}
         for cut in cuts:
             stat[p]['tpr'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size]
             stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p]['isSignal'] == 0].size]
             stat[p]['tnr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleIDs[p]] < cut)].size / data[p][data[p]['isSignal'] == 0].size]
+            stat[p]['ppv'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p][particleIDs[p]] > cut].size]
             print('Particle %10s has a TPR of %6.6f, a FPR of %6.6f and a TNR of %6.6f with a cut of %4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], cut))
 
         plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate')
         plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
+        plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
         plt.xlabel('False Positive Rate')
         plt.ylabel('Particle Rates')
         plt.title('Receiver Operating Characteristic (ROC) curve for %s identification'%(particle_formats[p]))
