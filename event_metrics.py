@@ -15,6 +15,20 @@ import scipy.stats
 import pdg
 
 
+# Base definitions of stable particles and detector data
+particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
+particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
+particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
+detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
+pseudo_detectors = ['all', 'default']
+detector_weights = {d: 1. for d in detectors + pseudo_detectors}
+
+# Read in all the particle's information into a dictionary of panda frames
+data = {}
+for p in particles:
+    data[p] = rpd.read_root(p + '.root')
+
+
 def basf2_Code(particle):
     """Return the pdgCode in a basf2 compatible way with escaped special characters.
 
@@ -34,13 +48,14 @@ def basf2_Code(particle):
         raise ValueError('Something unexpected happened while converting the input to an escaped pdgCode.')
 
 
-def stats(cut_min=0., cut_max=1., ncuts=50):
+def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
     """Calculate, print and plot various values from statistics for further analysis and finally return some values.
 
     Args:
         cut_min: Lower bound of the cut (default: 0).
         cut_max: Upper bound of the cut (default: 1).
         ncuts: Number of cuts to perform on the interval (default: 50).
+        cutting_columns: Dictionary which yields a column name for each particle on which basis the various statistics are calculated.
 
     Returns:
         A dictionary of dictionaries containing arrays themselfs.
@@ -63,10 +78,10 @@ def stats(cut_min=0., cut_max=1., ncuts=50):
     for p in particles:
         stat[p] = {'tpr': [], 'fpr': [], 'tnr': [], 'ppv': []}
         for cut in cuts:
-            stat[p]['tpr'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size]
-            stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p]['isSignal'] == 0].size]
-            stat[p]['tnr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][particleIDs[p]] < cut)].size / data[p][data[p]['isSignal'] == 0].size]
-            stat[p]['ppv'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][particleIDs[p]] > cut)].size / data[p][data[p][particleIDs[p]] > cut].size]
+            stat[p]['tpr'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size]
+            stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] > cut)].size / data[p][data[p]['isSignal'] == 0].size]
+            stat[p]['tnr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] < cut)].size / data[p][data[p]['isSignal'] == 0].size]
+            stat[p]['ppv'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].size / data[p][data[p][cutting_columns[p]] > cut].size]
 
             if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
                 print('VALUES INCONSISTENT: ', end='')
@@ -109,7 +124,7 @@ def epsilonPID_matrix(cut=0.3):
     plt.show()
 
 
-def mimic_ID(detector_weights=defaultdict(lambda: 1., {}), check=True):
+def mimic_ID(detector_weights=detector_weights, check=True):
     """Mimic the calculation of the particleIDs and compare them to their value provided by the analysis software.
 
     Args:
@@ -196,19 +211,6 @@ def logLikelihood_by_detector(nbins=50):
         plt.show()
 
 
-# Base definitions of stable particles and detector data
-particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
-particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
-particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
-detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
-pseudo_detectors = ['all', 'default']
-detector_weights = {d: 1. for d in detectors + pseudo_detectors}
-
-# Read in all the particle's information into a dictionary of panda frames
-data = {}
-for p in particles:
-    data[p] = rpd.read_root(p + '.root')
-
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
 parser.add_argument('--stats', dest='run_stats', action='store_true', default=False, help='Print out and visualize some statistics (default: False)')
 parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False, help='Plot the binned logLikelihood for each particle (default: False)')
@@ -227,6 +229,6 @@ if args.run_epsilonPID_matrix:
 if args.run_logLikelihood_by_detector:
     logLikelihood_by_detector()
 if args.run_mimic_ID:
-    mimic_ID(detector_weights)
+    mimic_ID()
 if args.run_bayes:
     bayes()
