@@ -86,6 +86,12 @@ def stats(cut_min=0., cut_max=1., ncuts=50):
 
 
 def epsilonPID_matrix(cut=0.3):
+    """Calculate the epsilon_PID matrix for misclassifying particles, print the result and plot a heatmap.
+
+    Args:
+        cut: Position of the cut for the particleIDs.
+
+    """
     epsilonPIDs = np.zeros(shape=(len(particles), len(particles)))
     for i, i_p in enumerate(particles):
         for j, j_p in enumerate(particles):
