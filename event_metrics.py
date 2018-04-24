@@ -159,11 +159,11 @@ def mimic_ID(detector_weights=detector_weights, check=True):
     print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
 
-def bayes(prior=defaultdict(lambda: 1., {})):
+def bayes(priors=defaultdict(lambda: 1., {})):
     """Compute probabilities for particle hypothesis using a bayesian approach.
 
     Args:
-        prior: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
+        priors: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
 
     """
     for l in particles:
@@ -173,10 +173,10 @@ def bayes(prior=defaultdict(lambda: 1., {})):
             # Calculate the particleIDs manually and compare them to the result of the analysis software
             denominator = 0.
             for p_2 in particles:
-                denominator += (data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__spall__bc'] - data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__spall__bc']).apply(np.exp) * prior[p_2]
+                denominator += (data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__spall__bc'] - data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__spall__bc']).apply(np.exp) * priors[p_2]
 
             # Algebraic trick to make exp(H_i)*C_i/sum(exp(H_k) * C_k, k) stable even for very small values of H_i and H_k
-            data[l]['bayes_' + particleIDs[p]] = prior[p] / denominator
+            data[l]['bayes_' + particleIDs[p]] = priors[p] / denominator
 
     c = {k: 'bayes_' + v for k, v in particleIDs.items()}
     stats(cutting_columns=c)
