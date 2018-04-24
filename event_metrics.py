@@ -109,13 +109,17 @@ def epsilonPID_matrix(cut=0.3):
     plt.show()
 
 
-def mimic_ID(detector_weights=defaultdict(lambda: 1., {})):
+def mimic_ID(detector_weights=defaultdict(lambda: 1., {}), check=True):
     """Mimic the calculation of the particleIDs and compare them to their value provided by the analysis software.
 
     Args:
         detector_weights: Dictionary of detectors with the weights (default 1.) as values.
+        check: Whether to assert the particleIDs if the detector weights are all 1.
 
     """
+    if not all(v == 1. for v in detector_weights.values()):
+        check = False
+
     for l in particles:
         # Calculate the accumulated logLikelihood and assess the relation to kaonID
         for p in particles:
@@ -133,8 +137,9 @@ def mimic_ID(detector_weights=defaultdict(lambda: 1., {})):
             # Algebraic trick to make exp(a)/(exp(a) + exp(b)) stable even for very small values of a and b
             data[l]['assumed_' + particleIDs[p]] = 1. / (1. + (data[l]['accumulatedLogLikelihood' + basf2_Code('pi+')] - data[l]['accumulatedLogLikelihood' + basf2_Code(p)]).apply(np.exp))
 
-            # Assert for equality of the manual calculation and analysis software's output
-            npt.assert_allclose(data[l]['assumed_' + particleIDs[p]].values, data[l][particleIDs[p]].astype(np.float64).values, atol=1e-3)
+            if check:
+                # Assert for equality of the manual calculation and analysis software's output
+                npt.assert_allclose(data[l]['assumed_' + particleIDs[p]].values, data[l][particleIDs[p]].astype(np.float64).values, atol=1e-3)
 
     print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
