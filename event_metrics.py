@@ -144,6 +144,28 @@ def mimic_ID(detector_weights=defaultdict(lambda: 1., {}), check=True):
     print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
 
+def bayes(prior=defaultdict(lambda: 1., {})):
+    """Compute probabilities for particle hypothesis using a bayesian approach.
+
+    Args:
+        prior: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
+
+    """
+    for l in particles:
+        # TODO: Use mimic_ID here to allow for weighted detector
+
+        for p in particles:
+            # Calculate the particleIDs manually and compare them to the result of the analysis software
+            denominator = 0.
+            for p_2 in particles:
+                denominator += (data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__spall__bc'] - data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__spall__bc']).apply(np.exp) * prior[p_2]
+
+            # Algebraic trick to make exp(H_i)*C_i/sum(exp(H_k) * C_k, k) stable even for very small values of H_i and H_k
+            data[l]['bayes_' + particleIDs[p]] = prior[p] / denominator
+
+        print(data[l]['bayes_' + particleIDs[l]].describe())
+
+
 def logLikelihood_by_particle(nbins=50):
     for d in detectors + pseudo_detectors:
         plt.suptitle('Binned pidLogLikelihood for detector %s'%(d))
@@ -193,6 +215,7 @@ parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_pa
 parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matirx of every events (default: False)')
 parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
 parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
+parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes')
 
 args = parser.parse_args()
 if args.run_stats:
@@ -205,3 +228,5 @@ if args.run_logLikelihood_by_detector:
     logLikelihood_by_detector()
 if args.run_mimic_ID:
     mimic_ID(detector_weights)
+if args.run_bayes:
+    bayes()
