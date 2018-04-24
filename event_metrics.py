@@ -2,6 +2,7 @@ from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to importing argparse
 
 import argparse
+from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -102,8 +103,11 @@ def epsilonPID_matrix(cut=0.3):
     plt.show()
 
 
-def mimic_ID():
+def mimic_ID(detector_weights=defaultdict(lambda: 1., {})):
     """Mimic the calculation of the particleIDs and compare them to their value provided by the analysis software.
+
+    Args:
+        detector_weights: Dictionary of detectors with the weights (default 1.) as values.
 
     """
     for l in particles:
@@ -115,7 +119,7 @@ def mimic_ID():
                 column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
                 # Fill up NaN values for detectors which do not yield a result
                 # Since at least one detector must return a logLikelihood it is not possible that only NaN values lead to a probability of 1
-                data[l]['accumulatedLogLikelihood' + basf2_Code(p)] += data[l][column].fillna(0)
+                data[l]['accumulatedLogLikelihood' + basf2_Code(p)] += data[l][column].fillna(0) * detector_weights[d]
 
         # Calculate the particleIDs manually and compare them to the result of the analysis software
         data[l]['assumed_pionID'] = 1. / (1. + (data[l]['accumulatedLogLikelihood' + basf2_Code('K+')] - data[l]['accumulatedLogLikelihood' + basf2_Code('pi+')]).apply(np.exp))
@@ -125,6 +129,8 @@ def mimic_ID():
 
             # Assert for equality of the manual calculation and analysis software's output
             npt.assert_allclose(data[l]['assumed_' + particleIDs[p]].values, data[l][particleIDs[p]].astype(np.float64).values, atol=1e-3)
+
+    print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
     # TODO: See which one would provide a better cut
 
@@ -165,7 +171,7 @@ particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muon
 particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 pseudo_detectors = ['all', 'default']
-# TODO: Add detector_weights as method of weighting loglikehoods against each other
+detector_weights = {d: 1. for d in detectors + pseudo_detectors}
 
 # Read in all the particle's information into a dictionary of panda frames
 data = {}
@@ -189,4 +195,4 @@ if args.run_epsilonPID_matrix:
 if args.run_logLikelihood_by_detector:
     logLikelihood_by_detector()
 if args.run_mimic_ID:
-    mimic_ID()
+    mimic_ID(detector_weights)
