@@ -5,6 +5,7 @@ import argparse
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.testing as npt
 #import pandas as pd
 import root_pandas as rpd
 import scipy
@@ -101,6 +102,33 @@ def epsilonPID_matrix(cut=0.3):
     plt.show()
 
 
+def mimic_ID():
+    """Mimic the calculation of the particleIDs and compare them to their value provided by the analysis software.
+
+    """
+    for l in particles:
+        # Calculate the accumulated logLikelihood and assess the relation to kaonID
+        for p in particles:
+            data[l]['accumulatedLogLikelihood' + basf2_Code(p)] = np.zeros(data[l][particleIDs[p]].size)
+            # The following loop is equivalent to querying the 'all' pseudo-detector when using flat detector weights
+            for d in detectors:
+                column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
+                # Fill up NaN values for detectors which do not yield a result
+                # Since at least one detector must return a logLikelihood it is not possible that only NaN values lead to a probability of 1
+                data[l]['accumulatedLogLikelihood' + basf2_Code(p)] += data[l][column].fillna(0)
+
+        # Calculate the particleIDs manually and compare them to the result of the analysis software
+        data[l]['assumed_pionID'] = 1. / (1. + (data[l]['accumulatedLogLikelihood' + basf2_Code('K+')] - data[l]['accumulatedLogLikelihood' + basf2_Code('pi+')]).apply(np.exp))
+        for p in (set(particles) - set(['pi+'])):
+            # Algebraic trick to make exp(a)/(exp(a) + exp(b)) stable even for very small values of a and b
+            data[l]['assumed_' + particleIDs[p]] = 1. / (1. + (data[l]['accumulatedLogLikelihood' + basf2_Code('pi+')] - data[l]['accumulatedLogLikelihood' + basf2_Code(p)]).apply(np.exp))
+
+            # Assert for equality of the manual calculation and analysis software's output
+            npt.assert_allclose(data[l]['assumed_' + particleIDs[p]].values, data[l][particleIDs[p]].astype(np.float64).values, atol=1e-3)
+
+    # TODO: See which one would provide a better cut
+
+
 def logLikelihood_by_particle(nbins=50):
     for d in detectors + pseudo_detectors:
         plt.suptitle('Binned pidLogLikelihood for detector %s'%(d))
@@ -137,6 +165,7 @@ particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muon
 particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 pseudo_detectors = ['all', 'default']
+# TODO: Add detector_weights as method of weighting loglikehoods against each other
 
 # Read in all the particle's information into a dictionary of panda frames
 data = {}
@@ -148,6 +177,7 @@ parser.add_argument('--stats', dest='run_stats', action='store_true', default=Fa
 parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False, help='Plot the binned logLikelihood for each particle (default: False)')
 parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matirx of every events (default: False)')
 parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
+parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
 
 args = parser.parse_args()
 if args.run_stats:
@@ -158,3 +188,5 @@ if args.run_epsilonPID_matrix:
     epsilonPID_matrix()
 if args.run_logLikelihood_by_detector:
     logLikelihood_by_detector()
+if args.run_mimic_ID:
+    mimic_ID()
