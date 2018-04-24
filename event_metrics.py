@@ -100,7 +100,7 @@ def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
     return stat
 
 
-def epsilonPID_matrix(cut=0.3):
+def epsilonPID_matrix(cut=0.2):
     """Calculate the epsilon_PID matrix for misclassifying particles, print the result and plot a heatmap.
 
     Args:
