@@ -88,12 +88,12 @@ def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
 
             print('Particle %10s: TPR=%6.6f; FPR=%6.6f; TNR=%6.6f; PPV=%6.6f; cut=%4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], stat[p]['ppv'][-1], cut))
 
-        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate')
+        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate (ROC curve)')
         plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
         plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
         plt.xlabel('False Positive Rate')
         plt.ylabel('Particle Rates')
-        plt.title('Receiver Operating Characteristic (ROC) curve for %s identification'%(particle_formats[p]))
+        plt.title('%s identification'%(particle_formats[p]))
         plt.legend()
         plt.show()
 
