@@ -178,7 +178,8 @@ def bayes(prior=defaultdict(lambda: 1., {})):
             # Algebraic trick to make exp(H_i)*C_i/sum(exp(H_k) * C_k, k) stable even for very small values of H_i and H_k
             data[l]['bayes_' + particleIDs[p]] = prior[p] / denominator
 
-        print(data[l]['bayes_' + particleIDs[l]].describe())
+    c = {k: 'bayes_' + v for k, v in particleIDs.items()}
+    stats(cutting_columns=c)
 
 
 def logLikelihood_by_particle(nbins=50):
