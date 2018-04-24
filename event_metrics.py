@@ -132,8 +132,6 @@ def mimic_ID(detector_weights=defaultdict(lambda: 1., {})):
 
     print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
-    # TODO: See which one would provide a better cut
-
 
 def logLikelihood_by_particle(nbins=50):
     for d in detectors + pseudo_detectors:
