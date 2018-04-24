@@ -1,0 +1,14 @@
+# Disregard auxiliary LaTeX files
+__*_temp.tex
+*.aux
+*.fdb_latexmk
+*.fls
+*.gz
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+
+# Ignore final PDF files
+*.pdf
