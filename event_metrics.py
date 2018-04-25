@@ -80,7 +80,7 @@ def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
         for cut in cuts:
             stat[p]['tpr'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size]
             stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] > cut)].size / data[p][data[p]['isSignal'] == 0].size]
-            stat[p]['tnr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] < cut)].size / data[p][data[p]['isSignal'] == 0].size]
+            stat[p]['tnr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] <= cut)].size / data[p][data[p]['isSignal'] == 0].size]
             stat[p]['ppv'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].size / data[p][data[p][cutting_columns[p]] > cut].size]
 
             if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
