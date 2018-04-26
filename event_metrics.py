@@ -148,11 +148,13 @@ def mimic_ID(detector_weights=detector_weights, check=True):
     print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
 
-def bayes(priors=defaultdict(lambda: 1., {})):
+def bayes(priors=defaultdict(lambda: 1., {}), **kwargs):
     """Compute probabilities for particle hypothesis using a bayesian approach.
 
     Args:
         priors: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
+
+        Any keyword arguments which are acceptable for the `stats` function.
 
     Returns:
         The output of the `stats` function for cutting at the newly added bayesian particle ID. See the `stats` function return value.
@@ -171,7 +173,7 @@ def bayes(priors=defaultdict(lambda: 1., {})):
             data[l]['bayes_' + particleIDs[p]] = priors[p] / denominator
 
     c = {k: 'bayes_' + v for k, v in particleIDs.items()}
-    return stats(cutting_columns=c)
+    return stats(cutting_columns=c, **kwargs)
 
 
 def plot_logLikelihood_by_particle(nbins=50):
