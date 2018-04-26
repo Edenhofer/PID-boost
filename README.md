@@ -10,5 +10,5 @@ The main inspiration for the actual program code heavily relies on the [b2-start
 * ~~Calculate and visualize the epsilon_PID matrix~~
 * ~~Visualize precision and recall~~
 * ~~Evaluate various "pid*" variables and reconstruct, e.g. the 'pionID' (see `basf2 variables.py` section 'PID', e.g. variable 'pidLogLikelihoodValueExpert')~~
-* Construct a naive alternative to the particle ID variable using Bayes and e.g. a flat prior
+* ~~Construct a naive alternative to the particle ID variable using Bayes and e.g. a flat prior~~
 * Compare the naive approach with the particle ID variable value
