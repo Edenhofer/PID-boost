@@ -174,7 +174,7 @@ def bayes(priors=defaultdict(lambda: 1., {})):
     return stats(cutting_columns=c)
 
 
-def logLikelihood_by_particle(nbins=50):
+def plot_logLikelihood_by_particle(nbins=50):
     for d in detectors + pseudo_detectors:
         plt.suptitle('Binned pidLogLikelihood for detector %s'%(d))
         for i, p in enumerate(particles):
@@ -187,7 +187,7 @@ def logLikelihood_by_particle(nbins=50):
         plt.show()
 
 
-def logLikelihood_by_detector(nbins=50):
+def plot_logLikelihood_by_detector(nbins=50):
     for p in particles:
         plt.suptitle('Binned pidLogLikelihood for particle %s'%(particle_formats[p]))
         for i, d in enumerate(detectors + pseudo_detectors):
@@ -204,19 +204,7 @@ def logLikelihood_by_detector(nbins=50):
         plt.show()
 
 
-parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
-parser.add_argument('--stats', dest='run_stats', action='store_true', default=False, help='Print out and visualize some statistics (default: False)')
-parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False, help='Plot the binned logLikelihood for each particle (default: False)')
-parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matirx of every events (default: False)')
-parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
-parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
-parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes')
-parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
-
-args = parser.parse_args()
-if args.run_stats:
-    stat = stats()
-
+def plot_stats_by_particle(stat):
     for p in particles:
         plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate (ROC curve)')
         # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
@@ -228,11 +216,25 @@ if args.run_stats:
         plt.legend()
         plt.show()
 
+
+parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
+parser.add_argument('--stats', dest='run_stats', action='store_true', default=False, help='Print out and visualize some statistics (default: False)')
+parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False, help='Plot the binned logLikelihood for each particle (default: False)')
+parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matirx of every events (default: False)')
+parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
+parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
+parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes')
+parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
+
+args = parser.parse_args()
+if args.run_stats:
+    plot_stats_by_particle(stats())
+
 if args.run_logLikelihood_by_particle:
-    logLikelihood_by_particle()
+    plot_logLikelihood_by_particle()
 
 if args.run_logLikelihood_by_detector:
-    logLikelihood_by_detector()
+    plot_logLikelihood_by_detector()
 
 if args.run_epsilonPID_matrix:
     cut = 0.2
@@ -253,33 +255,11 @@ if args.run_mimic_ID:
     mimic_ID()
 
 if args.run_bayes:
-    stat = bayes()
-
-    for p in particles:
-        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate (ROC curve)')
-        # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
-        # plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
-        plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('Particle Rates')
-        plt.title('%s identification'%(particle_formats[p]))
-        plt.legend()
-        plt.show()
+    plot_stats_by_particle(bayes())
 
 if args.run_bayes_best:
     best_priors = {}
     for p in particles:
         best_priors[p] = data[p][data[p]['isSignal'] == 1].shape[0]
 
-    stat = bayes(best_priors)
-
-    for p in particles:
-        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate (ROC curve)')
-        # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
-        # plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
-        plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('Particle Rates')
-        plt.title('%s identification'%(particle_formats[p]))
-        plt.legend()
-        plt.show()
+    plot_stats_by_particle(bayes(best_priors))
