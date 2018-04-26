@@ -31,6 +31,24 @@ for p in particles:
     data[p] = rpd.read_root(p + '.root')
 
 
+def pdg_from_name_faulty(particle):
+    """Return the pdgCode for a given particle honoring a bug in the float to integer conversion.
+
+    Args:
+        particle: The name of the particle which should be translated.
+
+    Returns:
+        The Particle Data Group (PDG) code compatible with the values in root files.
+
+    """
+    if particle == 'deuteron':
+        return 1000010048
+    if particle == 'anti-deuteron':
+        return -1000010048
+    else:
+        return pdg.from_name(particle)
+
+
 def basf2_Code(particle):
     """Return the pdgCode in a basf2 compatible way with escaped special characters.
 
@@ -107,8 +125,8 @@ def epsilonPID_matrix(cut=0.2, cutting_columns=particleIDs):
     epsilonPIDs = np.zeros(shape=(len(particles), len(particles)))
     for i, i_p in enumerate(particles):
         for j, j_p in enumerate(particles):
-            # BUG: the deuterium code is not properly stored in the mcPDG variable and hence might lead to misleading visuals
-            epsilonPIDs[i][j] = np.float64(data[i_p][(data[i_p]['mcPDG'] == pdg.from_name(i_p)) & (data[i_p][cutting_columns[j_p]] > cut)].shape[0]) / np.float64(data[i_p][data[i_p]['mcPDG'] == pdg.from_name(i_p)].shape[0])
+            # The deuterium code is not properly stored in the mcPDG variable, hence the use of `pdg_from_name_faulty()`
+            epsilonPIDs[i][j] = np.float64(data[i_p][(data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) & (data[i_p][cutting_columns[j_p]] > cut)].shape[0]) / np.float64(data[i_p][data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)].shape[0])
 
     print("Confusion matrix:\n%s"%(epsilonPIDs))
     return epsilonPIDs
