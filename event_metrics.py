@@ -228,6 +228,7 @@ parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_de
 parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
 parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes')
 parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
+parser.add_argument('--diff-ID-Bayes', dest='run_diff_ID_Bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and bayes')
 
 args = parser.parse_args()
 if args.run_stats:
@@ -266,3 +267,67 @@ if args.run_bayes_best:
         best_priors[p] = data[p][data[p]['isSignal'] == 1].shape[0]
 
     plot_stats_by_particle(bayes(best_priors))
+
+if args.run_diff_ID_Bayes:
+    cut = 0.2
+    ncuts = 10
+
+    best_priors = {}
+    for p in particles:
+        best_priors[p] = data[p][data[p]['isSignal'] == 1].shape[0]
+
+    stat_viaPrior = bayes(best_priors, ncuts=ncuts)
+    stat_viaID = stats(ncuts=ncuts)
+
+    # TODO: Return this via bayes()
+    c = {k: 'bayes_' + v for k, v in particleIDs.items()}
+    epsilonPIDs_viaPrior = epsilonPID_matrix(cutting_columns=c, cut=cut)
+    epsilonPIDs_viaID = epsilonPID_matrix(cut=cut)
+
+    fig, axes = plt.subplots(nrows=2, ncols=1)
+    plt.suptitle(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(epsilonPIDs_viaID)
+    for (j, i), label in np.ndenumerate(epsilonPIDs_viaID):
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
+    plt.xlabel('Predicted Particle')
+    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.ylabel('True Particle')
+    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.title('Identification via ID')
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(epsilonPIDs_viaPrior)
+    for (j, i), label in np.ndenumerate(epsilonPIDs_viaPrior):
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
+    plt.xlabel('Predicted Particle')
+    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.ylabel('True Particle')
+    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.title('Identification via Bayes')
+
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    plt.colorbar(cax=cbar_ax)
+
+    plt.show(fig)
+
+    for p in particles:
+        plt.subplot(1, 2, 1)
+        plt.title('%s identification via ID'%(particle_formats[p]))
+        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['tpr'], label='True Positive Rate (ROC curve)')
+        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['ppv'], label='Positive Predicted Value')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('Particle Rates')
+        plt.legend()
+
+        plt.subplot(1, 2, 2)
+        plt.title('%s identification via Bayes'%(particle_formats[p]))
+        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['tpr'], label='True Positive Rate (ROC curve)')
+        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['ppv'], label='Positive Predicted Value')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('Particle Rates')
+        plt.legend()
+
+        plt.show()
