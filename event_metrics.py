@@ -21,6 +21,8 @@ particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muon
 particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 pseudo_detectors = ['all', 'default']
+# Use the detector weights to exclude certain detectors, e.g. for debugging purposes
+# Bare in mind that if all likelihoods are calculated correctly this should never improve the result
 detector_weights = {d: 1. for d in detectors + pseudo_detectors}
 
 # Read in all the particle's information into a dictionary of panda frames
