@@ -80,10 +80,10 @@ def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
     for p in particles:
         stat[p] = {'tpr': [], 'fpr': [], 'tnr': [], 'ppv': []}
         for cut in cuts:
-            stat[p]['tpr'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].size / data[p][data[p]['isSignal'] == 1].size]
-            stat[p]['fpr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] > cut)].size / data[p][data[p]['isSignal'] == 0].size]
-            stat[p]['tnr'] += [data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] <= cut)].size / data[p][data[p]['isSignal'] == 0].size]
-            stat[p]['ppv'] += [data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].size / data[p][data[p][cutting_columns[p]] > cut].size]
+            stat[p]['tpr'] += [np.float64(data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 1].shape[0])]
+            stat[p]['fpr'] += [np.float64(data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 0].shape[0])]
+            stat[p]['tnr'] += [np.float64(data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] <= cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 0].shape[0])]
+            stat[p]['ppv'] += [np.float64(data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p][cutting_columns[p]] > cut].shape[0])]
 
             if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
                 print('VALUES INCONSISTENT: ', end='')
@@ -114,7 +114,7 @@ def epsilonPID_matrix(cut=0.2):
     for i, i_p in enumerate(particles):
         for j, j_p in enumerate(particles):
             # BUG: the deuterium code is not properly stored in the mcPDG variable and hence might lead to misleading visuals
-            epsilonPIDs[i][j] = data[i_p][(data[i_p]['mcPDG'] == pdg.from_name(i_p)) & (data[i_p][particleIDs[j_p]] > cut)].size / data[i_p][data[i_p]['mcPDG'] == pdg.from_name(i_p)].size
+            epsilonPIDs[i][j] = np.float64(data[i_p][(data[i_p]['mcPDG'] == pdg.from_name(i_p)) & (data[i_p][particleIDs[j_p]] > cut)].shape[0]) / np.float64(data[i_p][data[i_p]['mcPDG'] == pdg.from_name(i_p)].shape[0])
 
     print("Confusion matrix:\n%s"%(epsilonPIDs))
     plt.imshow(epsilonPIDs)
@@ -143,7 +143,7 @@ def mimic_ID(detector_weights=detector_weights, check=True):
     for l in particles:
         # Calculate the accumulated logLikelihood and assess the relation to kaonID
         for p in particles:
-            data[l]['accumulatedLogLikelihood' + basf2_Code(p)] = np.zeros(data[l][particleIDs[p]].size)
+            data[l]['accumulatedLogLikelihood' + basf2_Code(p)] = np.zeros(data[l][particleIDs[p]].shape[0])
             # The following loop is equivalent to querying the 'all' pseudo-detector when using flat detector weights
             for d in detectors:
                 column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
@@ -242,6 +242,6 @@ if args.run_bayes:
 if args.run_bayes_best:
     best_priors = {}
     for p in particles:
-        best_priors[p] = data[p][data[p]['isSignal'] == 1].size
+        best_priors[p] = data[p][data[p]['isSignal'] == 1].shape[0]
 
     bayes(best_priors)
