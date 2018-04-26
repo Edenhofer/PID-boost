@@ -90,16 +90,6 @@ def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
 
             print('Particle %10s: TPR=%6.6f; FPR=%6.6f; TNR=%6.6f; PPV=%6.6f; cut=%4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], stat[p]['ppv'][-1], cut))
 
-        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate (ROC curve)')
-        # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
-        # plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
-        plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('Particle Rates')
-        plt.title('%s identification'%(particle_formats[p]))
-        plt.legend()
-        plt.show()
-
     return stat
 
 
@@ -109,6 +99,9 @@ def epsilonPID_matrix(cut=0.2):
     Args:
         cut: Position of the cut for the particleIDs.
 
+    Returns:
+        A numpy matrix of epsilon_PID values. The `epsilon_PID[i][j]` value being the probability given it is a particle ''i'' that it will be categorized as particle ''j''.
+
     """
     epsilonPIDs = np.zeros(shape=(len(particles), len(particles)))
     for i, i_p in enumerate(particles):
@@ -117,16 +110,7 @@ def epsilonPID_matrix(cut=0.2):
             epsilonPIDs[i][j] = np.float64(data[i_p][(data[i_p]['mcPDG'] == pdg.from_name(i_p)) & (data[i_p][particleIDs[j_p]] > cut)].shape[0]) / np.float64(data[i_p][data[i_p]['mcPDG'] == pdg.from_name(i_p)].shape[0])
 
     print("Confusion matrix:\n%s"%(epsilonPIDs))
-    plt.imshow(epsilonPIDs)
-    for (j, i), label in np.ndenumerate(epsilonPIDs):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
-    plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
-    plt.ylabel('True Particle')
-    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
-    plt.colorbar()
-    plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-    plt.show()
+    return epsilonPIDs
 
 
 def mimic_ID(detector_weights=detector_weights, check=True):
@@ -170,6 +154,9 @@ def bayes(priors=defaultdict(lambda: 1., {})):
     Args:
         priors: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
 
+    Returns:
+        The output of the `stats` function for cutting at the newly added bayesian particle ID. See the `stats` function return value.
+
     """
     for l in particles:
         # TODO: Use mimic_ID here to allow for weighted detector
@@ -184,7 +171,7 @@ def bayes(priors=defaultdict(lambda: 1., {})):
             data[l]['bayes_' + particleIDs[p]] = priors[p] / denominator
 
     c = {k: 'bayes_' + v for k, v in particleIDs.items()}
-    stats(cutting_columns=c)
+    return stats(cutting_columns=c)
 
 
 def logLikelihood_by_particle(nbins=50):
@@ -228,20 +215,71 @@ parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', 
 
 args = parser.parse_args()
 if args.run_stats:
-    stats()
+    stat = stats()
+
+    for p in particles:
+        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate (ROC curve)')
+        # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
+        # plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
+        plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('Particle Rates')
+        plt.title('%s identification'%(particle_formats[p]))
+        plt.legend()
+        plt.show()
+
 if args.run_logLikelihood_by_particle:
     logLikelihood_by_particle()
-if args.run_epsilonPID_matrix:
-    epsilonPID_matrix()
+
 if args.run_logLikelihood_by_detector:
     logLikelihood_by_detector()
+
+if args.run_epsilonPID_matrix:
+    cut = 0.2
+    epsilonPIDs = epsilonPID_matrix(cut=cut)
+
+    plt.imshow(epsilonPIDs)
+    for (j, i), label in np.ndenumerate(epsilonPIDs):
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
+    plt.xlabel('Predicted Particle')
+    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.ylabel('True Particle')
+    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.colorbar()
+    plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    plt.show()
+
 if args.run_mimic_ID:
     mimic_ID()
+
 if args.run_bayes:
-    bayes()
+    stat = bayes()
+
+    for p in particles:
+        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate (ROC curve)')
+        # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
+        # plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
+        plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('Particle Rates')
+        plt.title('%s identification'%(particle_formats[p]))
+        plt.legend()
+        plt.show()
+
 if args.run_bayes_best:
     best_priors = {}
     for p in particles:
         best_priors[p] = data[p][data[p]['isSignal'] == 1].shape[0]
 
-    bayes(best_priors)
+    stat = bayes(best_priors)
+
+    for p in particles:
+        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate (ROC curve)')
+        # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
+        # plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
+        plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('Particle Rates')
+        plt.title('%s identification'%(particle_formats[p]))
+        plt.legend()
+        plt.show()
