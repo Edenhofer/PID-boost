@@ -1,4 +1,4 @@
-# Playground repository for boosted Particle IDentification
+# Playground repository for boosted Particle Identification
 
 ## Inspiration
 
