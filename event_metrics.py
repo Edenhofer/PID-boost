@@ -220,6 +220,7 @@ parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action=
 parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
 parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
 parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes')
+parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
 
 args = parser.parse_args()
 if args.run_stats:
@@ -234,3 +235,9 @@ if args.run_mimic_ID:
     mimic_ID()
 if args.run_bayes:
     bayes()
+if args.run_bayes_best:
+    best_priors = {}
+    for p in particles:
+        best_priors[p] = data[p][data[p]['isSignal'] == 1].size
+
+    bayes(best_priors)
