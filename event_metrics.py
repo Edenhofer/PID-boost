@@ -152,7 +152,7 @@ def mimic_ID(detector_weights=detector_weights, check=True):
                 data[l]['accumulatedLogLikelihood' + basf2_Code(p)] += data[l][column].fillna(0) * detector_weights[d]
 
         # Calculate the particleIDs manually and compare them to the result of the analysis software
-        data[l]['assumed_pionID'] = 1. / (1. + (data[l]['accumulatedLogLikelihood' + basf2_Code('K+')] - data[l]['accumulatedLogLikelihood' + basf2_Code('pi+')]).apply(np.exp))
+        data[l]['assumed_' + particleIDs['pi+']] = 1. / (1. + (data[l]['accumulatedLogLikelihood' + basf2_Code('K+')] - data[l]['accumulatedLogLikelihood' + basf2_Code('pi+')]).apply(np.exp))
         for p in (set(particles) - set(['pi+'])):
             # Algebraic trick to make exp(a)/(exp(a) + exp(b)) stable even for very small values of a and b
             data[l]['assumed_' + particleIDs[p]] = 1. / (1. + (data[l]['accumulatedLogLikelihood' + basf2_Code('pi+')] - data[l]['accumulatedLogLikelihood' + basf2_Code(p)]).apply(np.exp))
