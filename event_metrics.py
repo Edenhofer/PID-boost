@@ -78,12 +78,12 @@ def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
     stat = {}
     cuts = np.linspace(cut_min, cut_max, num=ncuts)
     for p in particles:
-        stat[p] = {'tpr': [], 'fpr': [], 'tnr': [], 'ppv': []}
+        stat[p] = {'tpr': np.array([]), 'fpr': np.array([]), 'tnr': np.array([]), 'ppv': np.array([])}
         for cut in cuts:
-            stat[p]['tpr'] += [np.float64(data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 1].shape[0])]
-            stat[p]['fpr'] += [np.float64(data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 0].shape[0])]
-            stat[p]['tnr'] += [np.float64(data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] <= cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 0].shape[0])]
-            stat[p]['ppv'] += [np.float64(data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p][cutting_columns[p]] > cut].shape[0])]
+            stat[p]['tpr'] = np.append(stat[p]['tpr'], [np.float64(data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 1].shape[0])])
+            stat[p]['fpr'] = np.append(stat[p]['fpr'], [np.float64(data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 0].shape[0])])
+            stat[p]['tnr'] = np.append(stat[p]['tnr'], [np.float64(data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] <= cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 0].shape[0])])
+            stat[p]['ppv'] = np.append(stat[p]['ppv'], [np.float64(data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p][cutting_columns[p]] > cut].shape[0])])
 
             if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
                 print('VALUES INCONSISTENT: ', end='')
