@@ -115,7 +115,9 @@ def epsilonPID_matrix(cut=0.2):
             epsilonPIDs[i][j] = data[i_p][(data[i_p]['mcPDG'] == pdg.from_name(i_p)) & (data[i_p][particleIDs[j_p]] > cut)].size / data[i_p][data[i_p]['mcPDG'] == pdg.from_name(i_p)].size
 
     print("Confusion matrix:\n%s"%(epsilonPIDs))
-    plt.imshow(epsilonPIDs, cmap='hot')
+    plt.imshow(epsilonPIDs)
+    for (j, i), label in np.ndenumerate(epsilonPIDs):
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
     plt.xlabel('Predicted Particle')
     plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
     plt.ylabel('True Particle')
