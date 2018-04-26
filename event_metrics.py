@@ -155,10 +155,11 @@ def bayes(priors=defaultdict(lambda: 1., {}), **kwargs):
     Args:
         priors: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
 
-        Any keyword arguments which are acceptable for the `stats` function.
+        Any keyword arguments which are accepted by the `stats` function.
 
     Returns:
-        The output of the `stats` function for cutting at the newly added bayesian particle ID. See the `stats` function return value.
+        stat: The output of the `stats` function for cutting at the newly added bayesian particle ID. See the `stats` function return value.
+        cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
 
     """
     for l in particles:
@@ -173,8 +174,10 @@ def bayes(priors=defaultdict(lambda: 1., {}), **kwargs):
             # Algebraic trick to make exp(H_i)*C_i/sum(exp(H_k) * C_k, k) stable even for very small values of H_i and H_k
             data[l]['bayes_' + particleIDs[p]] = priors[p] / denominator
 
-    c = {k: 'bayes_' + v for k, v in particleIDs.items()}
-    return stats(cutting_columns=c, **kwargs)
+    cutting_columns = {k: 'bayes_' + v for k, v in particleIDs.items()}
+    stat = stats(cutting_columns=cutting_columns, **kwargs)
+
+    return stat, cutting_columns
 
 
 def plot_logLikelihood_by_particle(nbins=50):
@@ -259,14 +262,16 @@ if args.run_mimic_ID:
     mimic_ID()
 
 if args.run_bayes:
-    plot_stats_by_particle(bayes())
+    stat, c = bayes()
+    plot_stats_by_particle(stat)
 
 if args.run_bayes_best:
     best_priors = {}
     for p in particles:
         best_priors[p] = data[p][data[p]['isSignal'] == 1].shape[0]
 
-    plot_stats_by_particle(bayes(best_priors))
+    stat, c = bayes(best_priors)
+    plot_stats_by_particle(stat)
 
 if args.run_diff_ID_Bayes:
     cut = 0.2
@@ -276,11 +281,9 @@ if args.run_diff_ID_Bayes:
     for p in particles:
         best_priors[p] = data[p][data[p]['isSignal'] == 1].shape[0]
 
-    stat_viaPrior = bayes(best_priors, ncuts=ncuts)
+    stat_viaPrior, c = bayes(best_priors, ncuts=ncuts)
     stat_viaID = stats(ncuts=ncuts)
 
-    # TODO: Return this via bayes()
-    c = {k: 'bayes_' + v for k, v in particleIDs.items()}
     epsilonPIDs_viaPrior = epsilonPID_matrix(cutting_columns=c, cut=cut)
     epsilonPIDs_viaID = epsilonPID_matrix(cut=cut)
 
