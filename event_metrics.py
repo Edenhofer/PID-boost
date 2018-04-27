@@ -26,9 +26,7 @@ pseudo_detectors = ['all', 'default']
 detector_weights = {d: 1. for d in detectors + pseudo_detectors}
 
 # Read in all the particle's information into a dictionary of panda frames
-data = {}
-for p in particles:
-    data[p] = rpd.read_root(p + '.root')
+data = {p: rpd.read_root(p + '.root') for p in particles}
 
 
 def pdg_from_name_faulty(particle):
@@ -284,9 +282,7 @@ if args.run_bayes:
     plot_stats_by_particle(stat)
 
 if args.run_bayes_best:
-    best_priors = {}
-    for p in particles:
-        best_priors[p] = data[p][data[p]['isSignal'] == 1].shape[0]
+    best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
 
     stat, c = bayes(best_priors)
     plot_stats_by_particle(stat)
@@ -295,9 +291,7 @@ if args.run_diff_ID_Bayes:
     cut = 0.2
     ncuts = 10
 
-    best_priors = {}
-    for p in particles:
-        best_priors[p] = data[p][data[p]['isSignal'] == 1].shape[0]
+    best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
 
     stat_viaPrior, c = bayes(best_priors, ncuts=ncuts)
     stat_viaID = stats(ncuts=ncuts)
