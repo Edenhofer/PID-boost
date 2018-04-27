@@ -7,7 +7,7 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.testing as npt
-#import pandas as pd
+import pandas as pd
 import root_pandas as rpd
 import scipy
 import scipy.stats
@@ -196,6 +196,55 @@ def bayes(priors=defaultdict(lambda: 1., {}), **kwargs):
     return stat, cutting_columns
 
 
+def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niterations=7, norm='pi+'):
+    """Compute probabilities for particle hypothesis keeping the `hold` root variable fixed using a bayesian approach.
+
+    Args:
+        hold: Root variable on which the 'a prior' probability shall depend on.
+        nbins: Number of bins to use for the `hold` variable when calculating probabilities.
+        detector: Name of the detector to be used for pidLogLikelihood extraction.
+        mc_best: Boolean specifying whether to use the Monte Carlo data for prior probabilities or an iterative approach.
+        niterations: Number of iterations for the converging approach.
+        norm: Particle by which abundance to norm the a priori probabilities.
+
+    Returns:
+        cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
+        bins: A list for each dataset containing the category of the `hold` variable bins of each track.
+
+    """
+    bins = {p: pd.qcut(data[p][hold], q=nbins, labels=range(nbins)) for p in particles}
+    cutting_columns = {k: 'bayes_' + hold + '_' + v for k, v in particleIDs.items()}
+
+    for l in particles:
+        for i in range(nbins):
+            if mc_best == True:
+                y = {p: np.float64(data[l][(bins[l] == i) & (data[l]['mcPDG'] == pdg_from_name_faulty(p))].shape[0]) for p in particles}
+                priors = {p: y[p] / y[norm] for p in particles}
+                niterations = 1
+
+                print('Priors %d/%d "%s" bin: '%(i+1, nbins, hold), priors)
+            else:
+                priors = {p: 1. for p in particles}
+
+            for iteration in range(niterations):
+                # Calculate the 'a posteriori' probability for each pt bin
+                for p in particles:
+                    denominator = 0.
+                    for p_2 in particles:
+                        denominator += (data[l][bins[l] == i]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + detector + '__bc'] - data[l][bins[l] == i]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc']).apply(np.exp) * priors[p_2]
+
+                    # Algebraic trick to make exp(H_i)*C_i/sum(exp(H_k) * C_k, k) stable even for very small values of H_i and H_k
+                    data[l].at[bins[l] == i, cutting_columns[p]] = priors[p] / denominator
+
+                y = {p: np.float64(data[l][bins[l] == i][cutting_columns[p]].sum()) for p in particles}
+                for p in particles:
+                    priors[p] = y[p] / y[norm]
+
+                if not mc_best: print('Priors %d/%d "%s" bin after iteration %2d: '%(i+1, nbins, hold, iteration + 1), priors)
+
+    return cutting_columns, bins
+
+
 def plot_logLikelihood_by_particle(nbins=50):
     for d in detectors + pseudo_detectors:
         plt.suptitle('Binned pidLogLikelihood for detector %s'%(d))
@@ -248,6 +297,7 @@ parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', defa
 parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes')
 parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
 parser.add_argument('--diff-ID-Bayes', dest='run_diff_ID_Bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and bayes')
+parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 
 args = parser.parse_args()
 if args.run_stats:
@@ -346,3 +396,26 @@ if args.run_diff_ID_Bayes:
         plt.legend()
 
         plt.show()
+
+if args.run_chunked_bayes:
+    particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
+    cuts_of_interest = {0.1: '-', 0.3: ':', 0.5: '-.', 0.7: '--'}
+
+    nbins = 10
+    niterations = 5
+    norm = 'pi+'
+    cutting_columns, bins = chunked_bayes(hold='pt', norm=norm, mc_best=False, niterations=niterations, nbins=10)
+
+    x = range(nbins)
+    plt.title('Chunked Bayes Abundance Comparison')
+
+    for cut, linestyle in cuts_of_interest.items():
+        for p, color in particle_visuals.items():
+            assumed_abundance = np.array([data[p][(bins[p] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in x])
+            actual_abundance = np.array([data[p][(bins[p] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in x])
+            plt.plot(x, assumed_abundance / actual_abundance, label='%s: %.2f cut'%(particle_formats[p], cut), linestyle=linestyle, color=color)
+
+    plt.xlabel(r'$p_T$ bin')
+    plt.ylabel('True Positive Rate')
+    plt.legend()
+    plt.show()
