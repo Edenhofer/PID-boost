@@ -209,10 +209,15 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
 
     Returns:
         cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
-        bins: A list for each dataset containing the category of the `hold` variable bins of each track.
+        bins: A dictionary containing a list for each particle dataset with the category of the `hold` variable bins of each track.
+        intervals: A dictionary containing an array of interval boundaries for every bin.
 
     """
-    bins = {p: pd.qcut(data[p][hold], q=nbins, labels=range(nbins)) for p in particles}
+    bins = {}
+    intervals = {}
+    for p in particles:
+        bins[p], intervals[p] = pd.qcut(data[p][hold], q=nbins, labels=range(nbins), retbins=True)
+
     cutting_columns = {k: 'bayes_' + hold + '_' + v for k, v in particleIDs.items()}
 
     for l in particles:
@@ -242,7 +247,7 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
 
                 if not mc_best: print('Priors %d/%d "%s" bin after iteration %2d: '%(i+1, nbins, hold, iteration + 1), priors)
 
-    return cutting_columns, bins
+    return cutting_columns, bins, intervals
 
 
 def plot_logLikelihood_by_particle(nbins=50):
@@ -399,22 +404,24 @@ if args.run_diff_ID_Bayes:
 
 if args.run_chunked_bayes:
     particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
-    cuts_of_interest = {0.1: '-', 0.3: ':', 0.5: '-.', 0.7: '--'}
+    cut_visuals = {0.1: '-', 0.3: ':', 0.5: '-.', 0.7: '--'}
 
     nbins = 10
     niterations = 5
     norm = 'pi+'
-    cutting_columns, bins = chunked_bayes(hold='pt', norm=norm, mc_best=False, niterations=niterations, nbins=10)
+    cutting_columns, bins, intervals = chunked_bayes(hold='pt', norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
+    interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
+    interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
-    x = range(nbins)
     plt.title('Chunked Bayes Abundance Comparison')
 
-    for cut, linestyle in cuts_of_interest.items():
+    for cut, linestyle in cut_visuals.items():
         for p, color in particle_visuals.items():
-            assumed_abundance = np.array([data[p][(bins[p] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in x])
-            actual_abundance = np.array([data[p][(bins[p] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in x])
-            plt.plot(x, assumed_abundance / actual_abundance, label='%s: %.2f cut'%(particle_formats[p], cut), linestyle=linestyle, color=color)
+            assumed_abundance = np.array([data[p][(bins[p] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
+            actual_abundance = np.array([data[p][(bins[p] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
+            plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s: %.2f cut'%(particle_formats[p], cut), linestyle=linestyle, color=color)
 
+    plt.xscale('log')
     plt.xlabel(r'$p_T$ bin')
     plt.ylabel('True Positive Rate')
     plt.legend()
