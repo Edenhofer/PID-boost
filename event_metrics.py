@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+# PYTHON_ARGCOMPLETE_OK
 
 from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to importing argparse
 
+import argcomplete
 import argparse
 from collections import defaultdict
 
@@ -16,6 +18,19 @@ import scipy.stats
 
 import pdg
 
+
+# Assemble the allowed command line options
+parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
+parser.add_argument('--stats', dest='run_stats', action='store_true', default=False, help='Print out and visualize some statistics (default: False)')
+parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False, help='Plot the binned logLikelihood for each particle (default: False)')
+parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matrix of every events (default: False)')
+parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
+parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
+parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes')
+parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
+parser.add_argument('--diff-ID-Bayes', dest='run_diff_ID_Bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and bayes')
+parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
+argcomplete.autocomplete(parser)
 
 # Base definitions of stable particles and detector data
 particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
@@ -294,17 +309,6 @@ def plot_stats_by_particle(stat):
         plt.legend()
         plt.show()
 
-
-parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
-parser.add_argument('--stats', dest='run_stats', action='store_true', default=False, help='Print out and visualize some statistics (default: False)')
-parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False, help='Plot the binned logLikelihood for each particle (default: False)')
-parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matrix of every events (default: False)')
-parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
-parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
-parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes')
-parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
-parser.add_argument('--diff-ID-Bayes', dest='run_diff_ID_Bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and bayes')
-parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 
 args = parser.parse_args()
 if args.run_stats:
