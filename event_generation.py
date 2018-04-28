@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import basf2
 from modularAnalysis import outputMdst
 from reconstruction import add_reconstruction

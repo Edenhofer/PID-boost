@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to importing argparse
 
