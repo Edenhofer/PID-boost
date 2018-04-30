@@ -403,22 +403,14 @@ if args.run_diff_ID_Bayes:
     plt.show(fig)
 
     for p in particles:
-        plt.subplot(1, 2, 1)
-        plt.title('%s identification via ID'%(particle_formats[p]))
-        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['tpr'], label='True Positive Rate (ROC curve)')
-        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['ppv'], label='Positive Predicted Value')
+        plt.title('%s identification'%(particle_formats[p]))
+        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['tpr'], label='True Positive Rate (ROC curve) via ID', color='xkcd:blue')
+        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['ppv'], label='Positive Predicted Value via ID', linestyle=':', color='darkblue')
+        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['tpr'], label='True Positive Rate (ROC curve) via Bayes', color='tomato')
+        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['ppv'], label='Positive Predicted Value via Bayes', linestyle=':', color='orangered')
         plt.xlabel('False Positive Rate')
         plt.ylabel('Particle Rates')
         plt.legend()
-
-        plt.subplot(1, 2, 2)
-        plt.title('%s identification via Bayes'%(particle_formats[p]))
-        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['tpr'], label='True Positive Rate (ROC curve)')
-        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['ppv'], label='Positive Predicted Value')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('Particle Rates')
-        plt.legend()
-
         plt.show()
 
 if args.run_chunked_bayes:
