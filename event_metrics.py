@@ -441,6 +441,19 @@ if args.run_chunked_bayes:
         plt.legend()
         plt.show()
 
+        epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
+        plt.imshow(epsilonPIDs)
+        for (j, i), label in np.ndenumerate(epsilonPIDs):
+            plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
+        plt.xlabel('Predicted Particle')
+        plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+        plt.ylabel('True Particle')
+        plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+        plt.title('Identification via Bayes')
+        plt.show()
+
+    plot_stats_by_particle(stats(cutting_columns=cutting_columns))
+
 if args.run_chunked_outliers:
     hold = 'pt'
     hold_format = r'$p_T$'
