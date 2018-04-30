@@ -230,8 +230,12 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
         cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
         category_column: Name of the column in each dataframe which holds the category for bin selection.
         intervals: A dictionary containing an array of interval boundaries for every bin.
+        iteration_priors: A dictionary for each dataset of particle dictionaries containing arrays of priors for each iteration.
 
     """
+    if mc_best == True:
+        niterations = 1
+
     category_column = 'category'
     intervals = {}
     for p in particles:
@@ -243,13 +247,13 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
         data[p][category_column], intervals[p] = pd.qcut(data[p][(data[p][hold] > lower_bound) & (data[p][hold] < upper_bound)][hold], q=nbins, labels=range(nbins), retbins=True)
 
     cutting_columns = {k: 'bayes_' + hold + '_' + v for k, v in particleIDs.items()}
+    iteration_priors = {l: {p: [[] for _ in range(niterations)] for p in particles} for l in particles}
 
     for l in particles:
         for i in range(nbins):
             if mc_best == True:
                 y = {p: np.float64(data[l][(data[l][category_column] == i) & (data[l]['mcPDG'] == pdg_from_name_faulty(p))].shape[0]) for p in particles}
                 priors = {p: y[p] / y[norm] for p in particles}
-                niterations = 1
 
                 print('Priors %d/%d "%s" bin: '%(i+1, nbins, hold), priors)
             else:
@@ -268,10 +272,11 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
                 y = {p: np.float64(data[l][data[l][category_column] == i][cutting_columns[p]].sum()) for p in particles}
                 for p in particles:
                     priors[p] = y[p] / y[norm]
+                    iteration_priors[l][p][iteration] += [priors[p]]
 
                 if not mc_best: print('Priors %d/%d "%s" bin after iteration %2d: '%(i+1, nbins, hold, iteration + 1), priors)
 
-    return cutting_columns, category_column, intervals
+    return cutting_columns, category_column, intervals, iteration_priors
 
 
 def plot_logLikelihood_by_particle(nbins=50):
@@ -425,7 +430,7 @@ if args.run_chunked_bayes:
     nbins = 10
     niterations = 5
     norm = 'pi+'
-    cutting_columns, category_column, intervals = chunked_bayes(hold=hold, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
+    cutting_columns, category_column, intervals, _ = chunked_bayes(hold=hold, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
