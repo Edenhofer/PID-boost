@@ -30,6 +30,7 @@ parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=Fa
 parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
 parser.add_argument('--diff-ID-Bayes', dest='run_diff_ID_Bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and bayes')
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
+parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False, help='Visualize the outliers of the chunked Bayesian approach')
 argcomplete.autocomplete(parser)
 
 # Base definitions of stable particles and detector data
@@ -431,4 +432,18 @@ if args.run_chunked_bayes:
     plt.xlabel(r'$p_T$ bin')
     plt.ylabel('True Positive Rate')
     plt.legend()
+    plt.show()
+
+if args.run_chunked_outliers:
+    hold = 'pt'
+    hold_format = r'$p_T$'
+    hold_unit = r'$\mathrm{GeV/c}$'
+    whis = 1.5
+    norm = 'pi+'
+
+    plt.boxplot(data[norm][hold], whis=whis, sym='+')
+    plt.title('Outliers outside of ' + str(whis) + ' IQR on a logarithmic scale')
+    plt.yscale('log')
+    plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+    plt.ylabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
     plt.show()
