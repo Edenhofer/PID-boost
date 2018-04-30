@@ -30,6 +30,7 @@ parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=Fa
 parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
 parser.add_argument('--diff-ID-Bayes', dest='run_diff_ID_Bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and bayes')
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
+parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False, help='Visualize the evolution of priors for the chunked Bayesian approach')
 parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False, help='Visualize the outliers of the chunked Bayesian approach')
 argcomplete.autocomplete(parser)
 
@@ -458,6 +459,32 @@ if args.run_chunked_bayes:
         plt.show()
 
     plot_stats_by_particle(stats(cutting_columns=cutting_columns))
+
+if args.run_chunked_bayes_priors:
+    particles_of_interest = ['K+', 'mu+']
+
+    hold = 'pt'
+    hold_format = r'$p_T$'
+    hold_unit = r'$\mathrm{GeV/c}$'
+    nbins = 10
+    niterations = 3
+    norm = 'pi+'
+
+    _, _, _, iteration_priors_viaIter = chunked_bayes(hold=hold, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
+    _, _, intervals, iteration_priors_viaBest = chunked_bayes(hold=hold, norm=norm, mc_best=True, nbins=nbins)
+    interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
+    interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
+
+    for p in particles_of_interest:
+        plt.title('Spectra Ratios Relative to %s'%(particle_formats[norm]))
+        plt.errorbar(interval_centers[p], iteration_priors_viaBest[norm][p][-1], xerr=interval_widths[p], label='Truth', fmt='*')
+        for n in range(niterations):
+            plt.errorbar(interval_centers[p], iteration_priors_viaIter[norm][p][n], xerr=interval_widths[p], label='Iteration %d'%(n+1), fmt='o')
+
+        plt.xlabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
+        plt.ylabel('Relative Abundance')
+        plt.legend()
+        plt.show()
 
 if args.run_chunked_outliers:
     hold = 'pt'
