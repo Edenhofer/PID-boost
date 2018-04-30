@@ -12,6 +12,6 @@ The main inspiration for the actual program code heavily relies on the [b2-start
 * ~~Evaluate various "pid*" variables and reconstruct, e.g. the 'pionID' (see `basf2 variables.py` section 'PID', e.g. variable 'pidLogLikelihoodValueExpert')~~
 * ~~Construct a naive alternative to the particle ID variable using Bayes and e.g. a flat prior~~
 * ~~Compare the naive approach with the particle ID variable value~~
-* Allow for variable dependant priors for the bayesian approach, e.g. make the priors depend on the transverse momentum
+* ~~Allow for variable dependant priors for the bayesian approach, e.g. make the priors depend on the transverse momentum~~
 * Compare the dependable priors bayesian approach with the simple bayesian approach and the particle ID one
 * Add a simple Machine Learning approach using the likelihoods as input and the prediction as output
