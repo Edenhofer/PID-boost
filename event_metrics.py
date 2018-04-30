@@ -417,28 +417,29 @@ if args.run_diff_ID_Bayes:
 
 if args.run_chunked_bayes:
     particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
-    cut_visuals = {0.1: '-', 0.3: ':', 0.5: '-.', 0.7: '--'}
+    cuts = [0.2]
 
+    hold = 'pt'
+    hold_format = r'$p_T$'
+    hold_unit = r'$\mathrm{GeV/c}$'
     nbins = 10
     niterations = 5
     norm = 'pi+'
-    cutting_columns, category_column, intervals = chunked_bayes(hold='pt', norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
+    cutting_columns, category_column, intervals = chunked_bayes(hold=hold, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
-    plt.title('Chunked Bayes Abundance Comparison')
-
-    for cut, linestyle in cut_visuals.items():
+    for cut in cuts:
+        plt.title('Chunked Bayes True Positive Rate for a cut at %.2f'%(cut))
         for p, color in particle_visuals.items():
             assumed_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
             actual_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
-            plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s: %.2f cut'%(particle_formats[p], cut), linestyle=linestyle, color=color)
+            plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s'%(particle_formats[p]), fmt='o', color=color)
 
-    plt.xscale('log')
-    plt.xlabel(r'$p_T$ bin')
-    plt.ylabel('True Positive Rate')
-    plt.legend()
-    plt.show()
+        plt.xlabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
+        plt.ylabel('True Positive Rate')
+        plt.legend()
+        plt.show()
 
 if args.run_chunked_outliers:
     hold = 'pt'
