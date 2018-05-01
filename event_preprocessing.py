@@ -12,7 +12,7 @@ detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm', 'all', 'default']
 
 # Default list of variables which should be exported to the root file
 root_vars = ['isSignal', 'mcErrors', 'mcPDG']
-root_vars += ['pt', 'ptErr']
+root_vars += ['pt', 'ptErr', 'cosTheta', 'cosThetaErr', 'Theta', 'ThetaErr']
 root_vars += ['kaonID', 'pionID','electronID',  'muonID', 'protonID', 'deuteronID']
 
 # Import mdst file and fill particle list without applying any cuts
