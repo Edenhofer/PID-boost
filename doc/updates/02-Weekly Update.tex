@@ -1,0 +1,180 @@
+\documentclass{beamer}
+	\usepackage[utf8]{inputenc}		% required for umlauts
+	\usepackage[ngerman]{babel}		% required for umlauts
+	\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage{libertine}			% enable this on Windows to allow for microtype
+	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
+
+	\usepackage{mathtools}		% required for formulas
+
+	\usepackage{graphicx}		% required to insert images
+	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
+	\usepackage[tracking=true]{microtype} % required to change character spacing
+
+	\usepackage{hyperref}		% insert clickable references
+
+	\usepackage{datetime}		% flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+
+	\usepackage{geometry}
+	\usepackage{scrextend}		% allow arbitrary indentation
+
+	\usepackage{color}
+
+	\usetheme{default}
+	\usecolortheme{beaver}
+
+	\title{Second Weekly Update on `Optimization~of~Particle~Identification'}
+	\subtitle{Simple Bayes with Static Priors, Variable Bayes with chunked Priors}
+	\author{Gordian Edenhofer}
+	\date{\today}
+
+
+\begin{document}
+\begin{frame}
+	\frametitle{Git Log}
+
+	\begin{itemize}
+		\item Construct a simple alternative to the `particleID' variables using Bayes with static priors
+		\item Compare the static priors approach with the `particleID' one
+		\item Introduce a Bayesian approach depending on chunked priors
+		\item Visualize difference in effectiveness of chunked Bayes, simple Bayes and `particleID'
+		\item Investigate possible alternatives to binning the transverse momentum $p_T$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Dataset}
+	\framesubtitle{Description}
+
+	Tested Sample Decay: \\
+	\hspace{2.5em}
+	$B^+ \rightarrow \mu^+ \nu_{\mu}$
+	\hspace{2em}
+	$B^- \rightarrow \pi^- D^0$
+	\\
+	\begin{addmargin}[1em]{0em}
+		$D^0 \rightarrow K^- \pi^+$ ,
+		$D^0 \rightarrow K^- \pi^+ \pi^0$,
+		$D^0 \rightarrow K^- \pi^+ \pi^+ \pi^-$,
+		$D^0 \rightarrow K^- K^+$,
+		$D^0 \rightarrow \pi^+ \pi^0$
+	\end{addmargin}
+
+	\vspace{1em}
+
+	Expectations:
+	\begin{itemize}
+		\item Lots of kaons and pions
+		\item High ID rate due to discarded background
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with static Priors vs. ParticleID}
+	\framesubtitle{$\epsilon_{PID}$-matrix Visualization}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Heatmap: Heatmap of epsilonPID matrix for a cut at 0.20 via ID, via Priors}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with static Priors vs. ParticleID}
+	\framesubtitle{Statistics}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Statistics: K+ Identification via ID, via Priors}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with chunked Priors}
+	\framesubtitle{Motivation for dependable a priori probabilities}
+
+	\begin{columns}[T]
+		\begin{column}{.5\textwidth}
+			Reasoning
+			\begin{itemize}
+				\item A priori probabilities not independent of the measurements
+				\item Different phase space for different measurements and hence different particle distribution
+				\item Exclusion of un-physical quantities
+			\end{itemize}
+		\end{column}
+		\begin{column}{.5\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Chunked Bayesian Approach: Outliers Outside of 1.5 IQR on a Logarithmic Scale}}}
+		\end{column}
+	\end{columns}
+
+	\vspace{2em}
+	$\Rightarrow$ Adaptable priors dependant on measurements
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with chunked Priors}
+	\framesubtitle{$p_T$-dependant Priors}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Chunked Bayesian Approach: K+ Spectra Ratios Relative to pi+}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with chunked Priors}
+	\framesubtitle{True Positive Rate for $p_T$-dependant Priors}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Chunked Bayesian Approach: True Positive Rate for a Cut at 0.20}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with chunked Priors vs. ParticleID}
+	\framesubtitle{$\epsilon_{PID}$-matrix Visualization}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Heatmap: Heatmap of epsilonPID matrix for a cut at 0.20 via ID, via chunked Bayes}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with chunked Priors vs. ParticleID}
+	\framesubtitle{Statistics}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Statistics: K+ Identification via ID, via chunked Bayes}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with chunked Priors vs. simple Bayes}
+	\framesubtitle{$\epsilon_{PID}$-matrix Visualization}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Heatmap: Heatmap of epsilonPID matrix for a cut at 0.20 via simple Bayes, via chunked Bayes}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with chunked Priors vs. simple Bayes}
+	\framesubtitle{Statistics}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Statistics: K+ Identification via simple Bayes, via chunked Bayes}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with chunked $p_T$-~and~$\theta$-Priors}
+	\framesubtitle{Variable selection: $\epsilon_{PID}$-matrix Visualization}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Heatmap: Heatmap of epsilonPID matrix for a cut at 0.20 chunked by pT, chunked by theta}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bayes with chunked $p_T$-~and~$\theta$-Priors}
+	\framesubtitle{Variable selection: Statistics}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Statistics: K+ Identification chunked by pT, chunked by theta}}}
+\end{frame}
+
+\end{document}
