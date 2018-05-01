@@ -7,6 +7,7 @@ PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to im
 import argcomplete
 import argparse
 from collections import defaultdict
+import re
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -286,7 +287,7 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
 
 def plot_logLikelihood_by_particle(nbins=50):
     for d in detectors + pseudo_detectors:
-        plt.suptitle('Binned pidLogLikelihood for Detector %s'%(d))
+        drawing_title = plt.suptitle('Binned pidLogLikelihood for Detector %s'%(d))
         for i, p in enumerate(particles):
             for i_2, p_2 in enumerate(particles):
                 plt.subplot(len(particles), len(particles), i*len(particles)+i_2+1)
@@ -294,12 +295,13 @@ def plot_logLikelihood_by_particle(nbins=50):
                 column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
                 data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
 
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/logLikelihood by Particle: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show()
 
 
 def plot_logLikelihood_by_detector(nbins=50):
     for p in particles:
-        plt.suptitle('Binned pidLogLikelihood for Particle %s'%(particle_formats[p]))
+        drawing_title = plt.suptitle('Binned pidLogLikelihood for Particle %s'%(particle_formats[p]))
         for i, d in enumerate(detectors + pseudo_detectors):
             plt.subplot(2, len(detectors + pseudo_detectors), i+1)
             plt.title('Detector %s with Signal'%(d))
@@ -311,19 +313,21 @@ def plot_logLikelihood_by_detector(nbins=50):
             column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
             data[p][data[p]['isSignal'] == 0][column].hist(bins=nbins)
 
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/logLikelihood by Detector: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show()
 
 
 def plot_stats_by_particle(stat):
     for p in particles:
-        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='True Positive Rate (ROC curve)')
+        plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='ROC')
         # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
         # plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
-        plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
+        plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='PPV')
         plt.xlabel('False Positive Rate')
         plt.ylabel('Particle Rates')
-        plt.title('%s Identification'%(particle_formats[p]))
+        drawing_title = plt.title('%s Identification'%(particle_formats[p]))
         plt.legend()
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Statistics: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show()
 
 
@@ -332,7 +336,7 @@ def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_ep
         raise ValueError('epsilonPIDs_approaches array must be of same length as the title_suffixes array')
 
     fig, _ = plt.subplots(nrows=2, ncols=1)
-    plt.suptitle(title_epsilonPIDs)
+    drawing_title = plt.suptitle(title_epsilonPIDs)
     for n in range(len(epsilonPIDs_approaches)):
         plt.subplot(1, len(epsilonPIDs_approaches), n+1)
         plt.imshow(epsilonPIDs_approaches[n])
@@ -342,11 +346,12 @@ def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_ep
         plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
         plt.ylabel('True Particle')
         plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
-        plt.title('Identification' + title_suffixes[n])
+        plt.title('ID' + title_suffixes[n])
 
     fig.subplots_adjust(right=0.8)
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
     plt.colorbar(cax=cbar_ax)
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Diff Heatmap: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes) + '.pdf'), bbox_inches='tight')
     plt.show(fig)
 
 
@@ -358,10 +363,10 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
         grid = plt.GridSpec(3, 1, hspace=0.1)
 
         main_ax = plt.subplot(grid[:2, 0])
-        plt.title('%s Identification'%(particle_formats[p]))
+        drawing_title = plt.title('%s Identification'%(particle_formats[p]))
         for n in range(len(stats_approaches)):
-            drawing = plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['tpr'], label='True Positive Rate (ROC curve)' + title_suffixes[n])
-            plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['ppv'], label='Positive Predicted Value' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
+            drawing = plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['tpr'], label='ROC' + title_suffixes[n])
+            plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['ppv'], label='PPV' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
 
         plt.setp(main_ax.get_xticklabels(), visible=False)
         plt.ylabel('Particle Rates')
@@ -380,6 +385,7 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
         plt.ylabel('Rate Ratios')
         plt.legend()
 
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Diff Statistics: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes) + '.pdf'), bbox_inches='tight')
         plt.show()
 
 
@@ -405,7 +411,8 @@ if args.run_epsilonPID_matrix:
     plt.ylabel('True Particle')
     plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
     plt.colorbar()
-    plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show()
 
 if args.run_mimic_id:
@@ -493,8 +500,8 @@ if args.run_diff_pt_theta:
     epsilonPIDs_by_pt = epsilonPID_matrix(cutting_columns=cutting_columns_by_pt, cut=cut)
     epsilonPIDs_by_theta = epsilonPID_matrix(cutting_columns=cutting_columns_by_theta, cut=cut)
 
-    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_by_pt, epsilonPIDs_by_theta], title_suffixes=[r' chunked by $p_T$', r' chunked by $\theta$'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-    plot_diff_stats(stats_approaches=[stat_by_pt, stat_by_theta], title_suffixes=[r' via $p_T$', r' via $\theta$'], particles_of_interest=['K+', 'pi+', 'mu+'])
+    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_by_pt, epsilonPIDs_by_theta], title_suffixes=[r' by $p_T$', r' by $\theta$'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    plot_diff_stats(stats_approaches=[stat_by_pt, stat_by_theta], title_suffixes=[r' by $p_T$', r' by $\theta$'], particles_of_interest=['K+', 'pi+', 'mu+'])
 
 if args.run_chunked_bayes:
     particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
@@ -512,7 +519,7 @@ if args.run_chunked_bayes:
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
     for cut in cuts:
-        plt.title('Chunked Bayes True Positive Rate for a Cut at %.2f'%(cut))
+        drawing_title = plt.title('True Positive Rate for a Cut at %.2f'%(cut))
         for p, color in particle_visuals.items():
             assumed_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
             actual_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
@@ -521,6 +528,7 @@ if args.run_chunked_bayes:
         plt.xlabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
         plt.ylabel('True Positive Rate')
         plt.legend()
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show()
 
         epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
@@ -531,7 +539,8 @@ if args.run_chunked_bayes:
         plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
         plt.ylabel('True Particle')
         plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
-        plt.title('Identification via Bayes')
+        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show()
 
     plot_stats_by_particle(stats(cutting_columns=cutting_columns))
@@ -553,7 +562,7 @@ if args.run_chunked_bayes_priors:
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
     for p in particles_of_interest:
-        plt.title('Spectra Ratios Relative to %s'%(particle_formats[norm]))
+        drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(particle_formats[p], particle_formats[norm]))
         plt.errorbar(interval_centers[p], iteration_priors_viaBest[norm][p][-1], xerr=interval_widths[p], label='Truth', fmt='*')
         for n in range(niterations):
             plt.errorbar(interval_centers[p], iteration_priors_viaIter[norm][p][n], xerr=interval_widths[p], label='Iteration %d'%(n+1), fmt='o')
@@ -561,6 +570,7 @@ if args.run_chunked_bayes_priors:
         plt.xlabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
         plt.ylabel('Relative Abundance')
         plt.legend()
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show()
 
 if args.run_chunked_outliers:
@@ -571,8 +581,9 @@ if args.run_chunked_outliers:
     norm = 'pi+'
 
     plt.boxplot(data[norm][hold], whis=whis, sym='+')
-    plt.title('Outliers Outside of ' + str(whis) + ' IQR on a Logarithmic Scale')
+    drawing_title = plt.title('Outliers Outside of ' + str(whis) + ' IQR on a Logarithmic Scale')
     plt.yscale('log')
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
     plt.ylabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show()
