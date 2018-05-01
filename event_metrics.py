@@ -26,10 +26,10 @@ parser.add_argument('--stats', dest='run_stats', action='store_true', default=Fa
 parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False, help='Plot the binned logLikelihood for each particle (default: False)')
 parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matrix of every events (default: False)')
 parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
-parser.add_argument('--mimic-ID', dest='run_mimic_ID', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
-parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes')
-parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using bayes with priors extracted from Monte Carlo')
-parser.add_argument('--diff-ID-Bayes', dest='run_diff_ID_Bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and bayes')
+parser.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
+parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using Bayes')
+parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using Bayes with priors extracted from Monte Carlo')
+parser.add_argument('--diff-id-bayes', dest='run_diff_id_bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and Bayes')
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False, help='Visualize the evolution of priors for the chunked Bayesian approach')
 parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False, help='Visualize the outliers of the chunked Bayesian approach')
@@ -83,7 +83,7 @@ def basf2_Code(particle):
     elif r < 0:
         return '__mi' + str(abs(r))
     else:
-        raise ValueError('Something unexpected happened while converting the input to an escaped pdgCode.')
+        raise ValueError('something unexpected happened while converting the input to an escaped pdgCode')
 
 
 def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
@@ -146,7 +146,7 @@ def epsilonPID_matrix(cut=0.2, cutting_columns=particleIDs):
             # The deuterium code is not properly stored in the mcPDG variable, hence the use of `pdg_from_name_faulty()`
             epsilonPIDs[i][j] = np.float64(data[i_p][(data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) & (data[i_p][cutting_columns[j_p]] > cut)].shape[0]) / np.float64(data[i_p][data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)].shape[0])
 
-    print("Confusion matrix:\n%s"%(epsilonPIDs))
+    print("epsilon_PID matrix:\n%s"%(epsilonPIDs))
     return epsilonPIDs
 
 
@@ -186,7 +186,7 @@ def mimic_ID(detector_weights=detector_weights, check=True):
 
 
 def bayes(priors=defaultdict(lambda: 1., {}), **kwargs):
-    """Compute probabilities for particle hypothesis using a bayesian approach.
+    """Compute probabilities for particle hypothesis using a Bayesian approach.
 
     Args:
         priors: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
@@ -194,7 +194,7 @@ def bayes(priors=defaultdict(lambda: 1., {}), **kwargs):
         Any keyword arguments which are accepted by the `stats` function.
 
     Returns:
-        stat: The output of the `stats` function for cutting at the newly added bayesian particle ID. See the `stats` function return value.
+        stat: The output of the `stats` function for cutting at the newly added Bayesian particle ID. See the `stats` function return value.
         cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
 
     """
@@ -217,7 +217,7 @@ def bayes(priors=defaultdict(lambda: 1., {}), **kwargs):
 
 
 def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niterations=7, norm='pi+', whis=1.5):
-    """Compute probabilities for particle hypothesis keeping the `hold` root variable fixed using a bayesian approach.
+    """Compute probabilities for particle hypothesis keeping the `hold` root variable fixed using a Bayesian approach.
 
     Args:
         hold: Root variable on which the 'a prior' probability shall depend on.
@@ -257,7 +257,7 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
                 y = {p: np.float64(data[l][(data[l][category_column] == i) & (data[l]['mcPDG'] == pdg_from_name_faulty(p))].shape[0]) for p in particles}
                 priors = {p: y[p] / y[norm] for p in particles}
 
-                print('Priors %d/%d "%s" bin: '%(i+1, nbins, hold), priors)
+                print('Priors %d/%d "%s" Bin: '%(i+1, nbins, hold), priors)
             else:
                 priors = {p: 1. for p in particles}
 
@@ -276,14 +276,14 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
                     priors[p] = y[p] / y[norm]
                     iteration_priors[l][p][iteration] += [priors[p]]
 
-                if not mc_best: print('Priors %d/%d "%s" bin after iteration %2d: '%(i+1, nbins, hold, iteration + 1), priors)
+                if not mc_best: print('Priors %d/%d "%s" Bin after Iteration %2d: '%(i+1, nbins, hold, iteration + 1), priors)
 
     return cutting_columns, category_column, intervals, iteration_priors
 
 
 def plot_logLikelihood_by_particle(nbins=50):
     for d in detectors + pseudo_detectors:
-        plt.suptitle('Binned pidLogLikelihood for detector %s'%(d))
+        plt.suptitle('Binned pidLogLikelihood for Detector %s'%(d))
         for i, p in enumerate(particles):
             for i_2, p_2 in enumerate(particles):
                 plt.subplot(len(particles), len(particles), i*len(particles)+i_2+1)
@@ -296,15 +296,15 @@ def plot_logLikelihood_by_particle(nbins=50):
 
 def plot_logLikelihood_by_detector(nbins=50):
     for p in particles:
-        plt.suptitle('Binned pidLogLikelihood for particle %s'%(particle_formats[p]))
+        plt.suptitle('Binned pidLogLikelihood for Particle %s'%(particle_formats[p]))
         for i, d in enumerate(detectors + pseudo_detectors):
             plt.subplot(2, len(detectors + pseudo_detectors), i+1)
-            plt.title('Detector %s with signal'%(d))
+            plt.title('Detector %s with Signal'%(d))
             column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
             data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
 
             plt.subplot(2, len(detectors + pseudo_detectors), i+1+len(detectors + pseudo_detectors))
-            plt.title('Detector %s with no signal'%(d))
+            plt.title('Detector %s with no Signal'%(d))
             column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
             data[p][data[p]['isSignal'] == 0][column].hist(bins=nbins)
 
@@ -319,7 +319,7 @@ def plot_stats_by_particle(stat):
         plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='Positive Predicted Value')
         plt.xlabel('False Positive Rate')
         plt.ylabel('Particle Rates')
-        plt.title('%s identification'%(particle_formats[p]))
+        plt.title('%s Identification'%(particle_formats[p]))
         plt.legend()
         plt.show()
 
@@ -355,7 +355,7 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
         grid = plt.GridSpec(3, 1, hspace=0.1)
 
         main_ax = plt.subplot(grid[:2, 0])
-        plt.title('%s identification'%(particle_formats[p]))
+        plt.title('%s Identification'%(particle_formats[p]))
         for n in range(len(stats_approaches)):
             drawing = plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['tpr'], label='True Positive Rate (ROC curve)' + title_suffixes[n])
             plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['ppv'], label='Positive Predicted Value' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
@@ -405,7 +405,7 @@ if args.run_epsilonPID_matrix:
     plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
     plt.show()
 
-if args.run_mimic_ID:
+if args.run_mimic_id:
     mimic_ID()
 
 if args.run_bayes:
@@ -418,7 +418,7 @@ if args.run_bayes_best:
     stat, c = bayes(best_priors)
     plot_stats_by_particle(stat)
 
-if args.run_diff_ID_Bayes:
+if args.run_diff_id_bayes:
     cut = 0.2
     ncuts = 10
 
@@ -447,7 +447,7 @@ if args.run_chunked_bayes:
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
     for cut in cuts:
-        plt.title('Chunked Bayes True Positive Rate for a cut at %.2f'%(cut))
+        plt.title('Chunked Bayes True Positive Rate for a Cut at %.2f'%(cut))
         for p, color in particle_visuals.items():
             assumed_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
             actual_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
@@ -505,7 +505,7 @@ if args.run_chunked_outliers:
     norm = 'pi+'
 
     plt.boxplot(data[norm][hold], whis=whis, sym='+')
-    plt.title('Outliers outside of ' + str(whis) + ' IQR on a logarithmic scale')
+    plt.title('Outliers Outside of ' + str(whis) + ' IQR on a Logarithmic Scale')
     plt.yscale('log')
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
     plt.ylabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
