@@ -438,8 +438,6 @@ if args.run_diff_id_chunked:
     ncuts = 10
 
     hold = 'pt'
-    hold_format = r'$p_T$'
-    hold_unit = r'$\mathrm{GeV/c}$'
     nbins = 10
     niterations = 5
     norm = 'pi+'
