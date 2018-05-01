@@ -324,6 +324,62 @@ def plot_stats_by_particle(stat):
         plt.show()
 
 
+def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_epsilonPIDs=''):
+    if len(epsilonPIDs_approaches) >= 0 and len(epsilonPIDs_approaches) != len(title_suffixes):
+        raise ValueError('epsilonPIDs_approaches array must be of same length as the title_suffixes array')
+
+    fig, _ = plt.subplots(nrows=2, ncols=1)
+    plt.suptitle(title_epsilonPIDs)
+    for n in range(len(epsilonPIDs_approaches)):
+        plt.subplot(1, len(epsilonPIDs_approaches), n+1)
+        plt.imshow(epsilonPIDs_approaches[n])
+        for (j, i), label in np.ndenumerate(epsilonPIDs_approaches[n]):
+            plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
+        plt.xlabel('Predicted Particle')
+        plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+        plt.ylabel('True Particle')
+        plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+        plt.title('Identification' + title_suffixes[n])
+
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    plt.colorbar(cax=cbar_ax)
+    plt.show(fig)
+
+
+def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interest=particles):
+    if len(stats_approaches) >= 0 and len(stats_approaches) != len(title_suffixes):
+        raise ValueError('stats_approaches array must be of same length as the title_suffixes array')
+
+    for p in particles_of_interest:
+        grid = plt.GridSpec(3, 1, hspace=0.1)
+
+        main_ax = plt.subplot(grid[:2, 0])
+        plt.title('%s identification'%(particle_formats[p]))
+        for n in range(len(stats_approaches)):
+            drawing = plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['tpr'], label='True Positive Rate (ROC curve)' + title_suffixes[n])
+            plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['ppv'], label='Positive Predicted Value' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
+
+        plt.setp(main_ax.get_xticklabels(), visible=False)
+        plt.ylabel('Particle Rates')
+        plt.legend()
+
+        plt.subplot(grid[2, 0], sharex=main_ax)
+        for n in range(0, len(stats_approaches), 2):
+            interpolated_rate = scipy.interpolate.interp1d(stats_approaches[n+1][p]['fpr'], stats_approaches[n+1][p]['tpr'], bounds_error=False, fill_value='extrapolate')
+            plt.plot(stats_approaches[n][p]['fpr'], interpolated_rate(stats_approaches[n][p]['fpr']) / stats_approaches[n][p]['tpr'], label='TPR Ratio', color='C2')
+            interpolated_rate = scipy.interpolate.interp1d(stats_approaches[n+1][p]['fpr'], stats_approaches[n+1][p]['ppv'], bounds_error=False, fill_value='extrapolate')
+            plt.plot(stats_approaches[n][p]['fpr'], interpolated_rate(stats_approaches[n][p]['fpr']) / stats_approaches[n][p]['ppv'], label='PPV Ratio', linestyle=':', color='C3')
+
+        plt.axhline(y=1., color='dimgrey', linestyle='--')
+        plt.grid()
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('Rate Ratios')
+        plt.legend()
+
+        plt.show()
+
+
 args = parser.parse_args()
 if args.run_stats:
     plot_stats_by_particle(stats())
@@ -367,67 +423,14 @@ if args.run_diff_ID_Bayes:
     ncuts = 10
 
     best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
-
     stat_viaPrior, c = bayes(best_priors, ncuts=ncuts)
     stat_viaID = stats(ncuts=ncuts)
 
     epsilonPIDs_viaPrior = epsilonPID_matrix(cutting_columns=c, cut=cut)
     epsilonPIDs_viaID = epsilonPID_matrix(cut=cut)
 
-    fig, axes = plt.subplots(nrows=2, ncols=1)
-    plt.suptitle(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-
-    plt.subplot(1, 2, 1)
-    plt.imshow(epsilonPIDs_viaID)
-    for (j, i), label in np.ndenumerate(epsilonPIDs_viaID):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
-    plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
-    plt.ylabel('True Particle')
-    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
-    plt.title('Identification via ID')
-
-    plt.subplot(1, 2, 2)
-    plt.imshow(epsilonPIDs_viaPrior)
-    for (j, i), label in np.ndenumerate(epsilonPIDs_viaPrior):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
-    plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
-    plt.ylabel('True Particle')
-    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
-    plt.title('Identification via Bayes')
-
-    fig.subplots_adjust(right=0.8)
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-    plt.colorbar(cax=cbar_ax)
-
-    plt.show(fig)
-
-    for p in particles:
-        grid = plt.GridSpec(3, 1, hspace=0.1)
-
-        main_ax = plt.subplot(grid[:2, 0])
-        plt.title('%s identification'%(particle_formats[p]))
-        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['tpr'], label='True Positive Rate (ROC curve) via ID', color='C0')
-        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['ppv'], label='Positive Predicted Value via ID', linestyle=':', color='C0')
-        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['tpr'], label='True Positive Rate (ROC curve) via Bayes', color='C1')
-        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['ppv'], label='Positive Predicted Value via Bayes', linestyle=':', color='C1')
-        plt.setp(main_ax.get_xticklabels(), visible=False)
-        plt.ylabel('Particle Rates')
-        plt.legend()
-
-        plt.subplot(grid[2, 0], sharex=main_ax)
-        interpolated_rate = scipy.interpolate.interp1d(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['tpr'], bounds_error=False, fill_value='extrapolate')
-        plt.plot(stat_viaID[p]['fpr'], interpolated_rate(stat_viaID[p]['fpr']) / stat_viaID[p]['tpr'], label='TPR Ratio', color='C2')
-        interpolated_rate = scipy.interpolate.interp1d(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['ppv'], bounds_error=False, fill_value='extrapolate')
-        plt.plot(stat_viaID[p]['fpr'], interpolated_rate(stat_viaID[p]['fpr']) / stat_viaID[p]['ppv'], label='PPV Ratio', linestyle=':', color='C3')
-        plt.axhline(y=1, color='grey', linestyle='--')
-        plt.grid()
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('Rate Ratios')
-        plt.legend()
-
-        plt.show()
+    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_viaID, epsilonPIDs_viaPrior], title_suffixes=[' via ID', ' via Priors'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    plot_diff_stats(stats_approaches=[stat_viaID, stat_viaPrior], title_suffixes=[' via ID', ' via Priors'], particles_of_interest=['K+', 'pi+', 'mu+'])
 
 if args.run_chunked_bayes:
     particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
