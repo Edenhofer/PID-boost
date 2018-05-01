@@ -30,6 +30,7 @@ parser.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', defa
 parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using Bayes')
 parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using Bayes with priors extracted from Monte Carlo')
 parser.add_argument('--diff-id-bayes', dest='run_diff_id_bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and Bayes')
+parser.add_argument('--diff-id-chunked', dest='run_diff_id_chunked', action='store_true', default=False, help='Compare the difference of selecting by particle ID and by chunked Bayes')
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False, help='Visualize the evolution of priors for the chunked Bayesian approach')
 parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False, help='Visualize the outliers of the chunked Bayesian approach')
@@ -431,6 +432,27 @@ if args.run_diff_id_bayes:
 
     plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_viaID, epsilonPIDs_viaPrior], title_suffixes=[' via ID', ' via Priors'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
     plot_diff_stats(stats_approaches=[stat_viaID, stat_viaPrior], title_suffixes=[' via ID', ' via Priors'], particles_of_interest=['K+', 'pi+', 'mu+'])
+
+if args.run_diff_id_chunked:
+    cut = 0.2
+    ncuts = 10
+
+    hold = 'pt'
+    hold_format = r'$p_T$'
+    hold_unit = r'$\mathrm{GeV/c}$'
+    nbins = 10
+    niterations = 5
+    norm = 'pi+'
+    cutting_columns = chunked_bayes(hold=hold, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
+
+    stat_viaChunks = stats(cutting_columns=cutting_columns, ncuts=ncuts)
+    stat_viaID = stats(ncuts=ncuts)
+
+    epsilonPIDs_viaChunks = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
+    epsilonPIDs_viaID = epsilonPID_matrix(cut=cut)
+
+    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_viaID, epsilonPIDs_viaChunks], title_suffixes=[' via ID', ' via chunked Bayes'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    plot_diff_stats(stats_approaches=[stat_viaID, stat_viaChunks], title_suffixes=[' via ID', ' via chunked Bayes'], particles_of_interest=['K+', 'pi+', 'mu+'])
 
 if args.run_chunked_bayes:
     particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
