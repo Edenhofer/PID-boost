@@ -15,6 +15,7 @@ import pandas as pd
 import root_pandas as rpd
 import scipy
 import scipy.stats
+import scipy.interpolate
 
 import pdg
 
@@ -403,14 +404,29 @@ if args.run_diff_ID_Bayes:
     plt.show(fig)
 
     for p in particles:
+        grid = plt.GridSpec(3, 1, hspace=0.1)
+
+        main_ax = plt.subplot(grid[:2, 0])
         plt.title('%s identification'%(particle_formats[p]))
-        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['tpr'], label='True Positive Rate (ROC curve) via ID', color='xkcd:blue')
-        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['ppv'], label='Positive Predicted Value via ID', linestyle=':', color='darkblue')
-        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['tpr'], label='True Positive Rate (ROC curve) via Bayes', color='tomato')
-        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['ppv'], label='Positive Predicted Value via Bayes', linestyle=':', color='orangered')
-        plt.xlabel('False Positive Rate')
+        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['tpr'], label='True Positive Rate (ROC curve) via ID', color='C0')
+        plt.plot(stat_viaID[p]['fpr'], stat_viaID[p]['ppv'], label='Positive Predicted Value via ID', linestyle=':', color='C0')
+        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['tpr'], label='True Positive Rate (ROC curve) via Bayes', color='C1')
+        plt.plot(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['ppv'], label='Positive Predicted Value via Bayes', linestyle=':', color='C1')
+        plt.setp(main_ax.get_xticklabels(), visible=False)
         plt.ylabel('Particle Rates')
         plt.legend()
+
+        plt.subplot(grid[2, 0], sharex=main_ax)
+        interpolated_rate = scipy.interpolate.interp1d(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['tpr'], bounds_error=False, fill_value='extrapolate')
+        plt.plot(stat_viaID[p]['fpr'], interpolated_rate(stat_viaID[p]['fpr']) / stat_viaID[p]['tpr'], label='TPR Ratio', color='C2')
+        interpolated_rate = scipy.interpolate.interp1d(stat_viaPrior[p]['fpr'], stat_viaPrior[p]['ppv'], bounds_error=False, fill_value='extrapolate')
+        plt.plot(stat_viaID[p]['fpr'], interpolated_rate(stat_viaID[p]['fpr']) / stat_viaID[p]['ppv'], label='PPV Ratio', linestyle=':', color='C3')
+        plt.axhline(y=1, color='grey', linestyle='--')
+        plt.grid()
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('Rate Ratios')
+        plt.legend()
+
         plt.show()
 
 if args.run_chunked_bayes:
