@@ -439,10 +439,11 @@ if args.run_diff_id_chunked:
     ncuts = 10
 
     hold = 'pt'
+    whis = 1.5
     nbins = 10
     niterations = 5
     norm = 'pi+'
-    cutting_columns = chunked_bayes(hold=hold, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
+    cutting_columns = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
 
     stat_viaChunks = stats(cutting_columns=cutting_columns, ncuts=ncuts)
     stat_viaID = stats(ncuts=ncuts)
@@ -457,11 +458,12 @@ if args.run_diff_pt_theta:
     cut = 0.2
     ncuts = 10
 
+    whis = 1.5
     nbins = 10
     niterations = 5
     norm = 'pi+'
-    cutting_columns_by_pt = chunked_bayes(hold='pt', norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
-    cutting_columns_by_theta = chunked_bayes(hold='cosTheta', norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
+    cutting_columns_by_pt = chunked_bayes(hold='pt', whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
+    cutting_columns_by_theta = chunked_bayes(hold='cosTheta', whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
 
     stat_by_pt = stats(cutting_columns=cutting_columns_by_pt, ncuts=ncuts)
     stat_by_theta = stats(cutting_columns=cutting_columns_by_theta, ncuts=ncuts)
@@ -479,10 +481,11 @@ if args.run_chunked_bayes:
     hold = 'pt'
     hold_format = r'$p_T$'
     hold_unit = r'$\mathrm{GeV/c}$'
+    whis = 1.5
     nbins = 10
     niterations = 5
     norm = 'pi+'
-    cutting_columns, category_column, intervals, _ = chunked_bayes(hold=hold, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
+    cutting_columns, category_column, intervals, _ = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
@@ -517,12 +520,13 @@ if args.run_chunked_bayes_priors:
     hold = 'pt'
     hold_format = r'$p_T$'
     hold_unit = r'$\mathrm{GeV/c}$'
+    whis = 1.5
     nbins = 10
     niterations = 3
     norm = 'pi+'
 
-    _, _, _, iteration_priors_viaIter = chunked_bayes(hold=hold, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
-    _, _, intervals, iteration_priors_viaBest = chunked_bayes(hold=hold, norm=norm, mc_best=True, nbins=nbins)
+    _, _, _, iteration_priors_viaIter = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
+    _, _, intervals, iteration_priors_viaBest = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=True, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
