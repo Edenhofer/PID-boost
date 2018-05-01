@@ -239,7 +239,7 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
     if mc_best == True:
         niterations = 1
 
-    category_column = 'category'
+    category_column = 'category_' + hold
     intervals = {}
     for p in particles:
         q75, q25 = np.percentile(data[p][hold], [75, 25])
