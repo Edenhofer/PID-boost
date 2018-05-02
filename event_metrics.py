@@ -14,12 +14,16 @@ import numpy as np
 import numpy.testing as npt
 import pandas as pd
 import root_pandas as rpd
+import seaborn as sns
 import scipy
 import scipy.stats
 import scipy.interpolate
 
 import pdg
 
+
+# Enable and customize default plotting style
+sns.set_style("whitegrid")
 
 # Assemble the allowed command line options
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
