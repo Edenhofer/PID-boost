@@ -15,4 +15,6 @@ The main inspiration for the actual program code heavily relies on the [b2-start
 * ~~Allow for variable dependant priors for the bayesian approach, e.g. make the priors depend on the transverse momentum~~
 * ~~Compare the dependable priors bayesian approach with the simple bayesian approach and the particle ID one~~
 * Introduce alternative selection methods, e.g. maximum probability and weighted accept-all
+* Allow for priors depending on two variables
+* Compare the multi-dependant priors
 * Add a simple Machine Learning approach using the likelihoods as input and the prediction as output
