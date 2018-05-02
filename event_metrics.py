@@ -339,17 +339,19 @@ def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_ep
     drawing_title = plt.suptitle(title_epsilonPIDs)
     for n in range(len(epsilonPIDs_approaches)):
         plt.subplot(1, len(epsilonPIDs_approaches), n+1)
-        plt.imshow(epsilonPIDs_approaches[n])
+        plt.imshow(epsilonPIDs_approaches[n], cmap='viridis')
         for (j, i), label in np.ndenumerate(epsilonPIDs_approaches[n]):
-            plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
+            plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+        plt.grid(b=False, axis='both')
         plt.xlabel('Predicted Particle')
         plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
         plt.ylabel('True Particle')
         plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
         plt.title('ID' + title_suffixes[n])
+        plt.tight_layout(pad=1.4)
 
-    fig.subplots_adjust(right=0.8)
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    fig.subplots_adjust(right=0.85)
+    cbar_ax = fig.add_axes([0.88, 0.20, 0.05, 0.6])
     plt.colorbar(cax=cbar_ax)
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Diff Heatmap: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes) + '.pdf'), bbox_inches='tight')
     plt.show(fig)
@@ -380,7 +382,7 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
             plt.plot(stats_approaches[n][p]['fpr'], interpolated_rate(stats_approaches[n][p]['fpr']) / stats_approaches[n][p]['ppv'], label='PPV Ratio', linestyle=':', color='C3')
 
         plt.axhline(y=1., color='dimgrey', linestyle='--')
-        plt.grid()
+        plt.grid(b=True, axis='both')
         plt.xlabel('False Positive Rate')
         plt.ylabel('Rate Ratios')
         plt.legend()
@@ -403,9 +405,10 @@ if args.run_epsilonPID_matrix:
     cut = 0.2
     epsilonPIDs = epsilonPID_matrix(cut=cut)
 
-    plt.imshow(epsilonPIDs)
+    plt.imshow(epsilonPIDs, cmap='viridis')
     for (j, i), label in np.ndenumerate(epsilonPIDs):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+    plt.grid(b=False, axis='both')
     plt.xlabel('Predicted Particle')
     plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
     plt.ylabel('True Particle')
@@ -532,9 +535,10 @@ if args.run_chunked_bayes:
         plt.show()
 
         epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
-        plt.imshow(epsilonPIDs)
+        plt.imshow(epsilonPIDs, cmap='viridis')
         for (j, i), label in np.ndenumerate(epsilonPIDs):
-            plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center')
+            plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+        plt.grid(b=False, axis='both')
         plt.xlabel('Predicted Particle')
         plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
         plt.ylabel('True Particle')
