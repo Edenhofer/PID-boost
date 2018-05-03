@@ -50,7 +50,7 @@ parser.add_argument('--diff',
                     action='store',
                     default='',
                     const='id,simple_bayes',
-                    help='Compare two given methods of selecting particles (default: id,simple_bayes); Possible values include id, simple_bayes, chunked_bayes')
+                    help='Compare two given methods of selecting particles (default: id,simple_bayes); Possible values include id, flat_bayes, simple_bayes, chunked_bayes')
 parser.add_argument('--diff-pt-theta', dest='run_diff_pt_theta', action='store_true', default=False, help='Compare the difference of selecting by particle ID and by chunked Bayes')
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False, help='Visualize the evolution of priors for the chunked Bayesian approach')
@@ -486,6 +486,9 @@ if args.diff_methods:
         if m == 'id':
             c = particleIDs
             title_suffixes += [' via ID']
+        elif m == 'flat_bayes':
+            c = bayes()
+            title_suffixes += [' via flat Bayes']
         elif m == 'simple_bayes':
             c = bayes(mc_best=True)
             title_suffixes += [' via simple Bayes']
