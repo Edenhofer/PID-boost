@@ -213,19 +213,18 @@ def mimic_ID(detector_weights=detector_weights, check=True):
     print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
 
-def bayes(priors=defaultdict(lambda: 1., {}), **kwargs):
+def bayes(priors=defaultdict(lambda: 1., {})):
     """Compute probabilities for particle hypothesis using a Bayesian approach.
 
     Args:
         priors: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
 
-        Any keyword arguments which are accepted by the `stats` function.
-
     Returns:
-        stat: The output of the `stats` function for cutting at the newly added Bayesian particle ID. See the `stats` function return value.
         cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
 
     """
+    cutting_columns = {k: 'bayes_' + v for k, v in particleIDs.items()}
+
     for l in particles:
         # TODO: Use mimic_ID here to allow for weighted detector
 
@@ -236,12 +235,9 @@ def bayes(priors=defaultdict(lambda: 1., {}), **kwargs):
                 denominator += (data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__spall__bc'] - data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__spall__bc']).apply(np.exp) * priors[p_2]
 
             # Algebraic trick to make exp(H_i)*C_i/sum(exp(H_k) * C_k, k) stable even for very small values of H_i and H_k
-            data[l]['bayes_' + particleIDs[p]] = priors[p] / denominator
+            data[l][cutting_columns[p]] = priors[p] / denominator
 
-    cutting_columns = {k: 'bayes_' + v for k, v in particleIDs.items()}
-    stat = stats(cutting_columns=cutting_columns, **kwargs)
-
-    return stat, cutting_columns
+    return cutting_columns
 
 
 def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niterations=7, norm='pi+', whis=1.5):
@@ -457,14 +453,14 @@ if args.run_mimic_id:
     mimic_ID()
 
 if args.run_bayes:
-    stat, c = bayes()
-    plot_stats_by_particle(stat)
+    c = bayes()
+    plot_stats_by_particle(stats(cutting_columns=c))
 
 if args.run_bayes_best:
     best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
 
-    stat, c = bayes(best_priors)
-    plot_stats_by_particle(stat)
+    c = bayes(best_priors)
+    plot_stats_by_particle(stats(cutting_columns=c))
 
 if args.diff_methods:
     methods = args.diff_methods.split(',')
@@ -485,29 +481,25 @@ if args.diff_methods:
     if set(methods) == {'id', 'simple_bayes'}:
         cutting_columns_first = particleIDs
         best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
-        stats_second, cutting_columns_second = bayes(best_priors, ncuts=ncuts)
-        stats_first = stats(ncuts=ncuts)
+        cutting_columns_second = bayes(best_priors)
 
         title_suffixes = [' via ID', ' via Priors']
 
     if set(methods) == {'id', 'chunked_bayes'}:
         cutting_columns_first = particleIDs
         cutting_columns_second = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
-        stats_first = stats(cutting_columns=cutting_columns_first, ncuts=ncuts)
-        stats_second = stats(cutting_columns=cutting_columns_second, ncuts=ncuts)
 
         title_suffixes = [' via ID', ' via chunked Bayes']
 
     if set(methods) == {'simple_bayes', 'chunked_bayes'}:
         cutting_columns_second = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
         best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
-        stats_second = stats(cutting_columns=cutting_columns_second, ncuts=ncuts)
-        stats_first, cutting_columns_first = bayes(best_priors, ncuts=ncuts)
+        cutting_columns_first = bayes(best_priors)
 
         title_suffixes = [' via simple Bayes', ' via chunked Bayes']
 
     epsilonPIDs_approaches = [epsilonPID_matrix(cutting_columns=cutting_columns_first, cut=cut), epsilonPID_matrix(cutting_columns=cutting_columns_second, cut=cut)]
-    stats_approaches = [stats_first, stats_second]
+    stats_approaches = [stats(cutting_columns=cutting_columns_first, ncuts=ncuts), stats(cutting_columns=cutting_columns_second, ncuts=ncuts)]
 
     title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut)
     plot_diff_epsilonPIDs(epsilonPIDs_approaches=epsilonPIDs_approaches, title_suffixes=title_suffixes, title_epsilonPIDs=title_epsilonPIDs)
