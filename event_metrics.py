@@ -36,25 +36,30 @@ except ImportError:
 
 # Assemble the allowed command line options
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
-parser.add_argument('--stats', dest='run_stats', action='store_true', default=False, help='Print out and visualize some statistics (default: False)')
-parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False, help='Plot the binned logLikelihood for each particle (default: False)')
-parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False, help='Plot the confusion matrix of every events (default: False)')
-parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False, help='Plot the binned logLikelihood for each detector (default: False)')
-parser.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
-parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using Bayes')
-parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using Bayes with priors extracted from Monte Carlo')
-parser.add_argument('--diff',
-                    dest='diff_methods',
-                    nargs='?',
-                    type=str,
-                    action='store',
-                    default='',
-                    const='id,simple_bayes',
+parser.add_argument('--stats', dest='run_stats', action='store_true', default=False,
+                    help='Print out and visualize some statistics (default: False)')
+parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False,
+                    help='Plot the binned logLikelihood for each particle (default: False)')
+parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False,
+                    help='Plot the confusion matrix of every events (default: False)')
+parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False,
+                    help='Plot the binned logLikelihood for each detector (default: False)')
+parser.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', default=False,
+                    help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
+parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
+                    help='Calculate an accumulated probability for particle hypothesis using Bayes')
+parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False,
+                    help='Calculate an accumulated probability for particle hypothesis using Bayes with priors extracted from Monte Carlo')
+parser.add_argument('--diff', dest='diff_methods', nargs='?', type=str, action='store', default='', const='id,simple_bayes',
                     help='Compare two given methods of selecting particles (default: id,simple_bayes); Possible values include id, flat_bayes, simple_bayes, chunked_bayes')
-parser.add_argument('--diff-pt-theta', dest='run_diff_pt_theta', action='store_true', default=False, help='Compare the difference of selecting by particle ID and by chunked Bayes')
-parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
-parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False, help='Visualize the evolution of priors for the chunked Bayesian approach')
-parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False, help='Visualize the outliers of the chunked Bayesian approach')
+parser.add_argument('--diff-pt-theta', dest='run_diff_pt_theta', action='store_true', default=False,
+                    help='Compare the difference of selecting by particle ID and by chunked Bayes')
+parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False,
+                    help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
+parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False,
+                    help='Visualize the evolution of priors for the chunked Bayesian approach')
+parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False,
+                    help='Visualize the outliers of the chunked Bayesian approach')
 parser.add_argument('--cut', dest='hold', nargs='?', action='store', type=float, default=0.2,
                     help='Position of the default cut if only one is to be performed (default: 0.2)')
 parser.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
