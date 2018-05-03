@@ -213,23 +213,26 @@ def mimic_ID(detector_weights=detector_weights, check=True):
     print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
 
-def bayes(priors=defaultdict(lambda: 1., {})):
+def bayes(priors=defaultdict(lambda: 1., {}), mc_best=False):
     """Compute probabilities for particle hypothesis using a Bayesian approach.
 
     Args:
         priors: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
+        mc_best: Boolean specifying whether to use the Monte Carlo data for calculating the a prior probabilities.
 
     Returns:
         cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
 
     """
+    if mc_best == True:
+        priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
+
     cutting_columns = {k: 'bayes_' + v for k, v in particleIDs.items()}
 
     for l in particles:
         # TODO: Use mimic_ID here to allow for weighted detector
 
         for p in particles:
-            # Calculate the particleIDs manually and compare them to the result of the analysis software
             denominator = 0.
             for p_2 in particles:
                 denominator += (data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__spall__bc'] - data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__spall__bc']).apply(np.exp) * priors[p_2]
@@ -457,9 +460,7 @@ if args.run_bayes:
     plot_stats_by_particle(stats(cutting_columns=c))
 
 if args.run_bayes_best:
-    best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
-
-    c = bayes(best_priors)
+    c = bayes(mc_best=True)
     plot_stats_by_particle(stats(cutting_columns=c))
 
 if args.diff_methods:
@@ -486,8 +487,7 @@ if args.diff_methods:
             c = particleIDs
             title_suffixes += [' via ID']
         elif m == 'simple_bayes':
-            best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
-            c = bayes(best_priors)
+            c = bayes(mc_best=True)
             title_suffixes += [' via simple Bayes']
         elif m == 'chunked_bayes':
             c = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
