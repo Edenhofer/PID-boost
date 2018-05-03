@@ -238,6 +238,7 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
 
     Returns:
         cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
+        cutting_columns_isMax: A dictionary containing the name of each column by particle which shall be used for exclusive cuts, yielding the maximum probability particle.
         category_column: Name of the column in each dataframe which holds the category for bin selection.
         intervals: A dictionary containing an array of interval boundaries for every bin.
         iteration_priors: A dictionary for each dataset of particle dictionaries containing arrays of priors for each iteration.
@@ -286,7 +287,12 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
 
                 if not mc_best: print('Priors %d/%d "%s" Bin after Iteration %2d: '%(i+1, nbins, hold, iteration + 1), priors)
 
-    return cutting_columns, category_column, intervals, iteration_priors
+        max_columns = data[l][list(cutting_columns.values())].idxmax(axis=1)
+        cutting_columns_isMax = {k: v + '_isMax' for k, v in cutting_columns.items()}
+        for p in cutting_columns.keys():
+            data[l][cutting_columns_isMax[p]] = np.where(max_columns == cutting_columns[p], 1, 0)
+
+    return cutting_columns, cutting_columns_isMax, category_column, intervals, iteration_priors
 
 
 def plot_logLikelihood_by_particle(nbins=50):
@@ -521,7 +527,7 @@ if args.run_chunked_bayes:
     nbins = 10
     niterations = 5
     norm = 'pi+'
-    cutting_columns, category_column, intervals, _ = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
+    cutting_columns, _, category_column, intervals, _ = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
@@ -564,8 +570,8 @@ if args.run_chunked_bayes_priors:
     niterations = 3
     norm = 'pi+'
 
-    _, _, _, iteration_priors_viaIter = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
-    _, _, intervals, iteration_priors_viaBest = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=True, nbins=nbins)
+    iteration_priors_viaIter = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[-1]
+    intervals, iteration_priors_viaBest = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=True, nbins=nbins)[-2]
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
