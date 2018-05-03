@@ -35,23 +35,23 @@ except ImportError:
 
 
 # Assemble the allowed command line options
-parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
+parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--stats', dest='run_stats', action='store_true', default=False,
-                    help='Print out and visualize some statistics (default: False)')
+                    help='Print out and visualize some statistics')
 parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False,
-                    help='Plot the binned logLikelihood for each particle (default: False)')
+                    help='Plot the binned logLikelihood for each particle')
 parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False,
-                    help='Plot the confusion matrix of every events (default: False)')
+                    help='Plot the confusion matrix of every events')
 parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False,
-                    help='Plot the binned logLikelihood for each detector (default: False)')
+                    help='Plot the binned logLikelihood for each detector')
 parser.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', default=False,
-                    help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
+                    help='Mimic the calculation of the particle IDs using likelihoods')
 parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
 parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes with priors extracted from Monte Carlo')
 parser.add_argument('--diff', dest='diff_methods', nargs='?', type=str, action='store', default='', const='id,simple_bayes',
-                    help='Compare two given methods of selecting particles (default: id,simple_bayes); Possible values include id, flat_bayes, simple_bayes, chunked_bayes')
+                    help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, chunked_bayes')
 parser.add_argument('--diff-pt-theta', dest='run_diff_pt_theta', action='store_true', default=False,
                     help='Compare the difference of selecting by particle ID and by chunked Bayes')
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False,
@@ -61,19 +61,19 @@ parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', a
 parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False,
                     help='Visualize the outliers of the chunked Bayesian approach')
 parser.add_argument('--cut', dest='hold', nargs='?', action='store', type=float, default=0.2,
-                    help='Position of the default cut if only one is to be performed (default: 0.2)')
+                    help='Position of the default cut if only one is to be performed')
 parser.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
-                    help='Variable upon which the a priori probabilities shall depend on (default: pt)')
+                    help='Variable upon which the a priori probabilities shall depend on')
 parser.add_argument('--norm', dest='norm', nargs='?', action='store', default='pi+',
-                    help='Particle by which to norm the a priori probabilities in the chunked Bayesian approach (default: pi+)')
+                    help='Particle by which to norm the a priori probabilities in the chunked Bayesian approach')
 parser.add_argument('--nbins', dest='nbins', nargs='?', action='store', type=int, default=10,
-                    help='Number of bins to use for splitting the `hold` variable in the chunked Bayesian approach (default: 10)')
+                    help='Number of bins to use for splitting the `hold` variable in the chunked Bayesian approach')
 parser.add_argument('--ncuts', dest='ncuts', nargs='?', action='store', type=int, default=10,
-                    help='Number of cuts to perform for the various curves (default: 10)')
+                    help='Number of cuts to perform for the various curves')
 parser.add_argument('--niterations', dest='niterations', nargs='?', action='store', type=int, default=5,
-                    help='Number of iterations to perform for the iterative chunked Bayesian approach (default: 5)')
+                    help='Number of iterations to perform for the iterative chunked Bayesian approach')
 parser.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
-                    help='Whiskers with which the IQR will be IQR (default: 1.5)')
+                    help='Whiskers with which the IQR will be IQR')
 
 try:
     argcomplete.autocomplete(parser)
