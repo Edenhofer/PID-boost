@@ -485,7 +485,7 @@ if args.diff_methods:
     for m in methods:
         if m == 'id':
             c = particleIDs
-            title_suffixes += [' via ID']
+            title_suffixes += [' via PID']
         elif m == 'flat_bayes':
             c = bayes()
             title_suffixes += [' via flat Bayes']
