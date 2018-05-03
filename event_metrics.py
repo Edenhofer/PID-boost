@@ -367,7 +367,7 @@ def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_ep
     if len(epsilonPIDs_approaches) >= 0 and len(epsilonPIDs_approaches) != len(title_suffixes):
         raise ValueError('epsilonPIDs_approaches array must be of same length as the title_suffixes array')
 
-    fig, _ = plt.subplots(nrows=2, ncols=1)
+    fig, _ = plt.subplots(nrows=len(epsilonPIDs_approaches), ncols=1)
     drawing_title = plt.suptitle(title_epsilonPIDs)
     for n in range(len(epsilonPIDs_approaches)):
         plt.subplot(1, len(epsilonPIDs_approaches), n+1)
@@ -408,11 +408,11 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
         plt.legend()
 
         plt.subplot(grid[2, 0], sharex=main_ax)
-        for n in range(0, len(stats_approaches), 2):
-            interpolated_rate = scipy.interpolate.interp1d(stats_approaches[n+1][p]['fpr'], stats_approaches[n+1][p]['tpr'], bounds_error=False, fill_value='extrapolate')
-            plt.plot(stats_approaches[n][p]['fpr'], interpolated_rate(stats_approaches[n][p]['fpr']) / stats_approaches[n][p]['tpr'], label='TPR Ratio', color='C2')
-            interpolated_rate = scipy.interpolate.interp1d(stats_approaches[n+1][p]['fpr'], stats_approaches[n+1][p]['ppv'], bounds_error=False, fill_value='extrapolate')
-            plt.plot(stats_approaches[n][p]['fpr'], interpolated_rate(stats_approaches[n][p]['fpr']) / stats_approaches[n][p]['ppv'], label='PPV Ratio', linestyle=':', color='C3')
+        for n in range(1, len(stats_approaches)):
+            interpolated_rate = scipy.interpolate.interp1d(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['tpr'], bounds_error=False, fill_value='extrapolate')
+            plt.plot(stats_approaches[0][p]['fpr'], interpolated_rate(stats_approaches[0][p]['fpr']) / stats_approaches[0][p]['tpr'], label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color='C2')
+            interpolated_rate = scipy.interpolate.interp1d(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['ppv'], bounds_error=False, fill_value='extrapolate')
+            plt.plot(stats_approaches[n][p]['fpr'], interpolated_rate(stats_approaches[0][p]['fpr']) / stats_approaches[0][p]['ppv'], label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color='C3')
 
         plt.axhline(y=1., color='dimgrey', linestyle='--')
         plt.grid(b=True, axis='both')
@@ -465,7 +465,7 @@ if args.run_bayes_best:
 
 if args.diff_methods:
     methods = args.diff_methods.split(',')
-    assert(len(methods) == 2) # Currently only allow two different methods to be compared
+    assert (len(methods) >= 2), 'Specify at least two methods'
 
     cut = 0.2
     ncuts = 10
