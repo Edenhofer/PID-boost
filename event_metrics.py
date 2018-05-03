@@ -55,6 +55,20 @@ parser.add_argument('--diff-pt-theta', dest='run_diff_pt_theta', action='store_t
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False, help='Visualize the evolution of priors for the chunked Bayesian approach')
 parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False, help='Visualize the outliers of the chunked Bayesian approach')
+parser.add_argument('--cut', dest='hold', nargs='?', action='store', type=float, default=0.2,
+                    help='Position of the default cut if only one is to be performed (default: 0.2)')
+parser.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
+                    help='Variable upon which the a priori probabilities shall depend on (default: pt)')
+parser.add_argument('--norm', dest='norm', nargs='?', action='store', default='pi+',
+                    help='Particle by which to norm the a priori probabilities in the chunked Bayesian approach (default: pi+)')
+parser.add_argument('--nbins', dest='nbins', nargs='?', action='store', type=int, default=10,
+                    help='Number of bins to use for splitting the `hold` variable in the chunked Bayesian approach (default: 10)')
+parser.add_argument('--ncuts', dest='ncuts', nargs='?', action='store', type=int, default=10,
+                    help='Number of cuts to perform for the various curves (default: 10)')
+parser.add_argument('--niterations', dest='niterations', nargs='?', action='store', type=int, default=5,
+                    help='Number of iterations to perform for the iterative chunked Bayesian approach (default: 5)')
+parser.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
+                    help='Whiskers with which the IQR will be IQR (default: 1.5)')
 
 try:
     argcomplete.autocomplete(parser)
@@ -435,7 +449,7 @@ if args.run_logLikelihood_by_detector:
     plot_logLikelihood_by_detector()
 
 if args.run_epsilonPID_matrix:
-    cut = 0.2
+    cut = args.cut
     epsilonPIDs = epsilonPID_matrix(cut=cut)
 
     plt.figure()
@@ -467,14 +481,14 @@ if args.diff_methods:
     methods = args.diff_methods.split(',')
     assert (len(methods) >= 2), 'Specify at least two methods'
 
-    cut = 0.2
-    ncuts = 10
+    cut = args.cut
+    ncuts = args.ncuts
 
-    hold = 'pt'
-    whis = 1.5
-    nbins = 10
-    niterations = 5
-    norm = 'pi+'
+    hold = args.hold
+    whis = args.whis
+    nbins = args.nbins
+    niterations = args.niterations
+    norm = args.norm
     mc_best = False
 
     particles_of_interest = ['K+', 'pi+', 'mu+']
@@ -506,15 +520,15 @@ if args.diff_methods:
     plot_diff_stats(stats_approaches=stats_approaches, title_suffixes=title_suffixes, particles_of_interest=particles_of_interest)
 
 if args.run_diff_pt_theta:
-    cut = 0.2
-    ncuts = 10
+    cut = args.cut
+    ncuts = args.ncuts
 
     hold1 = 'pt'
     hold2 = 'cosTheta'
-    whis = 1.5
-    nbins = 10
-    niterations = 5
-    norm = 'pi+'
+    whis = args.whis
+    nbins = args.nbins
+    niterations = args.niterations
+    norm = args.norm
     cutting_columns_by_pt = chunked_bayes(hold=hold1, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
     cutting_columns_by_theta = chunked_bayes(hold=hold2, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
 
@@ -531,11 +545,11 @@ if args.run_chunked_bayes:
     particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
     cuts = [0.2]
 
-    hold = 'pt'
-    whis = 1.5
-    nbins = 10
-    niterations = 5
-    norm = 'pi+'
+    hold = args.hold
+    whis = args.whis
+    niterations = args.niterations
+    nbins = args.nbins
+    norm = args.norm
     cutting_columns, _, category_column, intervals, _ = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
@@ -548,7 +562,7 @@ if args.run_chunked_bayes:
             actual_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
             plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s'%(particle_formats[p]), fmt='o', color=color)
 
-        plt.xlabel('Transverse Momentum ' + variable_formats[hold] + ' (' + variable_units[hold] + ')')
+        plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
         plt.ylabel('True Positive Rate')
         plt.legend()
         plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
@@ -573,11 +587,11 @@ if args.run_chunked_bayes:
 if args.run_chunked_bayes_priors:
     particles_of_interest = ['K+', 'mu+']
 
-    hold = 'pt'
-    whis = 1.5
-    nbins = 10
-    niterations = 3
-    norm = 'pi+'
+    hold = args.hold
+    whis = args.whis
+    nbins = args.nbins
+    niterations = args.niterations
+    norm = args.norm
 
     iteration_priors_viaIter = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[-1]
     intervals, iteration_priors_viaBest = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=True, nbins=nbins)[-2]
@@ -591,23 +605,23 @@ if args.run_chunked_bayes_priors:
         for n in range(niterations):
             plt.errorbar(interval_centers[p], iteration_priors_viaIter[norm][p][n], xerr=interval_widths[p], label='Iteration %d'%(n+1), fmt='o')
 
-        plt.xlabel('Transverse Momentum ' + variable_formats[hold] + ' (' + variable_units[hold] + ')')
+        plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
         plt.ylabel('Relative Abundance')
         plt.legend()
         plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show(block=False)
 
 if args.run_chunked_outliers:
-    hold = 'pt'
-    whis = 1.5
-    norm = 'pi+'
+    hold = args.hold
+    whis = args.whis
+    norm = args.norm
 
     plt.figure()
     plt.boxplot(data[norm][hold], whis=whis, sym='+')
     drawing_title = plt.title('Outliers Outside of ' + str(whis) + ' IQR on a Logarithmic Scale')
     plt.yscale('log')
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
-    plt.ylabel('Transverse Momentum ' + variable_formats[hold] + ' (' + variable_units[hold] + ')')
+    plt.ylabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
