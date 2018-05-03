@@ -62,6 +62,8 @@ particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muon
 particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 pseudo_detectors = ['all', 'default']
+variable_formats = {'pt': r'$p_T$', 'Theta': r'$\theta$', 'cosTheta': r'$\cos(\theta)$'}
+variable_units = {'pt': r'$\mathrm{GeV/c}$', 'Theta': r'$Rad$', 'cosTheta': ''}
 # Use the detector weights to exclude certain detectors, e.g. for debugging purposes
 # Bare in mind that if all likelihoods are calculated correctly this should never improve the result
 detector_weights = {d: 1. for d in detectors + pseudo_detectors}
@@ -513,12 +515,14 @@ if args.run_diff_pt_theta:
     cut = 0.2
     ncuts = 10
 
+    hold1 = 'pt'
+    hold2 = 'cosTheta'
     whis = 1.5
     nbins = 10
     niterations = 5
     norm = 'pi+'
-    cutting_columns_by_pt = chunked_bayes(hold='pt', whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
-    cutting_columns_by_theta = chunked_bayes(hold='cosTheta', whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
+    cutting_columns_by_pt = chunked_bayes(hold=hold1, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
+    cutting_columns_by_theta = chunked_bayes(hold=hold2, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
 
     stat_by_pt = stats(cutting_columns=cutting_columns_by_pt, ncuts=ncuts)
     stat_by_theta = stats(cutting_columns=cutting_columns_by_theta, ncuts=ncuts)
@@ -526,16 +530,14 @@ if args.run_diff_pt_theta:
     epsilonPIDs_by_pt = epsilonPID_matrix(cutting_columns=cutting_columns_by_pt, cut=cut)
     epsilonPIDs_by_theta = epsilonPID_matrix(cutting_columns=cutting_columns_by_theta, cut=cut)
 
-    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_by_pt, epsilonPIDs_by_theta], title_suffixes=[r' by $p_T$', r' by $\theta$'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-    plot_diff_stats(stats_approaches=[stat_by_pt, stat_by_theta], title_suffixes=[r' by $p_T$', r' by $\theta$'], particles_of_interest=['K+', 'pi+', 'mu+'])
+    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_by_pt, epsilonPIDs_by_theta], title_suffixes=[' by ' + variable_formats[hold1], ' by ' + variable_formats[hold2]], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    plot_diff_stats(stats_approaches=[stat_by_pt, stat_by_theta], title_suffixes=[' by ' + variable_formats[hold1], ' by ' + variable_formats[hold2]], particles_of_interest=['K+', 'pi+', 'mu+'])
 
 if args.run_chunked_bayes:
     particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
     cuts = [0.2]
 
     hold = 'pt'
-    hold_format = r'$p_T$'
-    hold_unit = r'$\mathrm{GeV/c}$'
     whis = 1.5
     nbins = 10
     niterations = 5
@@ -551,7 +553,7 @@ if args.run_chunked_bayes:
             actual_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
             plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s'%(particle_formats[p]), fmt='o', color=color)
 
-        plt.xlabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
+        plt.xlabel('Transverse Momentum ' + variable_formats[hold] + ' (' + variable_units[hold] + ')')
         plt.ylabel('True Positive Rate')
         plt.legend()
         plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
@@ -576,8 +578,6 @@ if args.run_chunked_bayes_priors:
     particles_of_interest = ['K+', 'mu+']
 
     hold = 'pt'
-    hold_format = r'$p_T$'
-    hold_unit = r'$\mathrm{GeV/c}$'
     whis = 1.5
     nbins = 10
     niterations = 3
@@ -594,7 +594,7 @@ if args.run_chunked_bayes_priors:
         for n in range(niterations):
             plt.errorbar(interval_centers[p], iteration_priors_viaIter[norm][p][n], xerr=interval_widths[p], label='Iteration %d'%(n+1), fmt='o')
 
-        plt.xlabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
+        plt.xlabel('Transverse Momentum ' + variable_formats[hold] + ' (' + variable_units[hold] + ')')
         plt.ylabel('Relative Abundance')
         plt.legend()
         plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
@@ -602,8 +602,6 @@ if args.run_chunked_bayes_priors:
 
 if args.run_chunked_outliers:
     hold = 'pt'
-    hold_format = r'$p_T$'
-    hold_unit = r'$\mathrm{GeV/c}$'
     whis = 1.5
     norm = 'pi+'
 
@@ -611,6 +609,6 @@ if args.run_chunked_outliers:
     drawing_title = plt.title('Outliers Outside of ' + str(whis) + ' IQR on a Logarithmic Scale')
     plt.yscale('log')
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
-    plt.ylabel('Transverse Momentum ' + hold_format + ' (' + hold_unit + ')')
+    plt.ylabel('Transverse Momentum ' + variable_formats[hold] + ' (' + variable_units[hold] + ')')
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show()
