@@ -4,26 +4,35 @@
 from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to importing argparse
 
-import argcomplete
 import argparse
-from collections import defaultdict
 import re
+from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.testing as npt
 import pandas as pd
 import root_pandas as rpd
-import seaborn as sns
 import scipy
-import scipy.stats
 import scipy.interpolate
+import scipy.stats
 
 import pdg
 
 
-# Enable and customize default plotting style
-sns.set_style("whitegrid")
+try:
+    import seaborn as sns
+
+    # Enable and customize default plotting style
+    sns.set_style("whitegrid")
+except ImportError:
+    pass
+
+try:
+    import argcomplete
+except ImportError:
+    pass
+
 
 # Assemble the allowed command line options
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.')
@@ -41,7 +50,11 @@ parser.add_argument('--diff-pt-theta', dest='run_diff_pt_theta', action='store_t
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False, help='Visualize the evolution of priors for the chunked Bayesian approach')
 parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False, help='Visualize the outliers of the chunked Bayesian approach')
-argcomplete.autocomplete(parser)
+
+try:
+    argcomplete.autocomplete(parser)
+except NameError:
+    pass
 
 # Base definitions of stable particles and detector data
 particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
