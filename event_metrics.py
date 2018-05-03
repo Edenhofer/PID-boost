@@ -478,28 +478,25 @@ if args.diff_methods:
 
     particles_of_interest = ['K+', 'pi+', 'mu+']
 
-    if set(methods) == {'id', 'simple_bayes'}:
-        cutting_columns_first = particleIDs
-        best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
-        cutting_columns_second = bayes(best_priors)
+    epsilonPIDs_approaches = []
+    stats_approaches = []
+    title_suffixes = []
+    for m in methods:
+        if m == 'id':
+            c = particleIDs
+            title_suffixes += [' via ID']
+        elif m == 'simple_bayes':
+            best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
+            c = bayes(best_priors)
+            title_suffixes += [' via simple Bayes']
+        elif m == 'chunked_bayes':
+            c = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
+            title_suffixes += [' via chunked Bayes']
+        else:
+            raise ValueError('received unknown method "%s"'%(m))
 
-        title_suffixes = [' via ID', ' via Priors']
-
-    if set(methods) == {'id', 'chunked_bayes'}:
-        cutting_columns_first = particleIDs
-        cutting_columns_second = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
-
-        title_suffixes = [' via ID', ' via chunked Bayes']
-
-    if set(methods) == {'simple_bayes', 'chunked_bayes'}:
-        cutting_columns_second = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
-        best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
-        cutting_columns_first = bayes(best_priors)
-
-        title_suffixes = [' via simple Bayes', ' via chunked Bayes']
-
-    epsilonPIDs_approaches = [epsilonPID_matrix(cutting_columns=cutting_columns_first, cut=cut), epsilonPID_matrix(cutting_columns=cutting_columns_second, cut=cut)]
-    stats_approaches = [stats(cutting_columns=cutting_columns_first, ncuts=ncuts), stats(cutting_columns=cutting_columns_second, ncuts=ncuts)]
+        epsilonPIDs_approaches += [epsilonPID_matrix(cutting_columns=c, cut=cut)]
+        stats_approaches += [stats(cutting_columns=c, ncuts=ncuts)]
 
     title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut)
     plot_diff_epsilonPIDs(epsilonPIDs_approaches=epsilonPIDs_approaches, title_suffixes=title_suffixes, title_epsilonPIDs=title_epsilonPIDs)
