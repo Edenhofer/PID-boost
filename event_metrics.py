@@ -43,9 +43,14 @@ parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_de
 parser.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', default=False, help='Mimic the calculation of the particle IDs using likelihoods (default: False)')
 parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using Bayes')
 parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis using Bayes with priors extracted from Monte Carlo')
-parser.add_argument('--diff-id-bayes', dest='run_diff_id_bayes', action='store_true', default=False, help='Compare the difference of selecting by particle ID and Bayes')
-parser.add_argument('--diff-id-chunked', dest='run_diff_id_chunked', action='store_true', default=False, help='Compare the difference of selecting by particle ID and by chunked Bayes')
-parser.add_argument('--diff-bayes-chunked', dest='run_diff_bayes_chunked', action='store_true', default=False, help='Compare the difference of selecting via a plain Bayes or via a chunked Bayes')
+parser.add_argument('--diff',
+                    dest='diff_methods',
+                    nargs='?',
+                    type=str,
+                    action='store',
+                    default='',
+                    const='id,simple_bayes',
+                    help='Compare two given methods of selecting particles (default: id,simple_bayes); Possible values include id, simple_bayes, chunked_bayes')
 parser.add_argument('--diff-pt-theta', dest='run_diff_pt_theta', action='store_true', default=False, help='Compare the difference of selecting by particle ID and by chunked Bayes')
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False, help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False, help='Visualize the evolution of priors for the chunked Bayesian approach')
@@ -461,21 +466,10 @@ if args.run_bayes_best:
     stat, c = bayes(best_priors)
     plot_stats_by_particle(stat)
 
-if args.run_diff_id_bayes:
-    cut = 0.2
-    ncuts = 10
+if args.diff_methods:
+    methods = args.diff_methods.split(',')
+    assert(len(methods) == 2) # Currently only allow two different methods to be compared
 
-    best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
-    stat_viaPrior, c = bayes(best_priors, ncuts=ncuts)
-    stat_viaID = stats(ncuts=ncuts)
-
-    epsilonPIDs_viaPrior = epsilonPID_matrix(cutting_columns=c, cut=cut)
-    epsilonPIDs_viaID = epsilonPID_matrix(cut=cut)
-
-    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_viaID, epsilonPIDs_viaPrior], title_suffixes=[' via ID', ' via Priors'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-    plot_diff_stats(stats_approaches=[stat_viaID, stat_viaPrior], title_suffixes=[' via ID', ' via Priors'], particles_of_interest=['K+', 'pi+', 'mu+'])
-
-if args.run_diff_id_chunked:
     cut = 0.2
     ncuts = 10
 
@@ -484,37 +478,44 @@ if args.run_diff_id_chunked:
     nbins = 10
     niterations = 5
     norm = 'pi+'
-    cutting_columns = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
 
-    stat_viaChunks = stats(cutting_columns=cutting_columns, ncuts=ncuts)
-    stat_viaID = stats(ncuts=ncuts)
+    particles_of_interest = ['K+', 'pi+', 'mu+']
 
-    epsilonPIDs_viaChunks = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
-    epsilonPIDs_viaID = epsilonPID_matrix(cut=cut)
+    if set(methods) == {'id', 'bayes'}:
+        best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
+        stat_viaPrior, c = bayes(best_priors, ncuts=ncuts)
+        stat_viaID = stats(ncuts=ncuts)
 
-    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_viaID, epsilonPIDs_viaChunks], title_suffixes=[' via ID', ' via chunked Bayes'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-    plot_diff_stats(stats_approaches=[stat_viaID, stat_viaChunks], title_suffixes=[' via ID', ' via chunked Bayes'], particles_of_interest=['K+', 'pi+', 'mu+'])
+        epsilonPIDs_viaPrior = epsilonPID_matrix(cutting_columns=c, cut=cut)
+        epsilonPIDs_viaID = epsilonPID_matrix(cut=cut)
 
-if args.run_diff_bayes_chunked:
-    cut = 0.2
-    ncuts = 10
+        plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_viaID, epsilonPIDs_viaPrior], title_suffixes=[' via ID', ' via Priors'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+        plot_diff_stats(stats_approaches=[stat_viaID, stat_viaPrior], title_suffixes=[' via ID', ' via Priors'], particles_of_interest=particles_of_interest)
 
-    hold = 'pt'
-    whis = 1.5
-    nbins = 10
-    niterations = 5
-    norm = 'pi+'
-    cutting_columns_viaChunks = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
-    best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
+    if set(methods) == {'id', 'chunked_bayes'}:
+        cutting_columns = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
 
-    stat_viaChunks = stats(cutting_columns=cutting_columns_viaChunks, ncuts=ncuts)
-    stat_viaSimple, cutting_columns_viaSimple = bayes(best_priors, ncuts=ncuts)
+        stat_viaChunks = stats(cutting_columns=cutting_columns, ncuts=ncuts)
+        stat_viaID = stats(ncuts=ncuts)
 
-    epsilonPIDs_viaChunks = epsilonPID_matrix(cutting_columns=cutting_columns_viaChunks, cut=cut)
-    epsilonPIDs_viaSimple = epsilonPID_matrix(cutting_columns=cutting_columns_viaSimple, cut=cut)
+        epsilonPIDs_viaChunks = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
+        epsilonPIDs_viaID = epsilonPID_matrix(cut=cut)
 
-    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_viaSimple, epsilonPIDs_viaChunks], title_suffixes=[' via simple Bayes', ' via chunked Bayes'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-    plot_diff_stats(stats_approaches=[stat_viaSimple, stat_viaChunks], title_suffixes=[' via simple Bayes', ' via chunked Bayes'], particles_of_interest=['K+', 'pi+', 'mu+'])
+        plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_viaID, epsilonPIDs_viaChunks], title_suffixes=[' via ID', ' via chunked Bayes'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+        plot_diff_stats(stats_approaches=[stat_viaID, stat_viaChunks], title_suffixes=[' via ID', ' via chunked Bayes'], particles_of_interest=particles_of_interest)
+
+    if set(methods) == {'simple_bayes', 'chunked_bayes'}:
+        cutting_columns_viaChunks = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
+        best_priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
+
+        stat_viaChunks = stats(cutting_columns=cutting_columns_viaChunks, ncuts=ncuts)
+        stat_viaSimple, cutting_columns_viaSimple = bayes(best_priors, ncuts=ncuts)
+
+        epsilonPIDs_viaChunks = epsilonPID_matrix(cutting_columns=cutting_columns_viaChunks, cut=cut)
+        epsilonPIDs_viaSimple = epsilonPID_matrix(cutting_columns=cutting_columns_viaSimple, cut=cut)
+
+        plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_viaSimple, epsilonPIDs_viaChunks], title_suffixes=[' via simple Bayes', ' via chunked Bayes'], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+        plot_diff_stats(stats_approaches=[stat_viaSimple, stat_viaChunks], title_suffixes=[' via simple Bayes', ' via chunked Bayes'], particles_of_interest=particles_of_interest)
 
 if args.run_diff_pt_theta:
     cut = 0.2
