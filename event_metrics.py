@@ -60,6 +60,8 @@ group_action.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_prio
                     help='Visualize the evolution of priors for the chunked Bayesian approach')
 group_action.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False,
                     help='Visualize the outliers of the chunked Bayesian approach')
+group_action.add_argument('--chunked-multivariate-motivation', dest='run_chunked_multivariate_motivation', action='store_true', default=False,
+                    help='Motivate the usage of a chunked multivariate Bayesian approach')
 group_opt.add_argument('--cut', dest='cut', nargs='?', action='store', type=float, default=0.2,
                     help='Position of the default cut if only one is to be performed')
 group_opt.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
@@ -611,6 +613,63 @@ if args.run_chunked_outliers:
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
     plt.ylabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.show(block=False)
+
+if args.run_chunked_multivariate_motivation:
+    norm = args.norm
+    nbins = args.nbins
+    whis = args.whis
+    particles_of_interest = args.particles_of_interest.split(',')
+
+    holdings = ['pt', 'cosTheta']
+    particle_data = data[norm]
+
+    correlation_matrix = particle_data[holdings].corr()
+    plt.figure()
+    plt.imshow(correlation_matrix, cmap='viridis')
+    for (j, i), label in np.ndenumerate(correlation_matrix):
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+    plt.grid(b=False, axis='both')
+    plt.xlabel('Predicted Particle')
+    plt.xticks(range(len(holdings)), [variable_formats[v] for v in holdings])
+    plt.ylabel('True Particle')
+    plt.yticks(range(len(holdings)), [variable_formats[v] for v in holdings])
+    plt.colorbar()
+    drawing_title = plt.title('Heatmap of Correlation Matrix of Root Variables')
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.show(block=False)
+
+    selection = True
+    for hold in holdings:
+        q75, q25 = np.percentile(particle_data[hold], [75, 25])
+        iqr = q75 - q25
+        lower_bound = q25 - (iqr * whis)
+        upper_bound = q75 + (iqr * whis)
+        selection = selection & (particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)
+
+    variable_data = []
+    for hold in holdings:
+        variable_data += [particle_data[selection][hold]]
+
+    fig = plt.figure(figsize=(6, 6))
+    drawing_title = plt.suptitle('Multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings))
+    grid = plt.GridSpec(4, 4, hspace=0.2, wspace=0.2)
+
+    main_ax = plt.subplot(grid[:-1, 1:])
+    plt.scatter(variable_data[0], variable_data[1], s=5., alpha=0.1)
+    plt.setp(main_ax.get_xticklabels(), visible=False)
+    plt.setp(main_ax.get_yticklabels(), visible=False)
+
+    plt.subplot(grid[-1, 1:], sharex=main_ax)
+    plt.hist(variable_data[0], nbins, histtype='step', orientation='vertical')
+    plt.gca().invert_yaxis()
+    plt.xlabel(variable_formats[holdings[0]] + ' (' + variable_units[holdings[0]] + ')')
+    plt.subplot(grid[:-1, 0], sharey=main_ax)
+    plt.hist(variable_data[1], nbins, histtype='step', orientation='horizontal')
+    plt.gca().invert_xaxis()
+    plt.ylabel(variable_formats[holdings[1]] + ' (' + variable_units[holdings[1]] + ')')
+
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
 
