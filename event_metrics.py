@@ -70,6 +70,8 @@ parser.add_argument('--ncuts', dest='ncuts', nargs='?', action='store', type=int
                     help='Number of cuts to perform for the various curves')
 parser.add_argument('--niterations', dest='niterations', nargs='?', action='store', type=int, default=5,
                     help='Number of iterations to perform for the iterative chunked Bayesian approach')
+parser.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='?', action='store', default='K+,pi+,mu+',
+                    help='List of particles which shall be analysed')
 parser.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
                     help='Whiskers with which the IQR will be IQR')
 
@@ -494,7 +496,7 @@ if args.diff_methods:
     norm = args.norm
     mc_best = False
 
-    particles_of_interest = ['K+', 'pi+', 'mu+']
+    particles_of_interest = args.particles_of_interest.split(',')
 
     epsilonPIDs_approaches = []
     stats_approaches = []
@@ -570,8 +572,7 @@ if args.run_chunked_bayes:
     plot_stats_by_particle(stats(cutting_columns=cutting_columns))
 
 if args.run_chunked_bayes_priors:
-    particles_of_interest = ['K+', 'mu+']
-
+    particles_of_interest = args.particles_of_interest.split(',')
     hold = args.hold
     whis = args.whis
     nbins = args.nbins
