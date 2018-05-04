@@ -60,7 +60,7 @@ parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', a
                     help='Visualize the evolution of priors for the chunked Bayesian approach')
 parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False,
                     help='Visualize the outliers of the chunked Bayesian approach')
-parser.add_argument('--cut', dest='hold', nargs='?', action='store', type=float, default=0.2,
+parser.add_argument('--cut', dest='cut', nargs='?', action='store', type=float, default=0.2,
                     help='Position of the default cut if only one is to be performed')
 parser.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
                     help='Variable upon which the a priori probabilities shall depend on')
