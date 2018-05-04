@@ -531,8 +531,7 @@ if args.diff_methods:
     plot_diff_stats(stats_approaches=stats_approaches, title_suffixes=title_suffixes, particles_of_interest=particles_of_interest)
 
 if args.run_chunked_bayes:
-    particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
-    cuts = [0.2]
+    cut = args.cut
 
     hold = args.hold
     whis = args.whis
@@ -543,33 +542,34 @@ if args.run_chunked_bayes:
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals.items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals.items()}
 
-    for cut in cuts:
-        plt.figure()
-        drawing_title = plt.title('True Positive Rate for a Cut at %.2f'%(cut))
-        for p, color in particle_visuals.items():
-            assumed_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
-            actual_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
-            plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s'%(particle_formats[p]), fmt='o', color=color)
+    particles_of_interest = args.particles_of_interest.split(',')
 
-        plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
-        plt.ylabel('True Positive Rate')
-        plt.legend()
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
-        plt.show(block=False)
+    plt.figure()
+    drawing_title = plt.title('True Positive Rate for a Cut at %.2f'%(cut))
+    for p in particles_of_interest:
+        assumed_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
+        actual_abundance = np.array([data[p][(data[p][category_column] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
+        plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s'%(particle_formats[p]), fmt='o')
 
-        epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
-        plt.figure()
-        plt.imshow(epsilonPIDs, cmap='viridis')
-        for (j, i), label in np.ndenumerate(epsilonPIDs):
-            plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
-        plt.grid(b=False, axis='both')
-        plt.xlabel('Predicted Particle')
-        plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
-        plt.ylabel('True Particle')
-        plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
-        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
-        plt.show(block=False)
+    plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
+    plt.ylabel('True Positive Rate')
+    plt.legend()
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.show(block=False)
+
+    epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
+    plt.figure()
+    plt.imshow(epsilonPIDs, cmap='viridis')
+    for (j, i), label in np.ndenumerate(epsilonPIDs):
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+    plt.grid(b=False, axis='both')
+    plt.xlabel('Predicted Particle')
+    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.ylabel('True Particle')
+    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+    drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.show(block=False)
 
     plot_stats_by_particle(stats(cutting_columns=cutting_columns))
 
