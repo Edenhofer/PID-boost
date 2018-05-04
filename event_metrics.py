@@ -36,43 +36,45 @@ except ImportError:
 
 # Assemble the allowed command line options
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument('--stats', dest='run_stats', action='store_true', default=False,
+group_action = parser.add_argument_group('actions', 'Parameters which induce some kind of calculations and or visualizations')
+group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
+group_action.add_argument('--stats', dest='run_stats', action='store_true', default=False,
                     help='Print out and visualize some statistics')
-parser.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False,
+group_action.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False,
                     help='Plot the binned logLikelihood for each particle')
-parser.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False,
+group_action.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False,
                     help='Plot the confusion matrix of every events')
-parser.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False,
+group_action.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False,
                     help='Plot the binned logLikelihood for each detector')
-parser.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', default=False,
+group_action.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', default=False,
                     help='Mimic the calculation of the particle IDs using likelihoods')
-parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
+group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
-parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False,
+group_action.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes with priors extracted from Monte Carlo')
-parser.add_argument('--diff', dest='diff_methods', nargs='?', type=str, action='store', default='', const='id,simple_bayes',
+group_action.add_argument('--diff', dest='diff_methods', nargs='?', type=str, action='store', default='', const='id,simple_bayes',
                     help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, chunked_bayes, chunked_bayes_by_${ROOT_VAR_NAME}')
-parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False,
+group_action.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
-parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False,
+group_action.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False,
                     help='Visualize the evolution of priors for the chunked Bayesian approach')
-parser.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False,
+group_action.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False,
                     help='Visualize the outliers of the chunked Bayesian approach')
-parser.add_argument('--cut', dest='cut', nargs='?', action='store', type=float, default=0.2,
+group_opt.add_argument('--cut', dest='cut', nargs='?', action='store', type=float, default=0.2,
                     help='Position of the default cut if only one is to be performed')
-parser.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
+group_opt.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
                     help='Variable upon which the a priori probabilities shall depend on')
-parser.add_argument('--norm', dest='norm', nargs='?', action='store', default='pi+',
+group_opt.add_argument('--norm', dest='norm', nargs='?', action='store', default='pi+',
                     help='Particle by which to norm the a priori probabilities in the chunked Bayesian approach')
-parser.add_argument('--nbins', dest='nbins', nargs='?', action='store', type=int, default=10,
+group_opt.add_argument('--nbins', dest='nbins', nargs='?', action='store', type=int, default=10,
                     help='Number of bins to use for splitting the `hold` variable in the chunked Bayesian approach')
-parser.add_argument('--ncuts', dest='ncuts', nargs='?', action='store', type=int, default=10,
+group_opt.add_argument('--ncuts', dest='ncuts', nargs='?', action='store', type=int, default=10,
                     help='Number of cuts to perform for the various curves')
-parser.add_argument('--niterations', dest='niterations', nargs='?', action='store', type=int, default=5,
+group_opt.add_argument('--niterations', dest='niterations', nargs='?', action='store', type=int, default=5,
                     help='Number of iterations to perform for the iterative chunked Bayesian approach')
-parser.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='?', action='store', default='K+,pi+,mu+',
+group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='?', action='store', default='K+,pi+,mu+',
                     help='List of particles which shall be analysed')
-parser.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
+group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
                     help='Whiskers with which the IQR will be IQR')
 
 try:
