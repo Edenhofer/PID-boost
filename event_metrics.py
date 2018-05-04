@@ -51,9 +51,7 @@ parser.add_argument('--bayes', dest='run_bayes', action='store_true', default=Fa
 parser.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes with priors extracted from Monte Carlo')
 parser.add_argument('--diff', dest='diff_methods', nargs='?', type=str, action='store', default='', const='id,simple_bayes',
-                    help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, chunked_bayes')
-parser.add_argument('--diff-pt-theta', dest='run_diff_pt_theta', action='store_true', default=False,
-                    help='Compare the difference of selecting by particle ID and by chunked Bayes')
+                    help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, chunked_bayes, chunked_bayes_by_${ROOT_VAR_NAME}')
 parser.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 parser.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False,
@@ -514,6 +512,10 @@ if args.diff_methods:
         elif m == 'chunked_bayes':
             c = chunked_bayes(hold=hold, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
             title_suffixes += [' via chunked Bayes']
+        elif re.match(r'chunked_bayes_by_[\w]+', m):
+            explicit_hold = re.sub(r'chunked_bayes_by_([\w\d_]+)', r'\1', m)
+            c = chunked_bayes(hold=explicit_hold, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
+            title_suffixes += [' by ' + variable_formats[explicit_hold]]
         else:
             raise ValueError('received unknown method "%s"'%(m))
 
@@ -523,28 +525,6 @@ if args.diff_methods:
     title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut)
     plot_diff_epsilonPIDs(epsilonPIDs_approaches=epsilonPIDs_approaches, title_suffixes=title_suffixes, title_epsilonPIDs=title_epsilonPIDs)
     plot_diff_stats(stats_approaches=stats_approaches, title_suffixes=title_suffixes, particles_of_interest=particles_of_interest)
-
-if args.run_diff_pt_theta:
-    cut = args.cut
-    ncuts = args.ncuts
-
-    hold1 = 'pt'
-    hold2 = 'cosTheta'
-    whis = args.whis
-    nbins = args.nbins
-    niterations = args.niterations
-    norm = args.norm
-    cutting_columns_by_pt = chunked_bayes(hold=hold1, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
-    cutting_columns_by_theta = chunked_bayes(hold=hold2, whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[0]
-
-    stat_by_pt = stats(cutting_columns=cutting_columns_by_pt, ncuts=ncuts)
-    stat_by_theta = stats(cutting_columns=cutting_columns_by_theta, ncuts=ncuts)
-
-    epsilonPIDs_by_pt = epsilonPID_matrix(cutting_columns=cutting_columns_by_pt, cut=cut)
-    epsilonPIDs_by_theta = epsilonPID_matrix(cutting_columns=cutting_columns_by_theta, cut=cut)
-
-    plot_diff_epsilonPIDs(epsilonPIDs_approaches=[epsilonPIDs_by_pt, epsilonPIDs_by_theta], title_suffixes=[' by ' + variable_formats[hold1], ' by ' + variable_formats[hold2]], title_epsilonPIDs=r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-    plot_diff_stats(stats_approaches=[stat_by_pt, stat_by_theta], title_suffixes=[' by ' + variable_formats[hold1], ' by ' + variable_formats[hold2]], particles_of_interest=['K+', 'pi+', 'mu+'])
 
 if args.run_chunked_bayes:
     particle_visuals = {'K+': 'C0', 'pi+': 'C1'}
