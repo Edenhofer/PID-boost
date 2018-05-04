@@ -162,13 +162,13 @@ def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
     """
     stat = {}
     cuts = np.linspace(cut_min, cut_max, num=ncuts)
-    for p in particles:
+    for p, particle_data in data.items():
         stat[p] = {'tpr': np.array([]), 'fpr': np.array([]), 'tnr': np.array([]), 'ppv': np.array([])}
         for cut in cuts:
-            stat[p]['tpr'] = np.append(stat[p]['tpr'], [np.float64(data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 1].shape[0])])
-            stat[p]['fpr'] = np.append(stat[p]['fpr'], [np.float64(data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 0].shape[0])])
-            stat[p]['tnr'] = np.append(stat[p]['tnr'], [np.float64(data[p][(data[p]['isSignal'] == 0) & (data[p][cutting_columns[p]] <= cut)].shape[0]) / np.float64(data[p][data[p]['isSignal'] == 0].shape[0])])
-            stat[p]['ppv'] = np.append(stat[p]['ppv'], [np.float64(data[p][(data[p]['isSignal'] == 1) & (data[p][cutting_columns[p]] > cut)].shape[0]) / np.float64(data[p][data[p][cutting_columns[p]] > cut].shape[0])])
+            stat[p]['tpr'] = np.append(stat[p]['tpr'], [np.float64(particle_data[(particle_data['isSignal'] == 1) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[particle_data['isSignal'] == 1].shape[0])])
+            stat[p]['fpr'] = np.append(stat[p]['fpr'], [np.float64(particle_data[(particle_data['isSignal'] == 0) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[particle_data['isSignal'] == 0].shape[0])])
+            stat[p]['tnr'] = np.append(stat[p]['tnr'], [np.float64(particle_data[(particle_data['isSignal'] == 0) & (particle_data[cutting_columns[p]] <= cut)].shape[0]) / np.float64(particle_data[particle_data['isSignal'] == 0].shape[0])])
+            stat[p]['ppv'] = np.append(stat[p]['ppv'], [np.float64(particle_data[(particle_data['isSignal'] == 1) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[particle_data[cutting_columns[p]] > cut].shape[0])])
 
             if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
                 print('VALUES INCONSISTENT: ', end='')
@@ -210,26 +210,26 @@ def mimic_ID(detector_weights=detector_weights, check=True):
     if not all(v == 1. for v in detector_weights.values()):
         check = False
 
-    for l in particles:
+    for particle_data in data.values():
         # Calculate the accumulated logLikelihood and assess the relation to kaonID
         for p in particles:
-            data[l]['accumulatedLogLikelihood' + basf2_Code(p)] = np.zeros(data[l][particleIDs[p]].shape[0])
+            particle_data['accumulatedLogLikelihood' + basf2_Code(p)] = np.zeros(particle_data[particleIDs[p]].shape[0])
             # The following loop is equivalent to querying the 'all' pseudo-detector when using flat detector weights
             for d in detectors:
                 column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
                 # Fill up NaN values for detectors which do not yield a result
                 # Since at least one detector must return a logLikelihood it is not possible that only NaN values lead to a probability of 1
-                data[l]['accumulatedLogLikelihood' + basf2_Code(p)] += data[l][column].fillna(0) * detector_weights[d]
+                particle_data['accumulatedLogLikelihood' + basf2_Code(p)] += particle_data[column].fillna(0) * detector_weights[d]
 
         # Calculate the particleIDs manually and compare them to the result of the analysis software
-        data[l]['assumed_' + particleIDs['pi+']] = 1. / (1. + (data[l]['accumulatedLogLikelihood' + basf2_Code('K+')] - data[l]['accumulatedLogLikelihood' + basf2_Code('pi+')]).apply(np.exp))
+        particle_data['assumed_' + particleIDs['pi+']] = 1. / (1. + (particle_data['accumulatedLogLikelihood' + basf2_Code('K+')] - particle_data['accumulatedLogLikelihood' + basf2_Code('pi+')]).apply(np.exp))
         for p in (set(particles) - set(['pi+'])):
             # Algebraic trick to make exp(a)/(exp(a) + exp(b)) stable even for very small values of a and b
-            data[l]['assumed_' + particleIDs[p]] = 1. / (1. + (data[l]['accumulatedLogLikelihood' + basf2_Code('pi+')] - data[l]['accumulatedLogLikelihood' + basf2_Code(p)]).apply(np.exp))
+            particle_data['assumed_' + particleIDs[p]] = 1. / (1. + (particle_data['accumulatedLogLikelihood' + basf2_Code('pi+')] - particle_data['accumulatedLogLikelihood' + basf2_Code(p)]).apply(np.exp))
 
             if check:
                 # Assert for equality of the manual calculation and analysis software's output
-                npt.assert_allclose(data[l]['assumed_' + particleIDs[p]].values, data[l][particleIDs[p]].astype(np.float64).values, atol=1e-3)
+                npt.assert_allclose(particle_data['assumed_' + particleIDs[p]].values, particle_data[particleIDs[p]].astype(np.float64).values, atol=1e-3)
 
     print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
@@ -250,16 +250,16 @@ def bayes(priors=defaultdict(lambda: 1., {}), mc_best=False):
 
     cutting_columns = {k: 'bayes_' + v for k, v in particleIDs.items()}
 
-    for l in particles:
+    for particle_data in data.values():
         # TODO: Use mimic_ID here to allow for weighted detector
 
         for p in particles:
             denominator = 0.
             for p_2 in particles:
-                denominator += (data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__spall__bc'] - data[l]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__spall__bc']).apply(np.exp) * priors[p_2]
+                denominator += (particle_data['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__spall__bc'] - particle_data['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__spall__bc']).apply(np.exp) * priors[p_2]
 
             # Algebraic trick to make exp(H_i)*C_i/sum(exp(H_k) * C_k, k) stable even for very small values of H_i and H_k
-            data[l][cutting_columns[p]] = priors[p] / denominator
+            particle_data[cutting_columns[p]] = priors[p] / denominator
 
     return cutting_columns
 
@@ -289,21 +289,21 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
 
     category_column = 'category_' + hold
     intervals = {}
-    for p in particles:
-        q75, q25 = np.percentile(data[p][hold], [75, 25])
+    for p, particle_data in data.items():
+        q75, q25 = np.percentile(particle_data[hold], [75, 25])
         iqr = q75 - q25
         lower_bound = q25 - (iqr * whis)
         upper_bound = q75 + (iqr * whis)
 
-        data[p][category_column], intervals[p] = pd.qcut(data[p][(data[p][hold] > lower_bound) & (data[p][hold] < upper_bound)][hold], q=nbins, labels=range(nbins), retbins=True)
+        particle_data[category_column], intervals[p] = pd.qcut(particle_data[(particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)][hold], q=nbins, labels=range(nbins), retbins=True)
 
     cutting_columns = {k: 'bayes_' + hold + '_' + v for k, v in particleIDs.items()}
     iteration_priors = {l: {p: [[] for _ in range(niterations)] for p in particles} for l in particles}
 
-    for l in particles:
+    for l, particle_data in data.items():
         for i in range(nbins):
             if mc_best == True:
-                y = {p: np.float64(data[l][(data[l][category_column] == i) & (data[l]['mcPDG'] == pdg_from_name_faulty(p))].shape[0]) for p in particles}
+                y = {p: np.float64(particle_data[(particle_data[category_column] == i) & (particle_data['mcPDG'] == pdg_from_name_faulty(p))].shape[0]) for p in particles}
                 priors = {p: y[p] / y[norm] for p in particles}
 
                 print('Priors %d/%d "%s" Bin: '%(i+1, nbins, hold), priors)
@@ -315,22 +315,22 @@ def chunked_bayes(hold='pt', nbins=10, detector='all', mc_best=False, niteration
                 for p in particles:
                     denominator = 0.
                     for p_2 in particles:
-                        denominator += (data[l][data[l][category_column] == i]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + detector + '__bc'] - data[l][data[l][category_column] == i]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc']).apply(np.exp) * priors[p_2]
+                        denominator += (particle_data[particle_data[category_column] == i]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + detector + '__bc'] - particle_data[particle_data[category_column] == i]['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc']).apply(np.exp) * priors[p_2]
 
                     # Algebraic trick to make exp(H_i)*C_i/sum(exp(H_k) * C_k, k) stable even for very small values of H_i and H_k
-                    data[l].at[data[l][category_column] == i, cutting_columns[p]] = priors[p] / denominator
+                    particle_data.at[particle_data[category_column] == i, cutting_columns[p]] = priors[p] / denominator
 
-                y = {p: np.float64(data[l][data[l][category_column] == i][cutting_columns[p]].sum()) for p in particles}
+                y = {p: np.float64(particle_data[particle_data[category_column] == i][cutting_columns[p]].sum()) for p in particles}
                 for p in particles:
                     priors[p] = y[p] / y[norm]
                     iteration_priors[l][p][iteration] += [priors[p]]
 
                 if not mc_best: print('Priors %d/%d "%s" Bin after Iteration %2d: '%(i+1, nbins, hold, iteration + 1), priors)
 
-        max_columns = data[l][list(cutting_columns.values())].idxmax(axis=1)
+        max_columns = particle_data[list(cutting_columns.values())].idxmax(axis=1)
         cutting_columns_isMax = {k: v + '_isMax' for k, v in cutting_columns.items()}
         for p in cutting_columns.keys():
-            data[l][cutting_columns_isMax[p]] = np.where(max_columns == cutting_columns[p], 1, 0)
+            particle_data[cutting_columns_isMax[p]] = np.where(max_columns == cutting_columns[p], 1, 0)
 
     return cutting_columns, cutting_columns_isMax, category_column, intervals, iteration_priors
 
