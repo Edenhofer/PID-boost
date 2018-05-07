@@ -88,7 +88,7 @@ except NameError:
 # Base definitions of stable particles and detector data
 particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
 particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
-particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$'}
+particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$', 'K-': r'$K^-$', 'pi-': r'$\pi^-$', 'e-': r'$e^-$', 'mu-': r'$\mu^-$', 'p-': r'$p^-$', 'None': 'None', 'nan': 'NaN'}
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 pseudo_detectors = ['all', 'default']
 variable_formats = {'pt': r'$p_T$', 'Theta': r'$\theta$', 'cosTheta': r'$\cos(\theta)$'}
