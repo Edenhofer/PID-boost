@@ -652,6 +652,8 @@ if args.run_chunked_multivariate_motivation:
     holdings = ['pt', 'cosTheta']
     particle_data = data[norm]
 
+    truth_color_column = 'mcPDG_color'
+
     correlation_matrix = particle_data[holdings].corr()
     plt.figure()
     plt.imshow(correlation_matrix, cmap='viridis')
@@ -675,29 +677,34 @@ if args.run_chunked_multivariate_motivation:
         upper_bound = q75 + (iqr * whis)
         selection = selection & (particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)
 
-    variable_data = []
-    for hold in holdings:
-        variable_data += [particle_data[selection][hold]]
-
     fig = plt.figure(figsize=(6, 6))
     drawing_title = plt.suptitle('Multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings))
     grid = plt.GridSpec(4, 4, hspace=0.2, wspace=0.2)
 
     main_ax = plt.subplot(grid[:-1, 1:])
-    plt.scatter(variable_data[0], variable_data[1], s=5., alpha=0.1)
+    for v in set(particle_data[selection]['mcPDG']):
+        particle_data.at[selection & (particle_data[selection]['mcPDG'] == v), truth_color_column] = list(set(particle_data[selection]['mcPDG'])).index(v)
+    plt.scatter(particle_data[selection][holdings[0]], particle_data[selection][holdings[1]], c=particle_data[selection][truth_color_column], cmap=plt.cm.get_cmap('viridis', len(set(particle_data[selection]['mcPDG']))), s=5., alpha=.1)
     plt.setp(main_ax.get_xticklabels(), visible=False)
     plt.setp(main_ax.get_yticklabels(), visible=False)
 
     plt.subplot(grid[-1, 1:], sharex=main_ax)
-    plt.hist(variable_data[0], nbins, histtype='step', orientation='vertical')
+    plt.hist(particle_data[selection][holdings[0]], nbins, histtype='step', orientation='vertical')
     plt.gca().invert_yaxis()
     plt.xlabel(variable_formats[holdings[0]] + ' (' + variable_units[holdings[0]] + ')')
     plt.subplot(grid[:-1, 0], sharey=main_ax)
-    plt.hist(variable_data[1], nbins, histtype='step', orientation='horizontal')
+    plt.hist(particle_data[selection][holdings[1]], nbins, histtype='step', orientation='horizontal')
     plt.gca().invert_xaxis()
     plt.ylabel(variable_formats[holdings[1]] + ' (' + variable_units[holdings[1]] + ')')
 
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    fig.subplots_adjust(right=0.85)
+    cbar_ax = fig.add_axes([0.88, 0.20, 0.05, 0.6])
+    cbar = plt.colorbar(cax=cbar_ax, ticks=range(len(set(particle_data[selection]['mcPDG']))))
+    cbar.set_alpha(1.)
+    cbar.set_ticklabels([particle_formats[pdg_to_name_faulty(v)] for v in set(particle_data[selection]['mcPDG'])])
+    cbar.draw_all()
+
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
 
