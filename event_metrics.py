@@ -119,6 +119,25 @@ def pdg_from_name_faulty(particle):
         return pdg.from_name(particle)
 
 
+def pdg_to_name_faulty(pdg_code):
+    """Return the particle name for a given Particle Data Group (PDG) code honoring a bug in the float to integer conversion.
+
+    Args:
+        pdg_code: PDG code compatible with the values in root files.
+
+    Returns:
+        The name of the particle for the given PDG code with 'None' as value for faulty reconstructions and 'nan' for buggy translations.
+
+    """
+    if pdg_code == 0:
+        return 'None'
+
+    try:
+        return pdg.to_name(int(pdg_code))
+    except LookupError:
+        return 'nan'
+
+
 def basf2_Code(particle):
     """Return the pdgCode in a basf2 compatible way with escaped special characters.
 
