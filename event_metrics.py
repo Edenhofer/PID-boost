@@ -77,6 +77,8 @@ group_action.add_argument('--multivariate-bayes-motivation', dest='run_multivari
                     help='Motivate the usage of a multivariate Bayesian approach')
 group_opt.add_argument('--cut', dest='cut', nargs='?', action='store', type=float, default=0.2,
                     help='Position of the default cut if only one is to be performed')
+group_opt.add_argument('--exclusive-cut', dest='exclusive_cut', action='store_true', default=False,
+                    help='Perform exclusive cuts where apropiate using the maximum of the cutting column')
 group_opt.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
                     help='Variable upon which the a priori probabilities shall depend on')
 group_opt.add_argument('--holdings', dest='holdings', nargs='+', action='store', choices=['pt', 'cosTheta'], default=['pt', 'cosTheta'],
@@ -506,7 +508,10 @@ if args.run_logLikelihood_by_detector:
 
 if args.run_epsilonPID_matrix:
     cut = args.cut
-    epsilonPIDs = epsilonPID_matrix(cut=cut)
+    exclusive_cut = args.exclusive_cut
+
+    c = add_isMax_column(particleIDs) if exclusive_cut else particleIDs
+    epsilonPIDs = epsilonPID_matrix(cutting_columns=c, cut=cut)
 
     plt.figure()
     plt.imshow(epsilonPIDs, cmap='viridis')
@@ -518,7 +523,10 @@ if args.run_epsilonPID_matrix:
     plt.ylabel('True Particle')
     plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
     plt.colorbar()
-    drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    if exclusive_cut:
+        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
+    else:
+        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
@@ -546,6 +554,7 @@ if args.diff_methods:
     niterations = args.niterations
     norm = args.norm
     mc_best = args.mc_best
+    exclusive_cut = args.exclusive_cut
 
     particles_of_interest = args.particles_of_interest
 
@@ -575,10 +584,14 @@ if args.diff_methods:
         else:
             raise ValueError('received unknown method "%s"'%(m))
 
-        epsilonPIDs_approaches += [epsilonPID_matrix(cutting_columns=c, cut=cut)]
+        c_choice = add_isMax_column(c) if exclusive_cut else c
+        epsilonPIDs_approaches += [epsilonPID_matrix(cutting_columns=c_choice, cut=cut)]
         stats_approaches += [stats(cutting_columns=c, ncuts=ncuts)]
 
-    title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut)
+    if exclusive_cut:
+        title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
+    else:
+        title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
     plot_diff_epsilonPIDs(epsilonPIDs_approaches=epsilonPIDs_approaches, title_suffixes=title_suffixes, title_epsilonPIDs=title_epsilonPIDs)
     plot_diff_stats(stats_approaches=stats_approaches, title_suffixes=title_suffixes, particles_of_interest=particles_of_interest)
 
@@ -591,6 +604,7 @@ if args.run_univariate_bayes:
     nbins = args.nbins
     norm = args.norm
     mc_best = args.mc_best
+    exclusive_cut = args.exclusive_cut
     cutting_columns, category_columns, intervals, _ = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals[hold].items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals[hold].items()}
@@ -610,7 +624,8 @@ if args.run_univariate_bayes:
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
-    epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
+    c = add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
+    epsilonPIDs = epsilonPID_matrix(cutting_columns=c, cut=cut)
     plt.figure()
     plt.imshow(epsilonPIDs, cmap='viridis')
     for (j, i), label in np.ndenumerate(epsilonPIDs):
@@ -620,7 +635,10 @@ if args.run_univariate_bayes:
     plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
     plt.ylabel('True Particle')
     plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
-    drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
+    if exclusive_cut:
+        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
+    else:
+        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
@@ -671,6 +689,7 @@ if args.run_multivariate_bayes:
 
     holdings = args.holdings
     mc_best = args.mc_best
+    exclusive_cut = args.exclusive_cut
     whis = args.whis
     niterations = args.niterations
     nbins = args.nbins
@@ -678,7 +697,6 @@ if args.run_multivariate_bayes:
     particles_of_interest = args.particles_of_interest
 
     cutting_columns, category_columns, intervals, iteration_priors = multivariate_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
-    cutting_columns_isMax = add_isMax_column(cutting_columns)
 
     interval_centers = {}
     interval_widths = {}
@@ -700,7 +718,8 @@ if args.run_multivariate_bayes:
         plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show(block=False)
 
-    epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns_isMax, cut=cut)
+    c = add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
+    epsilonPIDs = epsilonPID_matrix(cutting_columns=c, cut=cut)
     plt.figure()
     plt.imshow(epsilonPIDs, cmap='viridis')
     for (j, i), label in np.ndenumerate(epsilonPIDs):
@@ -710,7 +729,10 @@ if args.run_multivariate_bayes:
     plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
     plt.ylabel('True Particle')
     plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
-    drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for an exclusive cut at $%.2f$'%(cut))
+    if exclusive_cut:
+        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
+    else:
+        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
     plt.colorbar()
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
