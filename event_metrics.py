@@ -51,8 +51,6 @@ group_action.add_argument('--mimic-id', dest='run_mimic_id', action='store_true'
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
-group_action.add_argument('--bayes-best', dest='run_bayes_best', action='store_true', default=False,
-                    help='Calculate an accumulated probability for particle hypothesis using Bayes with priors extracted from Monte Carlo')
 group_action.add_argument('--diff', dest='diff_methods', nargs='?', type=str, action='store', default='', const='id,simple_bayes',
                     help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, chunked_bayes, chunked_bayes_by_${ROOT_VAR_NAME}')
 group_action.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False,
@@ -511,11 +509,8 @@ if args.run_mimic_id:
     mimic_ID()
 
 if args.run_bayes:
-    c = bayes()
-    plot_stats_by_particle(stats(cutting_columns=c))
-
-if args.run_bayes_best:
-    c = bayes(mc_best=True)
+    mc_best = args.mc_best
+    c = bayes(mc_best=mc_best)
     plot_stats_by_particle(stats(cutting_columns=c))
 
 if args.diff_methods:
