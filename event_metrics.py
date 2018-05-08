@@ -52,7 +52,7 @@ group_action.add_argument('--mimic-id', dest='run_mimic_id', action='store_true'
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
 group_action.add_argument('--diff', dest='diff_methods', nargs='?', type=str, action='store', default='', const='id,simple_bayes',
-                    help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, chunked_bayes, chunked_bayes_by_${ROOT_VAR_NAME}')
+                    help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, chunked_bayes, chunked_bayes_by_${ROOT_VAR_NAME}, multivariate_bayes')
 group_action.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 group_action.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False,
@@ -524,6 +524,7 @@ if args.diff_methods:
     ncuts = args.ncuts
 
     hold = args.hold
+    holdings = ['pt', 'cosTheta']
     whis = args.whis
     nbins = args.nbins
     niterations = args.niterations
@@ -552,6 +553,9 @@ if args.diff_methods:
             explicit_hold = re.sub(r'chunked_bayes_by_([\w\d_]+)', r'\1', m)
             c = chunked_bayes(holdings=[explicit_hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
             title_suffixes += [' by ' + variable_formats[explicit_hold]]
+        elif m == 'multivariate_bayes':
+            c = chunked_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
+            title_suffixes += [' by ' + ' & '.join([variable_formats[h] for h in holdings])]
         else:
             raise ValueError('received unknown method "%s"'%(m))
 
