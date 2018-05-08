@@ -551,8 +551,8 @@ if args.diff_methods:
         elif m == 'chunked_bayes':
             c = chunked_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
             title_suffixes += [' via chunked Bayes']
-        elif re.match(r'chunked_bayes_by_[\w]+', m):
-            explicit_hold = re.sub(r'chunked_bayes_by_([\w\d_]+)', r'\1', m)
+        elif m in ['chunked_bayes_by_' + v for v in variable_formats.keys()]:
+            explicit_hold = re.sub('chunked_bayes_by_', '', m)
             c = chunked_bayes(holdings=[explicit_hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
             title_suffixes += [' by ' + variable_formats[explicit_hold]]
         elif m == 'multivariate_bayes':
