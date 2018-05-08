@@ -361,12 +361,26 @@ def multivariate_bayes(holdings=['pt'], nbins=10, detector='all', mc_best=False,
 
                 if not mc_best: print('Priors ', holdings, ' at ', i, ' of ' + str(nbins) + ' after %2d: '%(iteration + 1), priors)
 
+    return cutting_columns, category_columns, intervals, iteration_priors
+
+def add_isMax_column(cutting_columns):
+    """Add columns containing ones for each track where the cutting column is maximal and fill zeros otherwise.
+
+    Args:
+        cutting_columns: Columns by particles where to find the maximum
+
+    Returns:
+        cutting_columns_isMax: Columns by particle containing ones for maximal values
+
+    """
+    for particle_data in data.values():
         max_columns = particle_data[list(cutting_columns.values())].idxmax(axis=1)
         cutting_columns_isMax = {k: v + '_isMax' for k, v in cutting_columns.items()}
+
         for p in cutting_columns.keys():
             particle_data[cutting_columns_isMax[p]] = np.where(max_columns == cutting_columns[p], 1, 0)
 
-    return cutting_columns, cutting_columns_isMax, category_columns, intervals, iteration_priors
+    return cutting_columns_isMax
 
 
 def plot_logLikelihood_by_particle(nbins=50):
@@ -577,7 +591,7 @@ if args.run_univariate_bayes:
     nbins = args.nbins
     norm = args.norm
     mc_best = args.mc_best
-    cutting_columns, _, category_columns, intervals, _ = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
+    cutting_columns, category_columns, intervals, _ = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals[hold].items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals[hold].items()}
 
@@ -663,7 +677,8 @@ if args.run_multivariate_bayes:
     norm = args.norm
     particles_of_interest = args.particles_of_interest
 
-    cutting_columns, cutting_columns_isMax, category_columns, intervals, iteration_priors = multivariate_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
+    cutting_columns, category_columns, intervals, iteration_priors = multivariate_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
+    cutting_columns_isMax = add_isMax_column(cutting_columns)
 
     interval_centers = {}
     interval_widths = {}
