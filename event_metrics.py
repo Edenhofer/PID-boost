@@ -635,7 +635,7 @@ if args.run_univariate_bayes_priors:
     norm = args.norm
 
     iteration_priors_viaIter = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[-1]
-    intervals, iteration_priors_viaBest = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=True, nbins=nbins)[-2]
+    intervals, iteration_priors_viaBest = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=True, nbins=nbins)[-2:]
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals[hold].items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals[hold].items()}
 
