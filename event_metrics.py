@@ -61,6 +61,8 @@ group_action.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_prio
                     help='Visualize the evolution of priors for the chunked Bayesian approach')
 group_action.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False,
                     help='Visualize the outliers of the chunked Bayesian approach')
+group_action.add_argument('--chunked-multivariate-bayes', dest='run_chunked_multivariate_bayes', action='store_true', default=False,
+                    help='Calculate an accumulated probability for particle hypothesis keeping multiple variables fixed')
 group_action.add_argument('--chunked-multivariate-motivation', dest='run_chunked_multivariate_motivation', action='store_true', default=False,
                     help='Motivate the usage of a chunked multivariate Bayesian approach')
 group_opt.add_argument('--cut', dest='cut', nargs='?', action='store', type=float, default=0.2,
@@ -642,6 +644,56 @@ if args.run_chunked_outliers:
     plt.ylabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
+
+if args.run_chunked_multivariate_bayes:
+    cut = args.cut
+
+    holdings = ['pt', 'cosTheta']
+    mc_best = True
+    whis = args.whis
+    niterations = args.niterations
+    nbins = args.nbins
+    norm = args.norm
+    particles_of_interest = args.particles_of_interest.split(',')
+
+    cutting_columns, cutting_columns_isMax, category_columns, intervals, iteration_priors = chunked_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
+
+    interval_centers = {}
+    interval_widths = {}
+    for hold in holdings:
+        interval_centers[hold] = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals[hold].items()}
+        interval_widths[hold] = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals[hold].items()}
+
+    for p in particles_of_interest:
+        fig = plt.figure()
+        plt.imshow(np.array(iteration_priors[norm][p]).reshape(nbins, nbins).T, cmap='viridis')
+        plt.grid(b=False, axis='both')
+        plt.xlabel(variable_formats[holdings[0]] + ' (' + variable_units[holdings[0]] + ')')
+        plt.xticks(range(nbins), interval_centers[holdings[0]][p])
+        fig.autofmt_xdate()
+        plt.ylabel(variable_formats[holdings[1]] + ' (' + variable_units[holdings[1]] + ')')
+        plt.yticks(range(nbins), interval_centers[holdings[1]][p])
+        drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(particle_formats[p], particle_formats[norm]))
+        plt.colorbar()
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        plt.show(block=False)
+
+    epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns_isMax, cut=cut)
+    plt.figure()
+    plt.imshow(epsilonPIDs, cmap='viridis')
+    for (j, i), label in np.ndenumerate(epsilonPIDs):
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+    plt.grid(b=False, axis='both')
+    plt.xlabel('Predicted Particle')
+    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.ylabel('True Particle')
+    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+    drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for an exclusive cut at $%.2f$'%(cut))
+    plt.colorbar()
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.show(block=False)
+
+    plot_stats_by_particle(stats(cutting_columns=cutting_columns))
 
 if args.run_chunked_multivariate_motivation:
     norm = args.norm
