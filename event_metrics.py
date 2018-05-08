@@ -401,8 +401,8 @@ def plot_logLikelihood_by_detector(nbins=50):
         plt.show(block=False)
 
 
-def plot_stats_by_particle(stat):
-    for p in particles:
+def plot_stats_by_particle(stat, particles_of_interest=particles):
+    for p in particles_of_interest:
         plt.figure()
         plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='ROC')
         # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
@@ -479,7 +479,8 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
 
 args = parser.parse_args()
 if args.run_stats:
-    plot_stats_by_particle(stats())
+    particles_of_interest = args.particles_of_interest.split(',')
+    plot_stats_by_particle(stats(), particles_of_interest=particles_of_interest)
 
 if args.run_logLikelihood_by_particle:
     plot_logLikelihood_by_particle()
@@ -510,8 +511,10 @@ if args.run_mimic_id:
 
 if args.run_bayes:
     mc_best = args.mc_best
+    particles_of_interest = args.particles_of_interest.split(',')
+
     c = bayes(mc_best=mc_best)
-    plot_stats_by_particle(stats(cutting_columns=c))
+    plot_stats_by_particle(stats(cutting_columns=c), particles_of_interest=particles_of_interest)
 
 if args.diff_methods:
     methods = args.diff_methods.split(',')
@@ -601,7 +604,7 @@ if args.run_chunked_bayes:
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
-    plot_stats_by_particle(stats(cutting_columns=cutting_columns))
+    plot_stats_by_particle(stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
 
 if args.run_chunked_bayes_priors:
     particles_of_interest = args.particles_of_interest.split(',')
@@ -691,7 +694,7 @@ if args.run_chunked_multivariate_bayes:
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
-    plot_stats_by_particle(stats(cutting_columns=cutting_columns))
+    plot_stats_by_particle(stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
 
 if args.run_chunked_multivariate_motivation:
     norm = args.norm
