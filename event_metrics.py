@@ -67,6 +67,8 @@ group_opt.add_argument('--cut', dest='cut', nargs='?', action='store', type=floa
                     help='Position of the default cut if only one is to be performed')
 group_opt.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
                     help='Variable upon which the a priori probabilities shall depend on')
+group_opt.add_argument('--holdings', dest='holdings', nargs='+', action='store', choices=['pt', 'cosTheta'], default=['pt', 'cosTheta'],
+                    help='Variables upon which the multivariate a priori probabilities shall depend on')
 group_opt.add_argument('--norm', dest='norm', nargs='?', action='store', default='pi+',
                     help='Particle by which to norm the a priori probabilities in the chunked Bayesian approach')
 group_opt.add_argument('--nbins', dest='nbins', nargs='?', action='store', type=int, default=10,
@@ -524,7 +526,7 @@ if args.diff_methods:
     ncuts = args.ncuts
 
     hold = args.hold
-    holdings = ['pt', 'cosTheta']
+    holdings = args.holdings
     whis = args.whis
     nbins = args.nbins
     niterations = args.niterations
@@ -653,7 +655,7 @@ if args.run_chunked_outliers:
 if args.run_chunked_multivariate_bayes:
     cut = args.cut
 
-    holdings = ['pt', 'cosTheta']
+    holdings = args.holdings
     mc_best = args.mc_best
     whis = args.whis
     niterations = args.niterations
@@ -706,7 +708,7 @@ if args.run_chunked_multivariate_motivation:
     whis = args.whis
     particles_of_interest = args.particles_of_interest.split(',')
 
-    holdings = ['pt', 'cosTheta']
+    holdings = args.holdings
     particle_data = data[norm]
 
     truth_color_column = 'mcPDG_color'
