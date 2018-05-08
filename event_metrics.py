@@ -35,6 +35,18 @@ except ImportError:
     pass
 
 
+# Base definitions of stable particles and detector data
+particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
+particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
+particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$', 'K-': r'$K^-$', 'pi-': r'$\pi^-$', 'e-': r'$e^-$', 'mu-': r'$\mu^-$', 'p-': r'$p^-$', 'None': 'None', 'nan': 'NaN'}
+detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
+pseudo_detectors = ['all', 'default']
+variable_formats = {'pt': r'$p_T$', 'Theta': r'$\theta$', 'cosTheta': r'$\cos(\theta)$'}
+variable_units = {'pt': r'$\mathrm{GeV/c}$', 'Theta': r'$Rad$', 'cosTheta': 'unitless'}
+# Use the detector weights to exclude certain detectors, e.g. for debugging purposes
+# Bare in mind that if all likelihoods are calculated correctly this should never improve the result
+detector_weights = {d: 1. for d in detectors + pseudo_detectors}
+
 # Assemble the allowed command line options
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 group_action = parser.add_argument_group('actions', 'Parameters which induce some kind of calculations and or visualizations')
@@ -51,7 +63,7 @@ group_action.add_argument('--mimic-id', dest='run_mimic_id', action='store_true'
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
-group_action.add_argument('--diff', dest='diff_methods', nargs='?', type=str, action='store', default='', const='id,simple_bayes',
+group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['id', 'simple_bayes', 'chunked_bayes', *['chunked_bayes_by_' + v for v in variable_formats.keys()], 'multivariate_bayes'], default=[],
                     help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, chunked_bayes, chunked_bayes_by_${ROOT_VAR_NAME}, multivariate_bayes')
 group_action.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
@@ -79,7 +91,7 @@ group_opt.add_argument('--niterations', dest='niterations', nargs='?', action='s
                     help='Number of iterations to perform for the iterative chunked Bayesian approach')
 group_opt.add_argument('--mc-best', dest='mc_best', action='store_true', default=False,
                     help='Use Monte Carlo information for calculating the best possible a priori probabilities instead of relying on an iterative approach')
-group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='?', action='store', default='K+,pi+,mu+',
+group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='+', action='store', choices=particles, default=['K+', 'pi+', 'mu+'],
                     help='List of particles which shall be analysed')
 group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
                     help='Whiskers with which the IQR will be IQR')
@@ -88,18 +100,6 @@ try:
     argcomplete.autocomplete(parser)
 except NameError:
     pass
-
-# Base definitions of stable particles and detector data
-particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
-particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
-particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$', 'K-': r'$K^-$', 'pi-': r'$\pi^-$', 'e-': r'$e^-$', 'mu-': r'$\mu^-$', 'p-': r'$p^-$', 'None': 'None', 'nan': 'NaN'}
-detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
-pseudo_detectors = ['all', 'default']
-variable_formats = {'pt': r'$p_T$', 'Theta': r'$\theta$', 'cosTheta': r'$\cos(\theta)$'}
-variable_units = {'pt': r'$\mathrm{GeV/c}$', 'Theta': r'$Rad$', 'cosTheta': 'unitless'}
-# Use the detector weights to exclude certain detectors, e.g. for debugging purposes
-# Bare in mind that if all likelihoods are calculated correctly this should never improve the result
-detector_weights = {d: 1. for d in detectors + pseudo_detectors}
 
 # Read in all the particle's information into a dictionary of panda frames
 data = {p: rpd.read_root(p + '.root') for p in particles}
@@ -481,7 +481,7 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
 
 args = parser.parse_args()
 if args.run_stats:
-    particles_of_interest = args.particles_of_interest.split(',')
+    particles_of_interest = args.particles_of_interest
     plot_stats_by_particle(stats(), particles_of_interest=particles_of_interest)
 
 if args.run_logLikelihood_by_particle:
@@ -513,13 +513,13 @@ if args.run_mimic_id:
 
 if args.run_bayes:
     mc_best = args.mc_best
-    particles_of_interest = args.particles_of_interest.split(',')
+    particles_of_interest = args.particles_of_interest
 
     c = bayes(mc_best=mc_best)
     plot_stats_by_particle(stats(cutting_columns=c), particles_of_interest=particles_of_interest)
 
 if args.diff_methods:
-    methods = args.diff_methods.split(',')
+    methods = args.diff_methods
     assert (len(methods) >= 2), 'Specify at least two methods'
 
     cut = args.cut
@@ -533,7 +533,7 @@ if args.diff_methods:
     norm = args.norm
     mc_best = args.mc_best
 
-    particles_of_interest = args.particles_of_interest.split(',')
+    particles_of_interest = args.particles_of_interest
 
     epsilonPIDs_approaches = []
     stats_approaches = []
@@ -581,7 +581,7 @@ if args.run_chunked_bayes:
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals[hold].items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals[hold].items()}
 
-    particles_of_interest = args.particles_of_interest.split(',')
+    particles_of_interest = args.particles_of_interest
 
     plt.figure()
     drawing_title = plt.title('True Positive Rate for a Cut at %.2f'%(cut))
@@ -613,7 +613,7 @@ if args.run_chunked_bayes:
     plot_stats_by_particle(stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
 
 if args.run_chunked_bayes_priors:
-    particles_of_interest = args.particles_of_interest.split(',')
+    particles_of_interest = args.particles_of_interest
     hold = args.hold
     whis = args.whis
     nbins = args.nbins
@@ -661,7 +661,7 @@ if args.run_chunked_multivariate_bayes:
     niterations = args.niterations
     nbins = args.nbins
     norm = args.norm
-    particles_of_interest = args.particles_of_interest.split(',')
+    particles_of_interest = args.particles_of_interest
 
     cutting_columns, cutting_columns_isMax, category_columns, intervals, iteration_priors = chunked_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
 
@@ -706,7 +706,7 @@ if args.run_chunked_multivariate_motivation:
     norm = args.norm
     nbins = args.nbins
     whis = args.whis
-    particles_of_interest = args.particles_of_interest.split(',')
+    particles_of_interest = args.particles_of_interest
 
     holdings = args.holdings
     particle_data = data[norm]
