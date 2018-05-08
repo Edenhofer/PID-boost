@@ -39,6 +39,7 @@ except ImportError:
 particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
 particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
 particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$', 'K-': r'$K^-$', 'pi-': r'$\pi^-$', 'e-': r'$e^-$', 'mu-': r'$\mu^-$', 'p-': r'$p^-$', 'None': 'None', 'nan': 'NaN'}
+particle_base_formats = {'K+': r'$K$', 'pi+': r'$\pi$', 'e+': r'$e$', 'mu+': r'$\mu$', 'p+': r'$p$', 'deuteron': r'$d$', 'K-': r'$K$', 'pi-': r'$\pi$', 'e-': r'$e$', 'mu-': r'$\mu$', 'p-': r'$p$', 'None': 'None', 'nan': 'NaN'}
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 pseudo_detectors = ['all', 'default']
 variable_formats = {'pt': r'$p_T$', 'Theta': r'$\theta$', 'cosTheta': r'$\cos(\theta)$'}
@@ -221,7 +222,7 @@ def epsilonPID_matrix(cut=0.2, cutting_columns=particleIDs):
     for i, i_p in enumerate(particles):
         for j, j_p in enumerate(particles):
             # The deuterium code is not properly stored in the mcPDG variable, hence the use of `pdg_from_name_faulty()`
-            epsilonPIDs[i][j] = np.float64(data[i_p][(data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) & (data[i_p][cutting_columns[j_p]] > cut)].shape[0]) / np.float64(data[i_p][data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)].shape[0])
+            epsilonPIDs[i][j] = np.float64(data[i_p][((data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (data[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))) & (data[i_p][cutting_columns[j_p]] > cut)].shape[0]) / np.float64(data[i_p][(data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (data[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))].shape[0])
 
     print("epsilon_PID matrix:\n%s"%(epsilonPIDs))
     return epsilonPIDs
@@ -339,7 +340,7 @@ def multivariate_bayes(holdings=['pt'], nbins=10, detector='all', mc_best=False,
                 selection = selection & (particle_data[category_columns[holdings[m]]] == i[m])
 
             if mc_best == True:
-                y = {p: np.float64(particle_data[selection & (particle_data['mcPDG'] == pdg_from_name_faulty(p))].shape[0]) for p in particles}
+                y = {p: np.float64(particle_data[selection & ((particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p)))].shape[0]) for p in particles}
                 priors = {p: y[p] / y[norm] for p in particles}
 
                 print('Priors ', holdings, ' at ', i, ' of ' + str(nbins) + ': ', priors)
@@ -392,7 +393,7 @@ def plot_logLikelihood_by_particle(nbins=50):
         for i, p in enumerate(particles):
             for i_2, p_2 in enumerate(particles):
                 plt.subplot(len(particles), len(particles), i*len(particles)+i_2+1)
-                plt.title('Identified %s as %s'%(particle_formats[p], particle_formats[p_2]))
+                plt.title('Identified %s as %s'%(particle_base_formats[p], particle_base_formats[p_2]))
                 column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
                 data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
 
@@ -403,7 +404,7 @@ def plot_logLikelihood_by_particle(nbins=50):
 def plot_logLikelihood_by_detector(nbins=50):
     for p in particles:
         plt.figure()
-        drawing_title = plt.suptitle('Binned pidLogLikelihood for Particle %s'%(particle_formats[p]))
+        drawing_title = plt.suptitle('Binned pidLogLikelihood for Particle %s'%(particle_base_formats[p]))
         for i, d in enumerate(detectors + pseudo_detectors):
             plt.subplot(2, len(detectors + pseudo_detectors), i+1)
             plt.title('Detector %s with Signal'%(d))
@@ -428,7 +429,7 @@ def plot_stats_by_particle(stat, particles_of_interest=particles):
         plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='PPV')
         plt.xlabel('False Positive Rate')
         plt.ylabel('Particle Rates')
-        drawing_title = plt.title('%s Identification'%(particle_formats[p]))
+        drawing_title = plt.title('%s Identification'%(particle_base_formats[p]))
         plt.legend()
         plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Statistics: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show(block=False)
@@ -447,9 +448,9 @@ def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_ep
             plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
         plt.grid(b=False, axis='both')
         plt.xlabel('Predicted Particle')
-        plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+        plt.xticks(range(len(particles)), [particle_base_formats[p] for p in particles])
         plt.ylabel('True Particle')
-        plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+        plt.yticks(range(len(particles)), [particle_base_formats[p] for p in particles])
         plt.title('ID' + title_suffixes[n])
         plt.tight_layout(pad=1.4)
 
@@ -469,7 +470,7 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
         grid = plt.GridSpec(3, 1, hspace=0.1)
 
         main_ax = plt.subplot(grid[:2, 0])
-        drawing_title = plt.title('%s Identification'%(particle_formats[p]))
+        drawing_title = plt.title('%s Identification'%(particle_base_formats[p]))
         for n in range(len(stats_approaches)):
             drawing = plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['tpr'], label='ROC' + title_suffixes[n])
             plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['ppv'], label='PPV' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
@@ -519,9 +520,9 @@ if args.run_epsilonPID_matrix:
         plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
     plt.grid(b=False, axis='both')
     plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.xticks(range(len(particles)), [particle_base_formats[p] for p in particles])
     plt.ylabel('True Particle')
-    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.yticks(range(len(particles)), [particle_base_formats[p] for p in particles])
     plt.colorbar()
     if exclusive_cut:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
@@ -616,7 +617,7 @@ if args.run_univariate_bayes:
     for p in particles_of_interest:
         assumed_abundance = np.array([data[p][(data[p][category_columns[hold]] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
         actual_abundance = np.array([data[p][(data[p][category_columns[hold]] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
-        plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s'%(particle_formats[p]), fmt='o')
+        plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s'%(particle_base_formats[p]), fmt='o')
 
     plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
     plt.ylabel('True Positive Rate')
@@ -632,9 +633,9 @@ if args.run_univariate_bayes:
         plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
     plt.grid(b=False, axis='both')
     plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.xticks(range(len(particles)), [particle_base_formats[p] for p in particles])
     plt.ylabel('True Particle')
-    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.yticks(range(len(particles)), [particle_base_formats[p] for p in particles])
     if exclusive_cut:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
     else:
@@ -659,7 +660,7 @@ if args.run_univariate_bayes_priors:
 
     for p in particles_of_interest:
         plt.figure()
-        drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(particle_formats[p], particle_formats[norm]))
+        drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(particle_base_formats[p], particle_base_formats[norm]))
         plt.errorbar(interval_centers[p], iteration_priors_viaBest[norm][p][-1], xerr=interval_widths[p], label='Truth', fmt='*')
         for n in range(niterations):
             plt.errorbar(interval_centers[p], iteration_priors_viaIter[norm][p][n], xerr=interval_widths[p], label='Iteration %d'%(n+1), fmt='o')
@@ -713,7 +714,7 @@ if args.run_multivariate_bayes:
         fig.autofmt_xdate()
         plt.ylabel(variable_formats[holdings[1]] + ' (' + variable_units[holdings[1]] + ')')
         plt.yticks(range(nbins), interval_centers[holdings[1]][p])
-        drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(particle_formats[p], particle_formats[norm]))
+        drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(particle_base_formats[p], particle_base_formats[norm]))
         plt.colorbar()
         plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show(block=False)
@@ -726,9 +727,9 @@ if args.run_multivariate_bayes:
         plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
     plt.grid(b=False, axis='both')
     plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.xticks(range(len(particles)), [particle_base_formats[p] for p in particles])
     plt.ylabel('True Particle')
-    plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
+    plt.yticks(range(len(particles)), [particle_base_formats[p] for p in particles])
     if exclusive_cut:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
     else:
