@@ -63,18 +63,18 @@ group_action.add_argument('--mimic-id', dest='run_mimic_id', action='store_true'
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
-group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['id', 'simple_bayes', 'chunked_bayes', *['chunked_bayes_by_' + v for v in variable_formats.keys()], 'multivariate_bayes'], default=[],
-                    help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, chunked_bayes, chunked_bayes_by_${ROOT_VAR_NAME}, multivariate_bayes')
-group_action.add_argument('--chunked-bayes', dest='run_chunked_bayes', action='store_true', default=False,
+group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['id', 'simple_bayes', 'univariate_bayes', *['univariate_bayes_by_' + v for v in variable_formats.keys()], 'multivariate_bayes'], default=[],
+                    help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, univariate_bayes, univariate_bayes_by_${ROOT_VAR_NAME}, multivariate_bayes')
+group_action.add_argument('--univariate-bayes', dest='run_univariate_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
-group_action.add_argument('--chunked-bayes-priors', dest='run_chunked_bayes_priors', action='store_true', default=False,
-                    help='Visualize the evolution of priors for the chunked Bayesian approach')
-group_action.add_argument('--chunked-outliers', dest='run_chunked_outliers', action='store_true', default=False,
-                    help='Visualize the outliers of the chunked Bayesian approach')
-group_action.add_argument('--chunked-multivariate-bayes', dest='run_chunked_multivariate_bayes', action='store_true', default=False,
+group_action.add_argument('--univariate-bayes-priors', dest='run_univariate_bayes_priors', action='store_true', default=False,
+                    help='Visualize the evolution of priors for the univariate Bayesian approach')
+group_action.add_argument('--univariate-bayes-outliers', dest='run_univariate_bayes_outliers', action='store_true', default=False,
+                    help='Visualize the outliers of the univariate Bayesian approach')
+group_action.add_argument('--multivariate-bayes', dest='run_multivariate_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping multiple variables fixed')
-group_action.add_argument('--chunked-multivariate-motivation', dest='run_chunked_multivariate_motivation', action='store_true', default=False,
-                    help='Motivate the usage of a chunked multivariate Bayesian approach')
+group_action.add_argument('--multivariate-bayes-motivation', dest='run_multivariate_bayes_motivation', action='store_true', default=False,
+                    help='Motivate the usage of a multivariate Bayesian approach')
 group_opt.add_argument('--cut', dest='cut', nargs='?', action='store', type=float, default=0.2,
                     help='Position of the default cut if only one is to be performed')
 group_opt.add_argument('--hold', dest='hold', nargs='?', action='store', default='pt',
@@ -82,13 +82,13 @@ group_opt.add_argument('--hold', dest='hold', nargs='?', action='store', default
 group_opt.add_argument('--holdings', dest='holdings', nargs='+', action='store', choices=['pt', 'cosTheta'], default=['pt', 'cosTheta'],
                     help='Variables upon which the multivariate a priori probabilities shall depend on')
 group_opt.add_argument('--norm', dest='norm', nargs='?', action='store', default='pi+',
-                    help='Particle by which to norm the a priori probabilities in the chunked Bayesian approach')
+                    help='Particle by which to norm the a priori probabilities in the univariate and multivariate Bayesian approach')
 group_opt.add_argument('--nbins', dest='nbins', nargs='?', action='store', type=int, default=10,
-                    help='Number of bins to use for splitting the `hold` variable in the chunked Bayesian approach')
+                    help='Number of bins to use for splitting the `hold` variable in the univariate and multivariate Bayesian approach')
 group_opt.add_argument('--ncuts', dest='ncuts', nargs='?', action='store', type=int, default=10,
                     help='Number of cuts to perform for the various curves')
 group_opt.add_argument('--niterations', dest='niterations', nargs='?', action='store', type=int, default=5,
-                    help='Number of iterations to perform for the iterative chunked Bayesian approach')
+                    help='Number of iterations to perform for the iterative univariate and multivariate Bayesian approach')
 group_opt.add_argument('--mc-best', dest='mc_best', action='store_true', default=False,
                     help='Use Monte Carlo information for calculating the best possible a priori probabilities instead of relying on an iterative approach')
 group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='+', action='store', choices=particles, default=['K+', 'pi+', 'mu+'],
@@ -290,7 +290,7 @@ def bayes(priors=defaultdict(lambda: 1., {}), mc_best=False):
     return cutting_columns
 
 
-def chunked_bayes(holdings=['pt'], nbins=10, detector='all', mc_best=False, niterations=7, norm='pi+', whis=1.5):
+def multivariate_bayes(holdings=['pt'], nbins=10, detector='all', mc_best=False, niterations=7, norm='pi+', whis=1.5):
     """Compute probabilities for particle hypothesis keeping the `hold` root variable fixed using a Bayesian approach.
 
     Args:
@@ -548,15 +548,15 @@ if args.diff_methods:
         elif m == 'simple_bayes':
             c = bayes(mc_best=True)
             title_suffixes += [' via simple Bayes']
-        elif m == 'chunked_bayes':
-            c = chunked_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
-            title_suffixes += [' via chunked Bayes']
-        elif m in ['chunked_bayes_by_' + v for v in variable_formats.keys()]:
-            explicit_hold = re.sub('chunked_bayes_by_', '', m)
-            c = chunked_bayes(holdings=[explicit_hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
+        elif m == 'univariate_bayes':
+            c = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
+            title_suffixes += [' via univariate Bayes']
+        elif m in ['univariate_bayes_by_' + v for v in variable_formats.keys()]:
+            explicit_hold = re.sub('univariate_bayes_by_', '', m)
+            c = multivariate_bayes(holdings=[explicit_hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
             title_suffixes += [' by ' + variable_formats[explicit_hold]]
         elif m == 'multivariate_bayes':
-            c = chunked_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
+            c = multivariate_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
             title_suffixes += [' by ' + ' & '.join([variable_formats[h] for h in holdings])]
         else:
             raise ValueError('received unknown method "%s"'%(m))
@@ -568,7 +568,7 @@ if args.diff_methods:
     plot_diff_epsilonPIDs(epsilonPIDs_approaches=epsilonPIDs_approaches, title_suffixes=title_suffixes, title_epsilonPIDs=title_epsilonPIDs)
     plot_diff_stats(stats_approaches=stats_approaches, title_suffixes=title_suffixes, particles_of_interest=particles_of_interest)
 
-if args.run_chunked_bayes:
+if args.run_univariate_bayes:
     cut = args.cut
 
     hold = args.hold
@@ -577,7 +577,7 @@ if args.run_chunked_bayes:
     nbins = args.nbins
     norm = args.norm
     mc_best = args.mc_best
-    cutting_columns, _, category_columns, intervals, _ = chunked_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
+    cutting_columns, _, category_columns, intervals, _ = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals[hold].items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals[hold].items()}
 
@@ -593,7 +593,7 @@ if args.run_chunked_bayes:
     plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
     plt.ylabel('True Positive Rate')
     plt.legend()
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
     epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns, cut=cut)
@@ -607,12 +607,12 @@ if args.run_chunked_bayes:
     plt.ylabel('True Particle')
     plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
     drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for a cut at $%.2f$'%(cut))
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
     plot_stats_by_particle(stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
 
-if args.run_chunked_bayes_priors:
+if args.run_univariate_bayes_priors:
     particles_of_interest = args.particles_of_interest
     hold = args.hold
     whis = args.whis
@@ -620,8 +620,8 @@ if args.run_chunked_bayes_priors:
     niterations = args.niterations
     norm = args.norm
 
-    iteration_priors_viaIter = chunked_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[-1]
-    intervals, iteration_priors_viaBest = chunked_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=True, nbins=nbins)[-2]
+    iteration_priors_viaIter = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)[-1]
+    intervals, iteration_priors_viaBest = multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=True, nbins=nbins)[-2]
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals[hold].items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals[hold].items()}
 
@@ -635,10 +635,10 @@ if args.run_chunked_bayes_priors:
         plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
         plt.ylabel('Relative Abundance')
         plt.legend()
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show(block=False)
 
-if args.run_chunked_outliers:
+if args.run_univariate_bayes_outliers:
     hold = args.hold
     whis = args.whis
     norm = args.norm
@@ -649,10 +649,10 @@ if args.run_chunked_outliers:
     plt.yscale('log')
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
     plt.ylabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
-if args.run_chunked_multivariate_bayes:
+if args.run_multivariate_bayes:
     cut = args.cut
 
     holdings = args.holdings
@@ -663,7 +663,7 @@ if args.run_chunked_multivariate_bayes:
     norm = args.norm
     particles_of_interest = args.particles_of_interest
 
-    cutting_columns, cutting_columns_isMax, category_columns, intervals, iteration_priors = chunked_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
+    cutting_columns, cutting_columns_isMax, category_columns, intervals, iteration_priors = multivariate_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
 
     interval_centers = {}
     interval_widths = {}
@@ -682,7 +682,7 @@ if args.run_chunked_multivariate_bayes:
         plt.yticks(range(nbins), interval_centers[holdings[1]][p])
         drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(particle_formats[p], particle_formats[norm]))
         plt.colorbar()
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
         plt.show(block=False)
 
     epsilonPIDs = epsilonPID_matrix(cutting_columns=cutting_columns_isMax, cut=cut)
@@ -697,12 +697,12 @@ if args.run_chunked_multivariate_bayes:
     plt.yticks(range(len(particles)), [particle_formats[p] for p in particles])
     drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ matrix for an exclusive cut at $%.2f$'%(cut))
     plt.colorbar()
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
     plot_stats_by_particle(stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
 
-if args.run_chunked_multivariate_motivation:
+if args.run_multivariate_bayes_motivation:
     norm = args.norm
     nbins = args.nbins
     whis = args.whis
@@ -763,7 +763,7 @@ if args.run_chunked_multivariate_motivation:
     cbar.set_ticklabels([particle_formats[pdg_to_name_faulty(v)] for v in set(particle_data[selection]['mcPDG'])])
     cbar.draw_all()
 
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Chunked Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
 
