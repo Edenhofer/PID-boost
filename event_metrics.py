@@ -52,14 +52,12 @@ detector_weights = {d: 1. for d in detectors + pseudo_detectors}
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 group_action = parser.add_argument_group('actions', 'Parameters which induce some kind of calculations and or visualizations')
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
-group_action.add_argument('--stats', dest='run_stats', action='store_true', default=False,
-                    help='Print out and visualize some statistics')
 group_action.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False,
                     help='Plot the binned logLikelihood for each particle')
-group_action.add_argument('--epsilonPID-matrix', dest='run_epsilonPID_matrix', action='store_true', default=False,
-                    help='Plot the confusion matrix of every events')
 group_action.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False,
                     help='Plot the binned logLikelihood for each detector')
+group_action.add_argument('--pid', dest='run_pid', action='store_true', default=False,
+                    help='Print out and visualize some statistics and the epsilonPID-matrix for the default particle ID cut')
 group_action.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', default=False,
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
@@ -497,23 +495,22 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
 
 
 args = parser.parse_args()
-if args.run_stats:
-    particles_of_interest = args.particles_of_interest
-    plot_stats_by_particle(stats(), particles_of_interest=particles_of_interest)
-
 if args.run_logLikelihood_by_particle:
     plot_logLikelihood_by_particle()
 
 if args.run_logLikelihood_by_detector:
     plot_logLikelihood_by_detector()
 
-if args.run_epsilonPID_matrix:
+if args.run_pid:
     cut = args.cut
     exclusive_cut = args.exclusive_cut
 
+    particles_of_interest = args.particles_of_interest
+
+    plot_stats_by_particle(stats(), particles_of_interest=particles_of_interest)
+
     c = add_isMax_column(particleIDs) if exclusive_cut else particleIDs
     epsilonPIDs = epsilonPID_matrix(cutting_columns=c, cut=cut)
-
     plt.figure()
     plt.imshow(epsilonPIDs, cmap='viridis')
     for (j, i), label in np.ndenumerate(epsilonPIDs):
