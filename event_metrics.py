@@ -77,6 +77,8 @@ group_opt.add_argument('--ncuts', dest='ncuts', nargs='?', action='store', type=
                     help='Number of cuts to perform for the various curves')
 group_opt.add_argument('--niterations', dest='niterations', nargs='?', action='store', type=int, default=5,
                     help='Number of iterations to perform for the iterative chunked Bayesian approach')
+group_opt.add_argument('--mc-best', dest='mc_best', action='store_true', default=False,
+                    help='Use Monte Carlo information for calculating the best possible a priori probabilities instead of relying on an iterative approach')
 group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='?', action='store', default='K+,pi+,mu+',
                     help='List of particles which shall be analysed')
 group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
@@ -528,7 +530,7 @@ if args.diff_methods:
     nbins = args.nbins
     niterations = args.niterations
     norm = args.norm
-    mc_best = False
+    mc_best = args.mc_best
 
     particles_of_interest = args.particles_of_interest.split(',')
 
@@ -570,7 +572,8 @@ if args.run_chunked_bayes:
     niterations = args.niterations
     nbins = args.nbins
     norm = args.norm
-    cutting_columns, _, category_columns, intervals, _ = chunked_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=False, niterations=niterations, nbins=nbins)
+    mc_best = args.mc_best
+    cutting_columns, _, category_columns, intervals, _ = chunked_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
     interval_centers = {key: np.array([np.mean(value[i:i+2]) for i in range(len(value)-1)]) for key, value in intervals[hold].items()}
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals[hold].items()}
 
@@ -649,7 +652,7 @@ if args.run_chunked_multivariate_bayes:
     cut = args.cut
 
     holdings = ['pt', 'cosTheta']
-    mc_best = True
+    mc_best = args.mc_best
     whis = args.whis
     niterations = args.niterations
     nbins = args.nbins
