@@ -16,5 +16,5 @@ The main inspiration for the actual program code heavily relies on the [b2-start
 * ~~Compare the dependable priors bayesian approach with the simple bayesian approach and the particle ID one~~
 * ~~Allow for multivariate a prior probabilities on two variables~~
 * ~~Compare the multi-dependant priors~~
-* Introduce alternative selection methods, e.g. maximum probability ~~and weighted accept-all~~
+* ~~Introduce an alternative selection methods, i.e. maximum probability~~
 * Add a simple Machine Learning approach using the likelihoods as input and the prediction as output
