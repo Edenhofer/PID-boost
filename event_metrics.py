@@ -12,11 +12,13 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.testing as npt
+import os
 import pandas as pd
 import root_pandas as rpd
 import scipy
 import scipy.interpolate
 import scipy.stats
+import sys
 
 import pdg
 
@@ -149,6 +151,10 @@ def pdg_to_name_faulty(pdg_code):
 
 def pyplot_sanitize_savefig(title, format='pdf', bbox_inches='tight', **kwargs):
     output_directory = args.output_directory
+
+    if not os.path.exists(output_directory):
+        print('Creating desired output directory "%s"'%(output_directory), file=sys.stderr)
+        os.makedirs(output_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
     title = re.sub('[\\\\$_^{}]', '', title)
     plt.savefig(output_directory + '/' + title + '.' + format, bbox_inches=bbox_inches, format=format, **kwargs)
