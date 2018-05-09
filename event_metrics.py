@@ -42,8 +42,8 @@ particle_formats = {'K+': r'$K^+$', 'K-': r'$K^-$', 'pi+': r'$\pi^+$', 'pi-': r'
 particle_base_formats = {'K+': r'$K$', 'K-': r'$K$', 'pi+': r'$\pi$', 'pi-': r'$\pi$', 'e+': r'$e$', 'e-': r'$e$', 'mu+': r'$\mu$', 'mu-': r'$\mu$', 'p+': r'$p$', 'p-': r'$p$', 'deuteron': r'$d$', 'Sigma+': r'$\Sigma$', 'Sigma-': r'$\Sigma$', 'Xi+': r'$\Xi$', 'Xi-': r'$\Xi$', 'None': r'$None$', 'nan': r'$NaN$'}
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 pseudo_detectors = ['all', 'default']
-variable_formats = {'p': r'$p$', 'pErr': r'$p_{Err}$', 'phi': r'$\phi$', 'phiErr': r'$\phi_{Err}$', 'pt': r'$p_t$', 'ptErr': r'${p_t}_{Err}$', 'Theta': r'$\Theta$', 'ThetaErr': r'$\Theta_{Err}$', 'cosTheta': r'$\cos(\Theta)$'}
-variable_units = {'p': r'$\mathrm{GeV/c}$', 'phi': r'$Rad$', 'pt': r'$\mathrm{GeV/c}$', 'Theta': r'$Rad$', 'cosTheta': r'$unitless$'}
+variable_formats = {'p': r'$p$', 'pErr': r'$p_{Err}$', 'phi': r'$\phi$', 'phiErr': r'$\phi_{Err}$', 'pt': r'$p_t$', 'ptErr': r'${p_t}_{Err}$', 'z0': r'$z0$', 'd0': r'$d0$', 'omega': r'$\omega$', 'omegaErr': r'$\omega_{Err}$', 'Theta': r'$\Theta$', 'ThetaErr': r'$\Theta_{Err}$', 'cosTheta': r'$\cos(\Theta)$'}
+variable_units = {'p': r'$\mathrm{GeV/c}$', 'phi': r'$Rad$', 'pt': r'$\mathrm{GeV/c}$', 'z0': r'$?$', 'd0': r'$?$', 'omega': r'$?$', 'Theta': r'$Rad$', 'cosTheta': r'$unitless$'}
 # Use the detector weights to exclude certain detectors, e.g. for debugging purposes
 # Bare in mind that if all likelihoods are calculated correctly this should never improve the result
 detector_weights = {d: 1. for d in detectors + pseudo_detectors}
