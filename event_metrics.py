@@ -97,7 +97,7 @@ group_opt.add_argument('--niterations', dest='niterations', nargs='?', action='s
                     help='Number of iterations to perform for the iterative univariate and multivariate Bayesian approach')
 group_opt.add_argument('--mc-best', dest='mc_best', action='store_true', default=False,
                     help='Use Monte Carlo information for calculating the best possible a priori probabilities instead of relying on an iterative approach')
-group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='+', action='store', choices=particles, default=['K+', 'pi+', 'mu+'],
+group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='+', action='store', choices=particles, default=particles,
                     help='List of particles which shall be analysed')
 group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
                     help='Whiskers with which the IQR will be IQR')
