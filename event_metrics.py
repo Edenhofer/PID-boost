@@ -65,7 +65,7 @@ group_action.add_argument('--mimic-pid', dest='run_mimic_pid', action='store_tru
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
-group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['pid', 'simple_bayes', 'univariate_bayes', *['univariate_bayes_by_' + v for v in variable_formats.keys()], 'multivariate_bayes'], default=[],
+group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['pid', 'flat_bayes', 'simple_bayes', 'univariate_bayes', *['univariate_bayes_by_' + v for v in variable_formats.keys()], 'multivariate_bayes'], default=[],
                     help='Compare two given methods of selecting particles')
 group_action.add_argument('--univariate-bayes', dest='run_univariate_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
