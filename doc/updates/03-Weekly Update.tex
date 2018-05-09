@@ -1,0 +1,149 @@
+\documentclass{beamer}
+	\usepackage[utf8]{inputenc}		% required for umlauts
+	\usepackage[ngerman]{babel}		% required for umlauts
+	\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage{libertine}			% enable this on Windows to allow for microtype
+	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
+
+	\usepackage{mathtools}		% required for formulas
+
+	\usepackage{graphicx}		% required to insert images
+	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
+	\usepackage[tracking=true]{microtype} % required to change character spacing
+
+	\usepackage{hyperref}		% insert clickable references
+
+	\usepackage{datetime}		% flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+
+	\usepackage{geometry}
+	\usepackage{scrextend}		% allow arbitrary indentation
+
+	\usepackage{color}
+
+	\usetheme{default}
+	\usecolortheme{beaver}
+
+	\title{Third Weekly Update on `Optimization~of~Particle~Identification'}
+	\subtitle{Exclusive Cuts, Multivariate Bayes, Efficiency Analysis}
+	\author{Gordian Edenhofer}
+	\date{\today}
+
+
+\begin{document}
+\begin{frame}
+	\frametitle{Git Log}
+
+	\begin{itemize}
+		\item Introduce alternative selection methods, i.e. maximum probability
+		\item Allow for priors depending on two variables
+		\item Visualize multivariate Bayesian approach
+		\item Analyse the effectiveness of multivariate Bayesian approach
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Dataset}
+	\framesubtitle{Description}
+
+	Tested Sample Decay: \\
+	\hspace{2.5em}
+	$B^+ \rightarrow \mu^+ \nu_{\mu}$
+	\hspace{2em}
+	$B^- \rightarrow \pi^- D^0$
+	\\
+	\begin{addmargin}[1em]{0em}
+		$D^0 \rightarrow K^- \pi^+$ ,
+		$D^0 \rightarrow K^- \pi^+ \pi^0$,
+		$D^0 \rightarrow K^- \pi^+ \pi^+ \pi^-$,
+		$D^0 \rightarrow K^- K^+$,
+		$D^0 \rightarrow \pi^+ \pi^0$
+	\end{addmargin}
+
+	\vspace{1em}
+
+	Expectations:
+	\begin{itemize}
+		\item Lots of kaons and pions
+		\item High ID rate due to discarded background
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes}
+	\framesubtitle{Motivation}
+
+	\begin{columns}[T]
+		\begin{column}{.7\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Multivariate Bayesian Approach: Multi-axes Histogram of pt, cosTheta}}}
+		\end{column}
+		\pause
+		\begin{column}{.3\textwidth}
+			\centering
+			\vspace{5em}
+			\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Heatmap of Correlation Matrix of Root Variables}}}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes}
+	\framesubtitle{Analysis}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Multivariate Bayesian Approach: K Spectra Ratios Relative to pi}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes vs. ParticleID}
+	\framesubtitle{$\epsilon_{PID}$-matrix Visualization}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, by pT & cos(theta)}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes vs. ParticleID}
+	\framesubtitle{Statistics}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Statistics: K Identification via PID, by pT & cos(theta)}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes vs. univariate Bayes}
+	\framesubtitle{$\epsilon_{PID}$-matrix Visualization}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via univariate Bayes, by pT & cos(theta)}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes vs. univariate Bayes}
+	\framesubtitle{Statistics}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Statistics: K Identification via univariate Bayes, by pT & cos(theta)}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Appendix}
+	\framesubtitle{Univariate Bayes vs. ParticleID -- $\epsilon_{PID}$-matrix Visualization}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, via univariate Bayes}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Appendix}
+	\framesubtitle{Univariate Bayes vs. ParticleID -- Statistics}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res/Diff Statistics: K Identification via PID, via univariate Bayes}}}
+\end{frame}
+
+\end{document}
