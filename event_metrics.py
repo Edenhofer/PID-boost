@@ -99,9 +99,9 @@ group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', 
                     help='List of particles which shall be analysed')
 group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
                     help='Whiskers with which the IQR will be IQR')
-group_util.add_argument('-o', dest='output_directory', nargs='?', action='store', default='doc/updates/res/', const='./',
+group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='doc/updates/res/',
                     help='Directory for the generated output (mainly plots)')
-group_util.add_argument('-i', dest='input_directory', nargs='?', action='store', default='./', const='./',
+group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for root files for each particle')
 
 try:
