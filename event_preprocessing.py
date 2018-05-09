@@ -12,7 +12,7 @@ detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm', 'all', 'default']
 
 # Default list of variables which should be exported to the root file
 root_vars = ['isSignal', 'mcErrors', 'mcPDG']
-root_vars += ['pt', 'ptErr', 'cosTheta', 'cosThetaErr', 'Theta', 'ThetaErr']
+root_vars += ['p', 'pErr', 'phi', 'phiErr', 'pt', 'ptErr', 'z0', 'd0', 'omega', 'cosTheta', 'cosThetaErr', 'Theta', 'ThetaErr']
 root_vars += ['kaonID', 'pionID','electronID',  'muonID', 'protonID', 'deuteronID']
 
 # Import mdst file and fill particle list without applying any cuts
@@ -24,6 +24,7 @@ for p in particles:
     for d in detectors:
         for p_2 in particles:
             child_vars += ['pidLogLikelihoodValueExpert(' + str(pdg.from_name(p_2)) + ', ' + str(d) + ')']
+            child_vars += ['pidProbabilityExpert(' + str(pdg.from_name(p_2)) + ', ' + str(d) + ')']
 
     # Export variables of the analysis to NTuple root file
     # Inspect the value using modularAnalysis.printVariableValues('K+', `varName(varArg)`, path=path)
