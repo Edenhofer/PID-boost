@@ -38,12 +38,12 @@ except ImportError:
 # Base definitions of stable particles and detector data
 particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
 particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
-particle_formats = {'K+': r'$K^+$', 'pi+': r'$\pi^+$', 'e+': r'$e^+$', 'mu+': r'$\mu^+$', 'p+': r'$p^+$', 'deuteron': r'$d$', 'K-': r'$K^-$', 'pi-': r'$\pi^-$', 'e-': r'$e^-$', 'mu-': r'$\mu^-$', 'p-': r'$p^-$', 'None': 'None', 'nan': 'NaN'}
-particle_base_formats = {'K+': r'$K$', 'pi+': r'$\pi$', 'e+': r'$e$', 'mu+': r'$\mu$', 'p+': r'$p$', 'deuteron': r'$d$', 'K-': r'$K$', 'pi-': r'$\pi$', 'e-': r'$e$', 'mu-': r'$\mu$', 'p-': r'$p$', 'None': 'None', 'nan': 'NaN'}
+particle_formats = {'K+': r'$K^+$', 'K-': r'$K^-$', 'pi+': r'$\pi^+$', 'pi-': r'$\pi^-$', 'e+': r'$e^+$', 'e-': r'$e^-$', 'mu+': r'$\mu^+$', 'mu-': r'$\mu^-$', 'p+': r'$p^+$', 'p-': r'$p^-$', 'anti-p-': r'$\bar{p}^-$', 'deuteron': r'$d$', 'anti-deuteron': r'$\bar{d}$', 'Sigma+': r'$\Sigma^+$', 'Sigma-': r'$\Sigma^-$', 'anti-Sigma+': r'$\bar{\Sigma}^+$', 'anti-Sigma-': r'$\bar{\Sigma}^-$', 'Xi+': r'$\Xi^+$', 'Xi-': r'$\Xi^-$', 'anti-Xi+': r'$\bar{\Xi}^+$', 'anti-Xi-': r'$\bar{\Xi}^-$', 'None': r'$None$', 'nan': r'$NaN$'}
+particle_base_formats = {'K+': r'$K$', 'K-': r'$K$', 'pi+': r'$\pi$', 'pi-': r'$\pi$', 'e+': r'$e$', 'e-': r'$e$', 'mu+': r'$\mu$', 'mu-': r'$\mu$', 'p+': r'$p$', 'p-': r'$p$', 'deuteron': r'$d$', 'Sigma+': r'$\Sigma$', 'Sigma-': r'$\Sigma$', 'Xi+': r'$\Xi$', 'Xi-': r'$\Xi$', 'None': r'$None$', 'nan': r'$NaN$'}
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
 pseudo_detectors = ['all', 'default']
-variable_formats = {'pt': r'$p_T$', 'Theta': r'$\theta$', 'cosTheta': r'$\cos(\theta)$'}
-variable_units = {'pt': r'$\mathrm{GeV/c}$', 'Theta': r'$Rad$', 'cosTheta': 'unitless'}
+variable_formats = {'p': r'$p$', 'pErr': r'$p_{Err}$', 'phi': r'$\phi$', 'phiErr': r'$\phi_{Err}$', 'pt': r'$p_t$', 'ptErr': r'${p_t}_{Err}$', 'Theta': r'$\Theta$', 'ThetaErr': r'$\Theta_{Err}$', 'cosTheta': r'$\cos(\Theta)$'}
+variable_units = {'p': r'$\mathrm{GeV/c}$', 'phi': r'$Rad$', 'pt': r'$\mathrm{GeV/c}$', 'Theta': r'$Rad$', 'cosTheta': r'$unitless$'}
 # Use the detector weights to exclude certain detectors, e.g. for debugging purposes
 # Bare in mind that if all likelihoods are calculated correctly this should never improve the result
 detector_weights = {d: 1. for d in detectors + pseudo_detectors}
@@ -52,6 +52,7 @@ detector_weights = {d: 1. for d in detectors + pseudo_detectors}
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 group_action = parser.add_argument_group('actions', 'Parameters which induce some kind of calculations and or visualizations')
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
+group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
 group_action.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False,
                     help='Plot the binned logLikelihood for each particle')
 group_action.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False,
@@ -98,6 +99,8 @@ group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', 
                     help='List of particles which shall be analysed')
 group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
                     help='Whiskers with which the IQR will be IQR')
+group_util.add_argument('-o', dest='output_directory', nargs='?', action='store', default='doc/updates/res/', const='./',
+                    help='Directory for the generated output (mainly plots)')
 
 try:
     argcomplete.autocomplete(parser)
@@ -143,6 +146,13 @@ def pdg_to_name_faulty(pdg_code):
         return pdg.to_name(int(pdg_code))
     except LookupError:
         return 'nan'
+
+
+def pyplot_sanitize_savefig(title, format='pdf', bbox_inches='tight', **kwargs):
+    output_directory = args.output_directory
+
+    title = re.sub('[\\\\$_^{}]', '', title)
+    plt.savefig(output_directory + '/' + title + '.' + format, bbox_inches=bbox_inches, format=format, **kwargs)
 
 
 def basf2_Code(particle):
@@ -397,7 +407,7 @@ def plot_logLikelihood_by_particle(nbins=50):
                 column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
                 data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
 
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/logLikelihood by Particle: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        pyplot_sanitize_savefig('logLikelihood by Particle: ' + drawing_title.get_text())
         plt.show(block=False)
 
 
@@ -416,7 +426,7 @@ def plot_logLikelihood_by_detector(nbins=50):
             column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
             data[p][data[p]['isSignal'] == 0][column].hist(bins=nbins)
 
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/logLikelihood by Detector: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        pyplot_sanitize_savefig('logLikelihood by Detector: ' + drawing_title.get_text())
         plt.show(block=False)
 
 
@@ -431,7 +441,7 @@ def plot_stats_by_particle(stat, particles_of_interest=particles):
         plt.ylabel('Particle Rates')
         drawing_title = plt.title('%s Identification'%(particle_base_formats[p]))
         plt.legend()
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Statistics: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        pyplot_sanitize_savefig('Statistics: ' + drawing_title.get_text())
         plt.show(block=False)
 
 
@@ -457,7 +467,7 @@ def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_ep
     fig.subplots_adjust(right=0.85)
     cbar_ax = fig.add_axes([0.88, 0.20, 0.05, 0.6])
     plt.colorbar(cax=cbar_ax)
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Diff Heatmap: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes) + '.pdf'), bbox_inches='tight')
+    pyplot_sanitize_savefig('Diff Heatmap: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes))
     plt.show(block=False)
 
 
@@ -492,7 +502,7 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
         plt.ylabel('Rate Ratios')
         plt.legend()
 
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Diff Statistics: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes) + '.pdf'), bbox_inches='tight')
+        pyplot_sanitize_savefig('Diff Statistics: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes))
         plt.show(block=False)
 
 
@@ -520,7 +530,7 @@ if args.run_stats:
         plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
         plt.xticks(range(len(unique_particles)), [particle_formats[pdg_to_name_faulty(k)] for k in unique_particles])
         drawing_title = plt.title('True Particle Abundances in the reconstructed Decays')
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        pyplot_sanitize_savefig('General Purpose Statistics: ' + drawing_title.get_text())
         plt.show(block=False)
 
 if args.run_pid:
@@ -547,7 +557,7 @@ if args.run_pid:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
     else:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    pyplot_sanitize_savefig('Particle ID Approach: ' + drawing_title.get_text())
     plt.show(block=False)
 
 if args.run_mimic_pid:
@@ -641,7 +651,7 @@ if args.run_univariate_bayes:
     plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
     plt.ylabel('True Positive Rate')
     plt.legend()
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    pyplot_sanitize_savefig('Univariate Bayesian Approach: ' + drawing_title.get_text())
     plt.show(block=False)
 
     c = add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
@@ -659,7 +669,7 @@ if args.run_univariate_bayes:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
     else:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    pyplot_sanitize_savefig('Univariate Bayesian Approach: ' + drawing_title.get_text())
     plt.show(block=False)
 
     plot_stats_by_particle(stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
@@ -687,7 +697,7 @@ if args.run_univariate_bayes_priors:
         plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
         plt.ylabel('Relative Abundance')
         plt.legend()
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        pyplot_sanitize_savefig('Univariate Bayesian Approach: ' + drawing_title.get_text())
         plt.show(block=False)
 
 if args.run_univariate_bayes_outliers:
@@ -701,7 +711,7 @@ if args.run_univariate_bayes_outliers:
     plt.yscale('log')
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
     plt.ylabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Univariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    pyplot_sanitize_savefig('Univariate Bayesian Approach: ' + drawing_title.get_text())
     plt.show(block=False)
 
 if args.run_multivariate_bayes:
@@ -735,7 +745,7 @@ if args.run_multivariate_bayes:
         plt.yticks(range(nbins), interval_centers[holdings[1]][p])
         drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(particle_base_formats[p], particle_base_formats[norm]))
         plt.colorbar()
-        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
         plt.show(block=False)
 
     c = add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
@@ -754,7 +764,7 @@ if args.run_multivariate_bayes:
     else:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
     plt.colorbar()
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
     plt.show(block=False)
 
     plot_stats_by_particle(stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
@@ -782,7 +792,7 @@ if args.run_multivariate_bayes_motivation:
     plt.yticks(range(len(holdings)), [variable_formats[v] for v in holdings])
     plt.colorbar()
     drawing_title = plt.title('Heatmap of Correlation Matrix of Root Variables')
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
     plt.show(block=False)
 
     selection = True
@@ -820,7 +830,7 @@ if args.run_multivariate_bayes_motivation:
     cbar.set_ticklabels([particle_formats[pdg_to_name_faulty(v)] for v in set(particle_data[selection]['mcPDG'])])
     cbar.draw_all()
 
-    plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/Multivariate Bayesian Approach: ' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+    pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
     plt.show(block=False)
 
 
