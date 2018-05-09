@@ -17,6 +17,6 @@ The main inspiration for the actual program code heavily relies on the [b2-start
 * ~~Allow for multivariate a prior probabilities on two variables~~
 * ~~Compare the multi-dependant priors~~
 * ~~Introduce an alternative selection methods, i.e. maximum probability~~
-* Use different sets of data to diversify results
+* ~~Use different sets of data to diversify results~~
 * Output efficiency tables for various approaches
 * Add a simple Machine Learning approach using the likelihoods as input and the prediction as output
