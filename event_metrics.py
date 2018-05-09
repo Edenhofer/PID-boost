@@ -56,6 +56,8 @@ group_action.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood
                     help='Plot the binned logLikelihood for each particle')
 group_action.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False,
                     help='Plot the binned logLikelihood for each detector')
+group_action.add_argument('--stats', dest='run_stats', action='store_true', default=False,
+                    help='Visualize some general purpose statistics of the dataset')
 group_action.add_argument('--pid', dest='run_pid', action='store_true', default=False,
                     help='Print out and visualize some statistics and the epsilonPID-matrix for the default particle ID cut')
 group_action.add_argument('--mimic-pid', dest='run_mimic_pid', action='store_true', default=False,
@@ -500,6 +502,26 @@ if args.run_logLikelihood_by_particle:
 
 if args.run_logLikelihood_by_detector:
     plot_logLikelihood_by_detector()
+
+if args.run_stats:
+    particles_of_interest = args.particles_of_interest
+
+    for p in particles_of_interest:
+        # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction
+        particle_data = data[p]
+
+        unique_particles = np.unique(particle_data['mcPDG'].values)
+        true_abundance = np.array([particle_data[particle_data['mcPDG'] == code].shape[0] for code in unique_particles])
+        sorted_range = np.argsort(true_abundance)
+        true_abundance = true_abundance[sorted_range][::-1]
+        unique_particles = unique_particles[sorted_range][::-1]
+
+        plt.figure()
+        plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
+        plt.xticks(range(len(unique_particles)), [particle_formats[pdg_to_name_faulty(k)] for k in unique_particles])
+        drawing_title = plt.title('True Particle Abundances in the reconstructed Decays')
+        plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
+        plt.show(block=False)
 
 if args.run_pid:
     cut = args.cut
