@@ -101,14 +101,13 @@ group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=fl
                     help='Whiskers with which the IQR will be IQR')
 group_util.add_argument('-o', dest='output_directory', nargs='?', action='store', default='doc/updates/res/', const='./',
                     help='Directory for the generated output (mainly plots)')
+group_util.add_argument('-i', dest='input_directory', nargs='?', action='store', default='./', const='./',
+                    help='Directory in which the program shall search for root files for each particle')
 
 try:
     argcomplete.autocomplete(parser)
 except NameError:
     pass
-
-# Read in all the particle's information into a dictionary of panda frames
-data = {p: rpd.read_root(p + '.root') for p in particles}
 
 
 def pdg_from_name_faulty(particle):
@@ -507,6 +506,12 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
 
 
 args = parser.parse_args()
+
+# Read in all the particle's information into a dictionary of pandas-frames
+input_directory =  args.input_directory
+data = {p: rpd.read_root(input_directory + '/' + p + '.root') for p in particles}
+
+
 if args.run_logLikelihood_by_particle:
     plot_logLikelihood_by_particle()
 
