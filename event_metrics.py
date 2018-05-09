@@ -208,7 +208,7 @@ def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
 
 
 def epsilonPID_matrix(cut=0.2, cutting_columns=particleIDs):
-    """Calculate the epsilon_PID matrix for misclassifying particles, print the result and plot a heatmap.
+    """Calculate the epsilon_PID matrix for misclassifying particles: rows represent true particles, columns the classification.
 
     Args:
         cut: Position of the cut for the cutting_columns.
@@ -218,9 +218,9 @@ def epsilonPID_matrix(cut=0.2, cutting_columns=particleIDs):
         A numpy matrix of epsilon_PID values. The `epsilon_PID[i][j]` value being the probability given it is a particle ''i'' that it will be categorized as particle ''j''.
 
     """
-    epsilonPIDs = np.zeros(shape=(len(particles), len(particles)))
-    for i, i_p in enumerate(particles):
-        for j, j_p in enumerate(particles):
+    epsilonPIDs = np.zeros(shape=(len(data.keys()), len(cutting_columns.keys())))
+    for i, i_p in enumerate(data.keys()):
+        for j, j_p in enumerate(cutting_columns.keys()):
             # The deuterium code is not properly stored in the mcPDG variable, hence the use of `pdg_from_name_faulty()`
             epsilonPIDs[i][j] = np.float64(data[i_p][((data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (data[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))) & (data[i_p][cutting_columns[j_p]] > cut)].shape[0]) / np.float64(data[i_p][(data[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (data[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))].shape[0])
 
