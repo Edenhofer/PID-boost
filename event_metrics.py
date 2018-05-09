@@ -58,12 +58,12 @@ group_action.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood
                     help='Plot the binned logLikelihood for each detector')
 group_action.add_argument('--pid', dest='run_pid', action='store_true', default=False,
                     help='Print out and visualize some statistics and the epsilonPID-matrix for the default particle ID cut')
-group_action.add_argument('--mimic-id', dest='run_mimic_id', action='store_true', default=False,
+group_action.add_argument('--mimic-pid', dest='run_mimic_pid', action='store_true', default=False,
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
-group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['id', 'simple_bayes', 'univariate_bayes', *['univariate_bayes_by_' + v for v in variable_formats.keys()], 'multivariate_bayes'], default=[],
-                    help='Compare two given methods of selecting particles; Possible values include id, flat_bayes, simple_bayes, univariate_bayes, univariate_bayes_by_${ROOT_VAR_NAME}, multivariate_bayes')
+group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['pid', 'simple_bayes', 'univariate_bayes', *['univariate_bayes_by_' + v for v in variable_formats.keys()], 'multivariate_bayes'], default=[],
+                    help='Compare two given methods of selecting particles')
 group_action.add_argument('--univariate-bayes', dest='run_univariate_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
 group_action.add_argument('--univariate-bayes-priors', dest='run_univariate_bayes_priors', action='store_true', default=False,
@@ -226,7 +226,7 @@ def epsilonPID_matrix(cut=0.2, cutting_columns=particleIDs):
     return epsilonPIDs
 
 
-def mimic_ID(detector_weights=detector_weights, check=True):
+def mimic_pid(detector_weights=detector_weights, check=True):
     """Mimic the calculation of the particleIDs and compare them to their value provided by the analysis software.
 
     Args:
@@ -278,7 +278,7 @@ def bayes(priors=defaultdict(lambda: 1., {}), mc_best=False):
     cutting_columns = {k: 'bayes_' + v for k, v in particleIDs.items()}
 
     for particle_data in data.values():
-        # TODO: Use mimic_ID here to allow for weighted detector
+        # TODO: Use mimic_pid here to allow for weighted detector
 
         for p in particles:
             denominator = 0.
@@ -528,8 +528,8 @@ if args.run_pid:
     plt.savefig(re.sub('[\\\\$_^{}]', '', 'doc/updates/res/' + drawing_title.get_text() + '.pdf'), bbox_inches='tight')
     plt.show(block=False)
 
-if args.run_mimic_id:
-    mimic_ID()
+if args.run_mimic_pid:
+    mimic_pid()
 
 if args.run_bayes:
     mc_best = args.mc_best
@@ -560,7 +560,7 @@ if args.diff_methods:
     stats_approaches = []
     title_suffixes = []
     for m in methods:
-        if m == 'id':
+        if m == 'pid':
             c = particleIDs
             title_suffixes += [' via PID']
         elif m == 'flat_bayes':
