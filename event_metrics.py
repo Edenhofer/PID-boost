@@ -50,6 +50,10 @@ variable_units = {'p': r'$\mathrm{GeV/c}$', 'phi': r'$Rad$', 'pt': r'$\mathrm{Ge
 # Bare in mind that if all likelihoods are calculated correctly this should never improve the result
 detector_weights = {d: 1. for d in detectors + pseudo_detectors}
 
+# Dictionary of variables and their boundaries for possible values they might yield
+physical_boundaries = {'pt': (0, 5.5), 'cosTheta': (-1, 1)}
+
+
 # Assemble the allowed command line options
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 group_action = parser.add_argument_group('actions', 'Parameters which induce some kind of calculations and or visualizations')
@@ -529,6 +533,10 @@ args = parser.parse_args()
 # Read in all the particle's information into a dictionary of pandas-frames
 input_directory =  args.input_directory
 data = {p: rpd.read_root(input_directory + '/' + p + '.root') for p in particles}
+# Clean up the data; Remove obviously un-physical values
+for particle_data in data.values():
+    for k, bounds in physical_boundaries.items():
+        particle_data.drop(particle_data[(particle_data[k] < bounds[0]) | (particle_data[k] > bounds[1])].index, inplace=True)
 
 
 if args.run_logLikelihood_by_particle:
