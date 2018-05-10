@@ -101,10 +101,10 @@ group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', 
                     help='List of particles which shall be analysed')
 group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
                     help='Whiskers with which the IQR will be IQR')
-group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='doc/updates/res/',
-                    help='Directory for the generated output (mainly plots)')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for root files for each particle')
+group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='doc/updates/res/',
+                    help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'.')
 
 try:
     argcomplete.autocomplete(parser)
@@ -162,6 +162,8 @@ def pyplot_sanitize_savefig(title, format='pdf', bbox_inches='tight', **kwargs):
     """
     output_directory = args.output_directory
 
+    if output_directory == '/dev/null':
+        return
     if not os.path.exists(output_directory):
         print('Creating desired output directory "%s"'%(output_directory), file=sys.stderr)
         os.makedirs(output_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
