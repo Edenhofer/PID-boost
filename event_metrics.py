@@ -106,6 +106,10 @@ group_util.add_argument('-i', '--input', dest='input_directory', action='store',
                     help='Directory in which the program shall search for root files for each particle')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='doc/updates/res/',
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'.')
+group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
+                    help='Run interactively, i.e. show plots')
+group_util.add_argument('--non-interactive', dest='interactive', action='store_false', default=True,
+                    help='Run non-interactively and hence unattended, i.e. show no plots')
 
 try:
     argcomplete.autocomplete(parser)
@@ -150,8 +154,8 @@ def pdg_to_name_faulty(pdg_code):
         return 'nan'
 
 
-def pyplot_sanitize_savefig(title, format='pdf', bbox_inches='tight', **kwargs):
-    """Save the current figure given an arbitrary title to a configurable location and sanitize its name.
+def pyplot_sanitize_show(title, format='pdf', bbox_inches='tight', **kwargs):
+    """Save (not /dev/null) and show (interactive) the current figure given an arbitrary title to a configurable location and sanitize its name.
 
     Args:
         title: Title of the plot and baseline for the name of the file.
@@ -162,15 +166,19 @@ def pyplot_sanitize_savefig(title, format='pdf', bbox_inches='tight', **kwargs):
 
     """
     output_directory = args.output_directory
+    if output_directory != '/dev/null':
+        if not os.path.exists(output_directory):
+            print('Creating desired output directory "%s"'%(output_directory), file=sys.stderr)
+            os.makedirs(output_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
-    if output_directory == '/dev/null':
-        return
-    if not os.path.exists(output_directory):
-        print('Creating desired output directory "%s"'%(output_directory), file=sys.stderr)
-        os.makedirs(output_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+        title = re.sub('[\\\\$_^{}]', '', title)
+        plt.savefig(output_directory + '/' + title + '.' + format, bbox_inches=bbox_inches, format=format, **kwargs)
 
-    title = re.sub('[\\\\$_^{}]', '', title)
-    plt.savefig(output_directory + '/' + title + '.' + format, bbox_inches=bbox_inches, format=format, **kwargs)
+    interactive = args.interactive
+    if interactive:
+        plt.show(block=False)
+    else:
+        plt.close()
 
 
 def basf2_Code(particle):
@@ -426,8 +434,7 @@ def plot_logLikelihood_by_particle(nbins=50):
                 column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
                 data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
 
-        pyplot_sanitize_savefig('logLikelihood by Particle: ' + drawing_title.get_text())
-        plt.show(block=False)
+        pyplot_sanitize_show('logLikelihood by Particle: ' + drawing_title.get_text())
 
 
 def plot_logLikelihood_by_detector(nbins=50):
@@ -445,8 +452,7 @@ def plot_logLikelihood_by_detector(nbins=50):
             column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
             data[p][data[p]['isSignal'] == 0][column].hist(bins=nbins)
 
-        pyplot_sanitize_savefig('logLikelihood by Detector: ' + drawing_title.get_text())
-        plt.show(block=False)
+        pyplot_sanitize_show('logLikelihood by Detector: ' + drawing_title.get_text())
 
 
 def plot_stats_by_particle(stat, particles_of_interest=particles):
@@ -460,8 +466,7 @@ def plot_stats_by_particle(stat, particles_of_interest=particles):
         plt.ylabel('Particle Rates')
         drawing_title = plt.title('%s Identification'%(particle_base_formats[p]))
         plt.legend()
-        pyplot_sanitize_savefig('Statistics: ' + drawing_title.get_text())
-        plt.show(block=False)
+        pyplot_sanitize_show('Statistics: ' + drawing_title.get_text())
 
 
 def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_epsilonPIDs=''):
@@ -486,8 +491,7 @@ def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_ep
     fig.subplots_adjust(right=0.85)
     cbar_ax = fig.add_axes([0.88, 0.20, 0.05, 0.6])
     plt.colorbar(cax=cbar_ax)
-    pyplot_sanitize_savefig('Diff Heatmap: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes))
-    plt.show(block=False)
+    pyplot_sanitize_show('Diff Heatmap: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes))
 
 
 def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interest=particles):
@@ -525,8 +529,7 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
         plt.ylabel('Rate Ratios')
         plt.legend()
 
-        pyplot_sanitize_savefig('Diff Statistics: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes))
-        plt.show(block=False)
+        pyplot_sanitize_show('Diff Statistics: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes))
 
 
 args = parser.parse_args()
@@ -563,8 +566,7 @@ if args.run_stats:
         plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
         plt.xticks(range(len(unique_particles)), [particle_formats[pdg_to_name_faulty(k)] for k in unique_particles])
         drawing_title = plt.title('True Particle Abundances in the reconstructed Decays')
-        pyplot_sanitize_savefig('General Purpose Statistics: ' + drawing_title.get_text())
-        plt.show(block=False)
+        pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
 
 if args.run_pid:
     cut = args.cut
@@ -590,8 +592,7 @@ if args.run_pid:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
     else:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
-    pyplot_sanitize_savefig('Particle ID Approach: ' + drawing_title.get_text())
-    plt.show(block=False)
+    pyplot_sanitize_show('Particle ID Approach: ' + drawing_title.get_text())
 
 if args.run_mimic_pid:
     mimic_pid()
@@ -684,8 +685,7 @@ if args.run_univariate_bayes:
     plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
     plt.ylabel('True Positive Rate')
     plt.legend()
-    pyplot_sanitize_savefig('Univariate Bayesian Approach: ' + drawing_title.get_text())
-    plt.show(block=False)
+    pyplot_sanitize_show('Univariate Bayesian Approach: ' + drawing_title.get_text())
 
     c = add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
     epsilonPIDs = epsilonPID_matrix(cutting_columns=c, cut=cut)
@@ -702,8 +702,7 @@ if args.run_univariate_bayes:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
     else:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
-    pyplot_sanitize_savefig('Univariate Bayesian Approach: ' + drawing_title.get_text())
-    plt.show(block=False)
+    pyplot_sanitize_show('Univariate Bayesian Approach: ' + drawing_title.get_text())
 
     plot_stats_by_particle(stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
 
@@ -730,8 +729,7 @@ if args.run_univariate_bayes_priors:
         plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
         plt.ylabel('Relative Abundance')
         plt.legend()
-        pyplot_sanitize_savefig('Univariate Bayesian Approach: ' + drawing_title.get_text())
-        plt.show(block=False)
+        pyplot_sanitize_show('Univariate Bayesian Approach: ' + drawing_title.get_text())
 
 if args.run_univariate_bayes_outliers:
     hold = args.hold
@@ -747,8 +745,7 @@ if args.run_univariate_bayes_outliers:
     plt.yscale('log')
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
     plt.ylabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
-    pyplot_sanitize_savefig('Univariate Bayesian Approach: ' + drawing_title.get_text())
-    plt.show(block=False)
+    pyplot_sanitize_show('Univariate Bayesian Approach: ' + drawing_title.get_text())
 
 if args.run_multivariate_bayes:
     cut = args.cut
@@ -781,8 +778,7 @@ if args.run_multivariate_bayes:
         plt.yticks(range(nbins), interval_centers[holdings[1]][p])
         drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(particle_base_formats[p], particle_base_formats[norm]))
         plt.colorbar()
-        pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
-        plt.show(block=False)
+        pyplot_sanitize_show('Multivariate Bayesian Approach: ' + drawing_title.get_text())
 
     c = add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
     epsilonPIDs = epsilonPID_matrix(cutting_columns=c, cut=cut)
@@ -800,8 +796,7 @@ if args.run_multivariate_bayes:
     else:
         drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
     plt.colorbar()
-    pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
-    plt.show(block=False)
+    pyplot_sanitize_show('Multivariate Bayesian Approach: ' + drawing_title.get_text())
 
     plot_stats_by_particle(stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
 
@@ -828,8 +823,7 @@ if args.run_multivariate_bayes_motivation:
     plt.yticks(range(len(holdings)), [variable_formats[v] for v in holdings])
     plt.colorbar()
     drawing_title = plt.title('Heatmap of Correlation Matrix of Root Variables')
-    pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
-    plt.show(block=False)
+    pyplot_sanitize_show('Multivariate Bayesian Approach: ' + drawing_title.get_text())
 
     selection = np.ones(particle_data.shape[0], dtype=bool)
     if whis:
@@ -867,8 +861,7 @@ if args.run_multivariate_bayes_motivation:
     cbar.set_ticklabels([particle_formats[pdg_to_name_faulty(v)] for v in np.unique(particle_data[selection]['mcPDG'].values)])
     cbar.draw_all()
 
-    pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
-    plt.show(block=False)
+    pyplot_sanitize_show('Multivariate Bayesian Approach: ' + drawing_title.get_text())
 
 
 plt.show()
