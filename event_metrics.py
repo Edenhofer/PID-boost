@@ -99,7 +99,7 @@ group_opt.add_argument('--mc-best', dest='mc_best', action='store_true', default
                     help='Use Monte Carlo information for calculating the best possible a priori probabilities instead of relying on an iterative approach')
 group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', nargs='+', action='store', choices=particles, default=particles,
                     help='List of particles which shall be analysed')
-group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=1.5,
+group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=None,
                     help='Whiskers with which the IQR will be IQR')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for root files for each particle')
@@ -320,7 +320,7 @@ def bayes(priors=defaultdict(lambda: 1., {}), mc_best=False):
     return cutting_columns
 
 
-def multivariate_bayes(holdings=['pt'], nbins=10, detector='all', mc_best=False, niterations=7, norm='pi+', whis=1.5):
+def multivariate_bayes(holdings=['pt'], nbins=10, detector='all', mc_best=False, niterations=7, norm='pi+', whis=None):
     """Compute probabilities for particle hypothesis keeping the `hold` root variable fixed using a Bayesian approach.
 
     Args:
@@ -346,13 +346,14 @@ def multivariate_bayes(holdings=['pt'], nbins=10, detector='all', mc_best=False,
     category_columns = {hold: 'category_' + hold for hold in holdings}
     intervals = {hold: {} for hold in holdings}
     for p, particle_data in data.items():
-        selection = True
-        for hold in holdings:
-            q75, q25 = np.percentile(particle_data[hold], [75, 25])
-            iqr = q75 - q25
-            lower_bound = q25 - (iqr * whis)
-            upper_bound = q75 + (iqr * whis)
-            selection = selection & (particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)
+        selection = np.ones(particle_data.shape[0], dtype=bool)
+        if whis:
+            for hold in holdings:
+                q75, q25 = np.percentile(particle_data[hold], [75, 25])
+                iqr = q75 - q25
+                lower_bound = q25 - (iqr * whis)
+                upper_bound = q75 + (iqr * whis)
+                selection = selection & (particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)
 
         for hold in holdings:
             particle_data[category_columns[hold]], intervals[hold][p] = pd.qcut(particle_data[selection][hold], q=nbins, labels=range(nbins), retbins=True)
@@ -362,7 +363,7 @@ def multivariate_bayes(holdings=['pt'], nbins=10, detector='all', mc_best=False,
 
     for l, particle_data in data.items():
         for i in itertools.product(*[range(nbins) for _ in range(len(holdings))]):
-            selection = True
+            selection = np.ones(particle_data.shape[0], dtype=bool)
             for m in range(len(holdings)):
                 selection = selection & (particle_data[category_columns[holdings[m]]] == i[m])
 
@@ -729,7 +730,10 @@ if args.run_univariate_bayes_outliers:
     norm = args.norm
 
     plt.figure()
-    plt.boxplot(data[norm][hold], whis=whis, sym='+')
+    if whis:
+        plt.boxplot(data[norm][hold], whis=whis, sym='+')
+    else:
+        plt.boxplot(data[norm][hold], whis='range', sym='+')
     drawing_title = plt.title('Outliers Outside of ' + str(whis) + ' IQR on a Logarithmic Scale')
     plt.yscale('log')
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
@@ -818,13 +822,14 @@ if args.run_multivariate_bayes_motivation:
     pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
     plt.show(block=False)
 
-    selection = True
-    for hold in holdings:
-        q75, q25 = np.percentile(particle_data[hold], [75, 25])
-        iqr = q75 - q25
-        lower_bound = q25 - (iqr * whis)
-        upper_bound = q75 + (iqr * whis)
-        selection = selection & (particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)
+    selection = np.ones(particle_data.shape[0], dtype=bool)
+    if whis:
+        for hold in holdings:
+            q75, q25 = np.percentile(particle_data[hold], [75, 25])
+            iqr = q75 - q25
+            lower_bound = q25 - (iqr * whis)
+            upper_bound = q75 + (iqr * whis)
+            selection = selection & (particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)
 
     fig = plt.figure(figsize=(6, 6))
     drawing_title = plt.suptitle('Multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings))
