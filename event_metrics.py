@@ -362,7 +362,7 @@ def multivariate_bayes(holdings=['pt'], nbins=10, detector='all', mc_best=False,
         for hold in holdings:
             particle_data[category_columns[hold]], intervals[hold][p] = pd.qcut(particle_data[selection][hold], q=nbins, labels=range(nbins), retbins=True)
 
-    cutting_columns = {k: 'bayes_' + '_'.join([str(hold) for hold in set(holdings)]) + '_' + v for k, v in particleIDs.items()}
+    cutting_columns = {k: 'bayes_' + '_'.join([str(hold) for hold in np.unique(holdings)]) + '_' + v for k, v in particleIDs.items()}
     iteration_priors = {l: {p: [[] for _ in range(niterations)] for p in particles} for l in particles}
 
     for l, particle_data in data.items():
@@ -844,9 +844,9 @@ if args.run_multivariate_bayes_motivation:
     grid = plt.GridSpec(4, 4, hspace=0.2, wspace=0.2)
 
     main_ax = plt.subplot(grid[:-1, 1:])
-    for v in set(particle_data[selection]['mcPDG']):
-        particle_data.at[selection & (particle_data[selection]['mcPDG'] == v), truth_color_column] = list(set(particle_data[selection]['mcPDG'])).index(v)
-    plt.scatter(particle_data[selection][holdings[0]], particle_data[selection][holdings[1]], c=particle_data[selection][truth_color_column], cmap=plt.cm.get_cmap('viridis', len(set(particle_data[selection]['mcPDG']))), s=5., alpha=.1)
+    for v in np.unique(particle_data[selection]['mcPDG'].values):
+        particle_data.at[selection & (particle_data[selection]['mcPDG'] == v), truth_color_column] = list(np.unique(particle_data[selection]['mcPDG'].values)).index(v)
+    plt.scatter(particle_data[selection][holdings[0]], particle_data[selection][holdings[1]], c=particle_data[selection][truth_color_column], cmap=plt.cm.get_cmap('viridis', np.unique(particle_data[selection]['mcPDG'].values).shape[0]), s=5., alpha=.1)
     plt.setp(main_ax.get_xticklabels(), visible=False)
     plt.setp(main_ax.get_yticklabels(), visible=False)
 
@@ -861,9 +861,9 @@ if args.run_multivariate_bayes_motivation:
 
     fig.subplots_adjust(right=0.85)
     cbar_ax = fig.add_axes([0.88, 0.20, 0.05, 0.6])
-    cbar = plt.colorbar(cax=cbar_ax, ticks=range(len(set(particle_data[selection]['mcPDG']))))
+    cbar = plt.colorbar(cax=cbar_ax, ticks=range(np.unique(particle_data[selection]['mcPDG'].values).shape[0]))
     cbar.set_alpha(1.)
-    cbar.set_ticklabels([particle_formats[pdg_to_name_faulty(v)] for v in set(particle_data[selection]['mcPDG'])])
+    cbar.set_ticklabels([particle_formats[pdg_to_name_faulty(v)] for v in np.unique(particle_data[selection]['mcPDG'].values)])
     cbar.draw_all()
 
     pyplot_sanitize_savefig('Multivariate Bayesian Approach: ' + drawing_title.get_text())
