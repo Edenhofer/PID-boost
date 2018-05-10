@@ -15,9 +15,6 @@ import numpy.testing as npt
 import os
 import pandas as pd
 import root_pandas as rpd
-import scipy
-import scipy.interpolate
-import scipy.stats
 import sys
 
 import pdg
@@ -503,20 +500,24 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
 
         main_ax = plt.subplot(grid[:2, 0])
         drawing_title = plt.title('%s Identification'%(particle_base_formats[p]))
-        for n in range(len(stats_approaches)):
-            drawing = plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['tpr'], label='ROC' + title_suffixes[n])
-            plt.plot(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['ppv'], label='PPV' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
+        for n, approach in enumerate(stats_approaches):
+            drawing = plt.plot(approach[p]['fpr'], approach[p]['tpr'], label='ROC' + title_suffixes[n])
+            plt.plot(approach[p]['fpr'], approach[p]['ppv'], label='PPV' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
 
         plt.setp(main_ax.get_xticklabels(), visible=False)
         plt.ylabel('Particle Rates')
         plt.legend()
 
         plt.subplot(grid[2, 0], sharex=main_ax)
-        for n in range(1, len(stats_approaches)):
-            interpolated_rate = scipy.interpolate.interp1d(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['tpr'], bounds_error=False, fill_value='extrapolate')
-            plt.plot(stats_approaches[0][p]['fpr'], interpolated_rate(stats_approaches[0][p]['fpr']) / stats_approaches[0][p]['tpr'], label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color='C2')
-            interpolated_rate = scipy.interpolate.interp1d(stats_approaches[n][p]['fpr'], stats_approaches[n][p]['ppv'], bounds_error=False, fill_value='extrapolate')
-            plt.plot(stats_approaches[n][p]['fpr'], interpolated_rate(stats_approaches[0][p]['fpr']) / stats_approaches[0][p]['ppv'], label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color='C3')
+        base_approach = stats_approaches[0]
+        for n, approach in enumerate(stats_approaches[1:], 1):
+            sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
+            interpolated_rate = np.interp(base_approach[p]['fpr'], approach[p]['fpr'][sorted_range], approach[p]['tpr'][sorted_range])
+            plt.plot(base_approach[p]['fpr'], interpolated_rate / base_approach[p]['tpr'], label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color='C2')
+
+            sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
+            interpolated_rate = np.interp(base_approach[p]['fpr'], approach[p]['fpr'][sorted_range], approach[p]['ppv'][sorted_range])
+            plt.plot(base_approach[p]['fpr'], interpolated_rate / base_approach[p]['ppv'], label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color='C3')
 
         plt.axhline(y=1., color='dimgrey', linestyle='--')
         plt.grid(b=True, axis='both')
