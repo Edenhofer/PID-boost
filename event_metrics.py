@@ -150,6 +150,16 @@ def pdg_to_name_faulty(pdg_code):
 
 
 def pyplot_sanitize_savefig(title, format='pdf', bbox_inches='tight', **kwargs):
+    """Save the current figure given an arbitrary title to a configurable location and sanitize its name.
+
+    Args:
+        title: Title of the plot and baseline for the name of the file.
+        format: Format in which to save the plot; Its value is also appended to the filename.
+        bbox_inches: Bbox in inches; If 'tight' figure out the best suitable values.
+
+        Any keyword arguments valid for `matplotlib.pyplot.savefig()`.
+
+    """
     output_directory = args.output_directory
 
     if not os.path.exists(output_directory):
