@@ -64,7 +64,7 @@ group_action.add_argument('--mimic-pid', dest='run_mimic_pid', action='store_tru
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
-group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['pid', 'flat_bayes', 'simple_bayes', 'univariate_bayes', *['univariate_bayes_by_' + v for v in variable_formats.keys()], 'multivariate_bayes'], default=[],
+group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['pid', 'flat_bayes', 'simple_bayes', 'pidProbability', 'univariate_bayes', *['univariate_bayes_by_' + v for v in variable_formats.keys()], 'multivariate_bayes'], default=[],
                     help='Compare two given methods of selecting particles')
 group_action.add_argument('--univariate-bayes', dest='run_univariate_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
@@ -611,8 +611,9 @@ if args.diff_methods:
     norm = args.norm
     mc_best = args.mc_best
     exclusive_cut = args.exclusive_cut
-
     particles_of_interest = args.particles_of_interest
+
+    detector = 'all'
 
     epsilonPIDs_approaches = []
     stats_approaches = []
@@ -624,6 +625,10 @@ if args.diff_methods:
         elif m == 'flat_bayes':
             c = bayes()
             title_suffixes += [' via flat Bayes']
+        elif m == 'pidProbability':
+            # Consistency check for flat_bayes, as both should yield the same results (mathematically)
+            c = {p: 'pidProbabilityExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in particles}
+            title_suffixes += [' via pidProbability']
         elif m == 'simple_bayes':
             c = bayes(mc_best=True)
             title_suffixes += [' via simple Bayes']
