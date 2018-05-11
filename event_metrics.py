@@ -513,7 +513,7 @@ if args.run_stats:
     detector = 'all'
 
     for p in particles_of_interest:
-        # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction
+        # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction, hence plot for each dataset
         particle_data = data[p]
 
         unique_particles = np.unique(particle_data['mcPDG'].values)
@@ -523,6 +523,7 @@ if args.run_stats:
         unique_particles = unique_particles[sorted_range][::-1]
 
         plt.figure()
+        plt.grid(b=False, axis='x')
         plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
         plt.xticks(range(len(unique_particles)), [particle_formats[pdg_to_name_faulty(k)] for k in unique_particles])
         drawing_title = plt.title('True Particle Abundances in the reconstructed Decays')
