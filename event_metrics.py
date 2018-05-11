@@ -481,11 +481,13 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
         for n, approach in enumerate(stats_approaches[1:], 1):
             sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
             interpolated_rate = np.interp(base_approach[p]['fpr'], approach[p]['fpr'][sorted_range], approach[p]['tpr'][sorted_range])
-            plt.plot(base_approach[p]['fpr'], interpolated_rate / base_approach[p]['tpr'], label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color='C2')
+            ratio = np.divide(interpolated_rate, base_approach[p]['tpr'], out=np.ones_like(interpolated_rate), where=base_approach[p]['tpr']!=0)
+            plt.plot(base_approach[p]['fpr'], ratio, label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color='C2')
 
             sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
             interpolated_rate = np.interp(base_approach[p]['fpr'], approach[p]['fpr'][sorted_range], approach[p]['ppv'][sorted_range])
-            plt.plot(base_approach[p]['fpr'], interpolated_rate / base_approach[p]['ppv'], label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color='C3')
+            ratio = np.divide(interpolated_rate, base_approach[p]['ppv'], out=np.ones_like(interpolated_rate), where=base_approach[p]['ppv']!=0)
+            plt.plot(base_approach[p]['fpr'], ratio, label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color='C3')
 
         plt.axhline(y=1., color='dimgrey', linestyle='--')
         plt.grid(b=True, axis='both')
