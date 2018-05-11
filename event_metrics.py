@@ -56,10 +56,6 @@ parser = argparse.ArgumentParser(description='Calculating and visualizing metric
 group_action = parser.add_argument_group('actions', 'Parameters which induce some kind of calculations and or visualizations')
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
-group_action.add_argument('--logLikelihood-by-particle', dest='run_logLikelihood_by_particle', action='store_true', default=False,
-                    help='Plot the binned logLikelihood for each particle')
-group_action.add_argument('--logLikelihood-by-detector', dest='run_logLikelihood_by_detector', action='store_true', default=False,
-                    help='Plot the binned logLikelihood for each detector')
 group_action.add_argument('--stats', dest='run_stats', action='store_true', default=False,
                     help='Visualize some general purpose statistics of the dataset')
 group_action.add_argument('--pid', dest='run_pid', action='store_true', default=False,
@@ -423,38 +419,6 @@ def add_isMax_column(cutting_columns):
     return cutting_columns_isMax
 
 
-def plot_logLikelihood_by_particle(nbins=50):
-    for d in detectors + pseudo_detectors:
-        plt.figure()
-        drawing_title = plt.suptitle('Binned pidLogLikelihood for Detector %s'%(d))
-        for i, p in enumerate(particles):
-            for i_2, p_2 in enumerate(particles):
-                plt.subplot(len(particles), len(particles), i*len(particles)+i_2+1)
-                plt.title('Identified %s as %s'%(particle_base_formats[p], particle_base_formats[p_2]))
-                column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + d + '__bc'
-                data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
-
-        pyplot_sanitize_show('logLikelihood by Particle: ' + drawing_title.get_text())
-
-
-def plot_logLikelihood_by_detector(nbins=50):
-    for p in particles:
-        plt.figure()
-        drawing_title = plt.suptitle('Binned pidLogLikelihood for Particle %s'%(particle_base_formats[p]))
-        for i, d in enumerate(detectors + pseudo_detectors):
-            plt.subplot(2, len(detectors + pseudo_detectors), i+1)
-            plt.title('Detector %s with Signal'%(d))
-            column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
-            data[p][data[p]['isSignal'] == 1][column].hist(bins=nbins)
-
-            plt.subplot(2, len(detectors + pseudo_detectors), i+1+len(detectors + pseudo_detectors))
-            plt.title('Detector %s with no Signal'%(d))
-            column = 'pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc'
-            data[p][data[p]['isSignal'] == 0][column].hist(bins=nbins)
-
-        pyplot_sanitize_show('logLikelihood by Detector: ' + drawing_title.get_text())
-
-
 def plot_stats_by_particle(stat, particles_of_interest=particles):
     for p in particles_of_interest:
         plt.figure()
@@ -541,13 +505,6 @@ data = {p: rpd.read_root(input_directory + '/' + p + '.root') for p in particles
 for particle_data in data.values():
     for k, bounds in physical_boundaries.items():
         particle_data.drop(particle_data[(particle_data[k] < bounds[0]) | (particle_data[k] > bounds[1])].index, inplace=True)
-
-
-if args.run_logLikelihood_by_particle:
-    plot_logLikelihood_by_particle()
-
-if args.run_logLikelihood_by_detector:
-    plot_logLikelihood_by_detector()
 
 if args.run_stats:
     particles_of_interest = args.particles_of_interest
