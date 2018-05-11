@@ -230,10 +230,10 @@ def stats(cut_min=0., cut_max=1., ncuts=50, cutting_columns=particleIDs):
     for p, particle_data in data.items():
         stat[p] = {'tpr': np.array([]), 'fpr': np.array([]), 'tnr': np.array([]), 'ppv': np.array([])}
         for cut in cuts:
-            stat[p]['tpr'] = np.append(stat[p]['tpr'], [np.float64(particle_data[(particle_data['isSignal'] == 1) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[particle_data['isSignal'] == 1].shape[0])])
-            stat[p]['fpr'] = np.append(stat[p]['fpr'], [np.float64(particle_data[(particle_data['isSignal'] == 0) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[particle_data['isSignal'] == 0].shape[0])])
-            stat[p]['tnr'] = np.append(stat[p]['tnr'], [np.float64(particle_data[(particle_data['isSignal'] == 0) & (particle_data[cutting_columns[p]] <= cut)].shape[0]) / np.float64(particle_data[particle_data['isSignal'] == 0].shape[0])])
-            stat[p]['ppv'] = np.append(stat[p]['ppv'], [np.float64(particle_data[(particle_data['isSignal'] == 1) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[particle_data[cutting_columns[p]] > cut].shape[0])])
+            stat[p]['tpr'] = np.append(stat[p]['tpr'], [np.float64(particle_data[((particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[(particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0])])
+            stat[p]['fpr'] = np.append(stat[p]['fpr'], [np.float64(particle_data[((particle_data['mcPDG'] != pdg_from_name_faulty(p)) & (particle_data['mcPDG'] != -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[(particle_data['mcPDG'] != pdg_from_name_faulty(p)) & (particle_data['mcPDG'] != -1 * pdg_from_name_faulty(p))].shape[0])])
+            stat[p]['tnr'] = np.append(stat[p]['tnr'], [np.float64(particle_data[((particle_data['mcPDG'] != pdg_from_name_faulty(p)) & (particle_data['mcPDG'] != -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] <= cut)].shape[0]) / np.float64(particle_data[(particle_data['mcPDG'] != pdg_from_name_faulty(p)) & (particle_data['mcPDG'] != -1 * pdg_from_name_faulty(p))].shape[0])])
+            stat[p]['ppv'] = np.append(stat[p]['ppv'], [np.float64(particle_data[((particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[particle_data[cutting_columns[p]] > cut].shape[0])])
 
             if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
                 print('VALUES INCONSISTENT: ', end='')
@@ -310,13 +310,13 @@ def bayes(priors=defaultdict(lambda: 1., {}), mc_best=False):
         cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
 
     """
-    if mc_best == True:
-        priors = {p: data[p][data[p]['isSignal'] == 1].shape[0] for p in particles}
-
     cutting_columns = {k: 'bayes_' + v for k, v in particleIDs.items()}
 
     for particle_data in data.values():
         # TODO: Use mimic_pid here to allow for weighted detector
+
+        if mc_best == True:
+            priors = {p: particle_data[(particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0] for p in particles}
 
         for p in particles:
             denominator = 0.
@@ -678,8 +678,8 @@ if args.run_univariate_bayes:
     plt.figure()
     drawing_title = plt.title('True Positive Rate for a Cut at %.2f'%(cut))
     for p in particles_of_interest:
-        assumed_abundance = np.array([data[p][(data[p][category_columns[hold]] == it) & (data[p][cutting_columns[p]] > cut) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
-        actual_abundance = np.array([data[p][(data[p][category_columns[hold]] == it) & (data[p]['isSignal'] == 1)].shape[0] for it in range(nbins)])
+        assumed_abundance = np.array([data[p][((data[p]['mcPDG'] == pdg_from_name_faulty(p)) | (data[p]['mcPDG'] == -1 * pdg_from_name_faulty(p))) & (data[p][category_columns[hold]] == it) & (data[p][cutting_columns[p]] > cut)].shape[0] for it in range(nbins)])
+        actual_abundance = np.array([data[p][((data[p]['mcPDG'] == pdg_from_name_faulty(p)) | (data[p]['mcPDG'] == -1 * pdg_from_name_faulty(p))) & (data[p][category_columns[hold]] == it)].shape[0] for it in range(nbins)])
         plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s'%(particle_base_formats[p]), fmt='o')
 
     plt.xlabel(variable_formats[hold] + ' (' + variable_units[hold] + ')')
