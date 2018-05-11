@@ -529,11 +529,11 @@ if args.run_stats:
         true_abundance = true_abundance[sorted_range][::-1]
         unique_particles = unique_particles[sorted_range][::-1]
 
-        plt.figure()
+        fig = plt.figure()
         plt.grid(b=False, axis='x')
         plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
         plt.xticks(range(len(unique_particles)), [particle_formats[pdg_to_name_faulty(k)] for k in unique_particles])
-        drawing_title = plt.title('True Particle Abundances in the reconstructed Decays')
+        drawing_title = plt.title('True Particle Abundances in the %s-Data'%(particle_formats[p]))
         pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
 
         likelihood_ratio_bins, intervals = pd.cut(particle_data['pidProbabilityExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc'], nbins, labels=range(nbins), retbins=True)
@@ -554,9 +554,10 @@ if args.run_stats:
 
         plt.figure()
         plt.errorbar(interval_centers, abundance_ratio, yerr=y_err, capsize=3, elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.2)
-        drawing_title = plt.title('Relative Abundance in Likelihood Ratio Bins')
+        drawing_title = plt.title('Relative %s Abundance in Likelihood Ratio Bins'%(particle_base_formats[p]))
         plt.xlabel('%s Likelihood Ratio'%(particle_base_formats[p]))
-        plt.ylabel('Relative %s Abundance'%(particle_base_formats[p]))
+        fig.autofmt_xdate()
+        plt.ylabel('Relative Abundance')
         plt.ylim(-0.05, 1.05)
         pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
 
