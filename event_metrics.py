@@ -465,11 +465,12 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
     for p in particles_of_interest:
         plt.figure()
         grid = plt.GridSpec(3, 1, hspace=0.1)
+        colors = iter(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])
 
         main_ax = plt.subplot(grid[:2, 0])
         drawing_title = plt.title('%s Identification'%(particle_base_formats[p]))
         for n, approach in enumerate(stats_approaches):
-            drawing = plt.plot(approach[p]['fpr'], approach[p]['tpr'], label='ROC' + title_suffixes[n])
+            drawing = plt.plot(approach[p]['fpr'], approach[p]['tpr'], label='ROC' + title_suffixes[n], color=next(colors))
             plt.plot(approach[p]['fpr'], approach[p]['ppv'], label='PPV' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
 
         plt.setp(main_ax.get_xticklabels(), visible=False)
@@ -485,13 +486,13 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
             interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_range], approach[p]['tpr'][sorted_range])
             sorted_range = np.argsort(base_approach[p]['fpr']) # Numpy expects values sorted by x
             interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_range], base_approach[p]['tpr'][sorted_range])
-            plt.plot(x, interpolated_rate / interpolated_rate_base, label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color='C2')
+            plt.plot(x, interpolated_rate / interpolated_rate_base, label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color=next(colors))
 
             sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
             interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_range], approach[p]['ppv'][sorted_range])
             sorted_range = np.argsort(base_approach[p]['fpr']) # Numpy expects values sorted by x
             interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_range], base_approach[p]['ppv'][sorted_range])
-            plt.plot(x, interpolated_rate / interpolated_rate_base, label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color='C3')
+            plt.plot(x, interpolated_rate / interpolated_rate_base, label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color=next(colors))
 
         plt.axhline(y=1., color='dimgrey', linestyle='--')
         plt.grid(b=True, axis='both')
