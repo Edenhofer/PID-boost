@@ -458,7 +458,7 @@ def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_ep
     pyplot_sanitize_show('Diff Heatmap: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes))
 
 
-def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interest=particles):
+def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interest=particles, ninterpolations=100):
     if len(stats_approaches) >= 0 and len(stats_approaches) != len(title_suffixes):
         raise ValueError('stats_approaches array must be of same length as the title_suffixes array')
 
@@ -479,15 +479,19 @@ def plot_diff_stats(stats_approaches=[], title_suffixes=[], particles_of_interes
         plt.subplot(grid[2, 0], sharex=main_ax)
         base_approach = stats_approaches[0]
         for n, approach in enumerate(stats_approaches[1:], 1):
-            sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
-            interpolated_rate = np.interp(base_approach[p]['fpr'], approach[p]['fpr'][sorted_range], approach[p]['tpr'][sorted_range])
-            ratio = np.divide(interpolated_rate, base_approach[p]['tpr'], out=np.ones_like(interpolated_rate), where=base_approach[p]['tpr']!=0)
-            plt.plot(base_approach[p]['fpr'], ratio, label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color='C2')
+            x = np.linspace(np.sort(base_approach[p]['fpr'])[1], max(base_approach[p]['fpr']), ninterpolations) # Skip first value FPR value (zero)
 
             sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
-            interpolated_rate = np.interp(base_approach[p]['fpr'], approach[p]['fpr'][sorted_range], approach[p]['ppv'][sorted_range])
-            ratio = np.divide(interpolated_rate, base_approach[p]['ppv'], out=np.ones_like(interpolated_rate), where=base_approach[p]['ppv']!=0)
-            plt.plot(base_approach[p]['fpr'], ratio, label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color='C3')
+            interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_range], approach[p]['tpr'][sorted_range])
+            sorted_range = np.argsort(base_approach[p]['fpr']) # Numpy expects values sorted by x
+            interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_range], base_approach[p]['tpr'][sorted_range])
+            plt.plot(x, interpolated_rate / interpolated_rate_base, label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color='C2')
+
+            sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
+            interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_range], approach[p]['ppv'][sorted_range])
+            sorted_range = np.argsort(base_approach[p]['fpr']) # Numpy expects values sorted by x
+            interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_range], base_approach[p]['ppv'][sorted_range])
+            plt.plot(x, interpolated_rate / interpolated_rate_base, label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color='C3')
 
         plt.axhline(y=1., color='dimgrey', linestyle='--')
         plt.grid(b=True, axis='both')
