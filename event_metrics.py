@@ -507,7 +507,10 @@ for particle_data in data.values():
         particle_data.drop(particle_data[(particle_data[k] < bounds[0]) | (particle_data[k] > bounds[1])].index, inplace=True)
 
 if args.run_stats:
+    nbins = args.nbins
     particles_of_interest = args.particles_of_interest
+
+    detector = 'all'
 
     for p in particles_of_interest:
         # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction
@@ -523,6 +526,30 @@ if args.run_stats:
         plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
         plt.xticks(range(len(unique_particles)), [particle_formats[pdg_to_name_faulty(k)] for k in unique_particles])
         drawing_title = plt.title('True Particle Abundances in the reconstructed Decays')
+        pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
+
+        likelihood_ratio_bins, intervals = pd.cut(particle_data['pidProbabilityExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc'], nbins, labels=range(nbins), retbins=True)
+        abundance_ratio = np.zeros(nbins)
+        y_err = np.zeros(nbins)
+        for i in range(nbins):
+            particle_data_bin = particle_data[likelihood_ratio_bins == i]
+            numerator = particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0]
+            denominator = np.array([particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p_2)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p_2))].shape[0] for p_2 in particles]).sum()
+
+            abundance_ratio[i] = numerator / denominator
+            # Due to the correlation of of abundance_ratio and likelihood_ratio_bins the actual error is (?) y_err = sqrt(abundance_ratio) * efficiency * (1 - efficiency)
+            # For now use Gaussian Error Propagation, despite not really being appropriate (TODO)
+            y_err[i] = abundance_ratio[i] * np.sqrt(np.power((np.sqrt(numerator)/numerator), 2) + np.power((np.sqrt(denominator)/denominator), 2))
+
+        interval_centers = np.array([np.mean(intervals[i:i+2]) for i in range(len(intervals)-1)])
+        # As xerr np.array([intervals[i] - intervals[i-1] for i in range(1, len(intervals))]) / 2. may be used, indicating the width of the bins
+
+        plt.figure()
+        plt.errorbar(interval_centers, abundance_ratio, yerr=y_err, capsize=3, elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.2)
+        drawing_title = plt.title('Relative Abundance in Likelihood Ratio Bins')
+        plt.xlabel('%s Likelihood Ratio'%(particle_base_formats[p]))
+        plt.ylabel('Relative %s Abundance'%(particle_base_formats[p]))
+        plt.ylim(-0.05, 1.05)
         pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
 
 if args.run_pid:
