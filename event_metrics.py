@@ -295,7 +295,7 @@ def mimic_pid(detector_weights=detector_weights, check=True):
     print('Successfully calculated the particleIDs using the logLikelihoods only.')
 
 
-def bayes(priors=defaultdict(lambda: 1., {}), mc_best=False):
+def bayes(priors=defaultdict(lambda: 1., {}), detector='all', mc_best=False):
     """Compute probabilities for particle hypothesis using a Bayesian approach.
 
     Args:
@@ -317,7 +317,7 @@ def bayes(priors=defaultdict(lambda: 1., {}), mc_best=False):
         for p in particles:
             denominator = 0.
             for p_2 in particles:
-                denominator += (particle_data['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__spall__bc'] - particle_data['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__spall__bc']).apply(np.exp) * priors[p_2]
+                denominator += (particle_data['pidLogLikelihoodValueExpert__bo' + basf2_Code(p_2) + '__cm__sp' + detector + '__bc'] - particle_data['pidLogLikelihoodValueExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc']).apply(np.exp) * priors[p_2]
 
             # Algebraic trick to make exp(H_i)*C_i/sum(exp(H_k) * C_k, k) stable even for very small values of H_i and H_k
             particle_data[cutting_columns[p]] = priors[p] / denominator
