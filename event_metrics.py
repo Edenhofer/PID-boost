@@ -433,7 +433,7 @@ def plot_stats_by_particle(stat, particles_of_interest=particles):
         pyplot_sanitize_show('Statistics: ' + drawing_title.get_text())
 
 
-def plot_neyman_pearson(nbins=10, cutting_columns=particleIDs, title_suffix=''):
+def plot_neyman_pearson(nbins=10, cutting_columns=particleIDs, title_suffix='', particles_of_interest=particles):
     for p in particles_of_interest:
         particle_data = data[p]
 
@@ -565,7 +565,7 @@ if args.run_stats:
 
     for d in detectors + pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc' for p in particles}
-        plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()))
+        plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest)
 
 if args.run_pid:
     cut = args.cut
