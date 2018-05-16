@@ -545,9 +545,7 @@ if args.run_stats:
             denominator = np.array([particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p_2)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p_2))].shape[0] for p_2 in particles]).sum()
 
             abundance_ratio[i] = numerator / denominator
-            # Due to the correlation of of abundance_ratio and likelihood_ratio_bins the actual error is (?) y_err = sqrt(abundance_ratio) * efficiency * (1 - efficiency)
-            # For now use Gaussian Error Propagation, despite not really being appropriate (TODO)
-            y_err[i] = abundance_ratio[i] * np.sqrt(np.power((np.sqrt(numerator)/numerator), 2) + np.power((np.sqrt(denominator)/denominator), 2))
+            y_err[i] = np.sqrt(abundance_ratio[i] * (1 - abundance_ratio[i]) / denominator)
 
         interval_centers = np.array([np.mean(intervals[i:i+2]) for i in range(len(intervals)-1)])
         # As xerr np.array([intervals[i] - intervals[i-1] for i in range(1, len(intervals))]) / 2. may be used, indicating the width of the bins
