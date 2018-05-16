@@ -1,6 +1,9 @@
 # Disregard editor configurations
 .vscode/
 
+# Programming caches
+__pycache__/
+
 # Ignore ROOT data files
 *.root
 Belle2FileCatalog.xml
