@@ -433,6 +433,34 @@ def plot_stats_by_particle(stat, particles_of_interest=particles):
         pyplot_sanitize_show('Statistics: ' + drawing_title.get_text())
 
 
+def plot_neyman_pearson(nbins=10, cutting_columns=particleIDs):
+    for p in particles_of_interest:
+        particle_data = data[p]
+
+        likelihood_ratio_bins, intervals = pd.cut(particle_data[cutting_columns[p]], nbins, labels=range(nbins), retbins=True)
+        abundance_ratio = np.zeros(nbins)
+        y_err = np.zeros(nbins)
+        for i in range(nbins):
+            particle_data_bin = particle_data[likelihood_ratio_bins == i]
+            numerator = particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0]
+            denominator = np.array([particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p_2)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p_2))].shape[0] for p_2 in particles]).sum()
+
+            abundance_ratio[i] = numerator / denominator
+            y_err[i] = np.sqrt(abundance_ratio[i] * (1 - abundance_ratio[i]) / denominator)
+
+        interval_centers = np.array([np.mean(intervals[i:i+2]) for i in range(len(intervals)-1)])
+        # As xerr np.array([intervals[i] - intervals[i-1] for i in range(1, len(intervals))]) / 2. may be used, indicating the width of the bins
+
+        plt.figure()
+        plt.errorbar(interval_centers, abundance_ratio, yerr=y_err, capsize=3, elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.2)
+        drawing_title = plt.title('Relative %s Abundance in Likelihood Ratio Bins'%(particle_base_formats[p]))
+        plt.xlabel('%s Likelihood Ratio'%(particle_base_formats[p]))
+        fig.autofmt_xdate()
+        plt.ylabel('Relative Abundance')
+        plt.ylim(-0.05, 1.05)
+        pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
+
+
 def plot_diff_epsilonPIDs(epsilonPIDs_approaches=[], title_suffixes=[], title_epsilonPIDs=''):
     if len(epsilonPIDs_approaches) >= 0 and len(epsilonPIDs_approaches) != len(title_suffixes):
         raise ValueError('epsilonPIDs_approaches array must be of same length as the title_suffixes array')
@@ -536,28 +564,8 @@ if args.run_stats:
         drawing_title = plt.title('True Particle Abundances in the %s-Data'%(particle_formats[p]))
         pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
 
-        likelihood_ratio_bins, intervals = pd.cut(particle_data['pidProbabilityExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc'], nbins, labels=range(nbins), retbins=True)
-        abundance_ratio = np.zeros(nbins)
-        y_err = np.zeros(nbins)
-        for i in range(nbins):
-            particle_data_bin = particle_data[likelihood_ratio_bins == i]
-            numerator = particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0]
-            denominator = np.array([particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p_2)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p_2))].shape[0] for p_2 in particles]).sum()
-
-            abundance_ratio[i] = numerator / denominator
-            y_err[i] = np.sqrt(abundance_ratio[i] * (1 - abundance_ratio[i]) / denominator)
-
-        interval_centers = np.array([np.mean(intervals[i:i+2]) for i in range(len(intervals)-1)])
-        # As xerr np.array([intervals[i] - intervals[i-1] for i in range(1, len(intervals))]) / 2. may be used, indicating the width of the bins
-
-        plt.figure()
-        plt.errorbar(interval_centers, abundance_ratio, yerr=y_err, capsize=3, elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.2)
-        drawing_title = plt.title('Relative %s Abundance in Likelihood Ratio Bins'%(particle_base_formats[p]))
-        plt.xlabel('%s Likelihood Ratio'%(particle_base_formats[p]))
-        fig.autofmt_xdate()
-        plt.ylabel('Relative Abundance')
-        plt.ylim(-0.05, 1.05)
-        pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
+    c = {p: 'pidProbabilityExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in particles}
+    plot_neyman_pearson(cutting_columns=c)
 
 if args.run_pid:
     cut = args.cut
