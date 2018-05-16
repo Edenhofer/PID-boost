@@ -433,7 +433,7 @@ def plot_stats_by_particle(stat, particles_of_interest=particles):
         pyplot_sanitize_show('Statistics: ' + drawing_title.get_text())
 
 
-def plot_neyman_pearson(nbins=10, cutting_columns=particleIDs):
+def plot_neyman_pearson(nbins=10, cutting_columns=particleIDs, title_suffix=''):
     for p in particles_of_interest:
         particle_data = data[p]
 
@@ -453,7 +453,7 @@ def plot_neyman_pearson(nbins=10, cutting_columns=particleIDs):
 
         plt.figure()
         plt.errorbar(interval_centers, abundance_ratio, yerr=y_err, capsize=3, elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.2)
-        drawing_title = plt.title('Relative %s Abundance in Likelihood Ratio Bins'%(particle_base_formats[p]))
+        drawing_title = plt.title('Relative %s Abundance in Likelihood Ratio Bins%s'%(particle_base_formats[p], title_suffix))
         plt.xlabel('%s Likelihood Ratio'%(particle_base_formats[p]))
         fig.autofmt_xdate()
         plt.ylabel('Relative Abundance')
@@ -546,8 +546,6 @@ if args.run_stats:
     nbins = args.nbins
     particles_of_interest = args.particles_of_interest
 
-    detector = 'all'
-
     # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction
     # Ignore this for now and just plot the dataset belonging to the `norm` particle
     particle_data = data[norm]
@@ -565,8 +563,9 @@ if args.run_stats:
     drawing_title = plt.title('True Particle Abundances in the %s-Data'%(particle_formats[norm]))
     pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
 
-    c = {p: 'pidProbabilityExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in particles}
-    plot_neyman_pearson(cutting_columns=c)
+    for d in detectors + pseudo_detectors:
+        c = {p: 'pidProbabilityExpert__bo' + basf2_Code(p) + '__cm__sp' + d + '__bc' for p in particles}
+        plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()))
 
 if args.run_pid:
     cut = args.cut
