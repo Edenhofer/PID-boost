@@ -542,27 +542,28 @@ for particle_data in data.values():
         particle_data.drop(particle_data[(particle_data[k] < bounds[0]) | (particle_data[k] > bounds[1])].index, inplace=True)
 
 if args.run_stats:
+    norm = args.norm
     nbins = args.nbins
     particles_of_interest = args.particles_of_interest
 
     detector = 'all'
 
-    for p in particles_of_interest:
-        # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction, hence plot for each dataset
-        particle_data = data[p]
+    # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction
+    # Ignore this for now and just plot the dataset belonging to the `norm` particle
+    particle_data = data[norm]
 
-        unique_particles = np.unique(particle_data['mcPDG'].values)
-        true_abundance = np.array([particle_data[particle_data['mcPDG'] == code].shape[0] for code in unique_particles])
-        sorted_range = np.argsort(true_abundance)
-        true_abundance = true_abundance[sorted_range][::-1]
-        unique_particles = unique_particles[sorted_range][::-1]
+    unique_particles = np.unique(particle_data['mcPDG'].values)
+    true_abundance = np.array([particle_data[particle_data['mcPDG'] == code].shape[0] for code in unique_particles])
+    sorted_range = np.argsort(true_abundance)
+    true_abundance = true_abundance[sorted_range][::-1]
+    unique_particles = unique_particles[sorted_range][::-1]
 
-        fig = plt.figure()
-        plt.grid(b=False, axis='x')
-        plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
-        plt.xticks(range(len(unique_particles)), [particle_formats[pdg_to_name_faulty(k)] for k in unique_particles])
-        drawing_title = plt.title('True Particle Abundances in the %s-Data'%(particle_formats[p]))
-        pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
+    fig = plt.figure()
+    plt.grid(b=False, axis='x')
+    plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
+    plt.xticks(range(len(unique_particles)), [particle_formats[pdg_to_name_faulty(k)] for k in unique_particles])
+    drawing_title = plt.title('True Particle Abundances in the %s-Data'%(particle_formats[norm]))
+    pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
 
     c = {p: 'pidProbabilityExpert__bo' + basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in particles}
     plot_neyman_pearson(cutting_columns=c)
