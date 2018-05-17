@@ -77,7 +77,7 @@ group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=fl
                     help='Whiskers with which the IQR will be IQR')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for root files for each particle')
-group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='doc/updates/res/',
+group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'.')
 group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
                     help='Run interactively, i.e. show plots')
