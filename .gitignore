@@ -8,6 +8,9 @@ __pycache__/
 *.root
 Belle2FileCatalog.xml
 
+# Ignore HDF5 files (Keras models)
+*.h5
+
 # Temporary output locations
 /res/
 /tmp/
