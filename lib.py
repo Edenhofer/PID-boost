@@ -118,7 +118,7 @@ class ParticleFrame(dict):
         if input_directory is not None:
             self.read_root(input_directory)
         self.output_directory = './res/' if output_directory is None else output_directory
-        self.interactive = True if interactive is None else interactive
+        self.interactive = False if interactive is None else interactive
 
     def __setitem__(self, key, item):
         self.data[key] = item
