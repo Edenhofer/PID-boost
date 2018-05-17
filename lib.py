@@ -410,7 +410,7 @@ class ParticleFrame(dict):
     def pyplot_sanitize_show(self, title, format='pdf', bbox_inches='tight', output_directory=None, interactive=None, **kwargs):
         """Save and show the current figure to a configurable location and sanitize its name.
 
-            Args:
+        Args:
             title (str): Title of the plot and baseline for the name of the file.
             format (:obj:`str`, optional): Format in which to save the plot; Its value is also appended to the filename.
             bbox_inches (:obj:`str`, optional): Bbox in inches; If 'tight' figure out the best suitable values.
