@@ -3,6 +3,7 @@
 import argparse
 import itertools
 import os
+import pickle
 import re
 import sys
 from collections import defaultdict
@@ -406,6 +407,31 @@ class ParticleFrame(dict):
                 particle_data[cutting_columns_isMax[p]] = np.where(max_columns == cutting_columns[p], 1, 0)
 
         return cutting_columns_isMax
+
+    def save(self, pickle_file=None, output_directory=None):
+        """Save the current class to a pickle file.
+
+        Args:
+            pickle_file (:obj:`str`, optional): Path where to save the pickle file to; Takes precedence when specified; Do not save anything if given '/dev/null'.
+            output_directory (:obj:`str`, optional): Directory where to save the pickle file to with class' name as filename; Do not save anything if specifically given '/dev/null' as output directory.
+
+        """
+        if pickle_file is None:
+            if output_directory is None:
+                pickle_file = self.output_directory + '/' + self.__class__.__name__ + '.pkl'
+            elif output_directory == '/dev/null':
+                pickle_file = '/dev/null'
+            else:
+                pickle_file = output_directory + '/' + self.__class__.__name__ + '.pkl'
+        else:
+            pickle_file = pickle_file
+
+        if pickle_file != '/dev/null':
+            if not os.path.exists(os.path.dirname(pickle_file)):
+                print('Creating desired parent directory "%s" for the pickle file "%s"'%(os.path.dirname(pickle_file), pickle_file), file=sys.stderr)
+                os.makedirs(os.path.dirname(pickle_file), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+
+            pickle.dump(self, open(pickle_file, 'wb'), pickle.HIGHEST_PROTOCOL)
 
     def pyplot_sanitize_show(self, title, format='pdf', bbox_inches='tight', output_directory=None, interactive=None, **kwargs):
         """Save and show the current figure to a configurable location and sanitize its name.
