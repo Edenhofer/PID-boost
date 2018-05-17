@@ -65,6 +65,7 @@ truth_color_column = 'mcPDG_color'
 detector = 'all'
 p = 'K+'
 particle_data = data[p]
+training_fraction = 0.8
 batch_size = 32
 epochs = 10
 
@@ -81,14 +82,17 @@ augmented_matrix = particle_data[design_columns + [truth_color_column]]
 augmented_matrix = augmented_matrix.dropna(subset=[truth_color_column]) # Drop rows with no mcPDG code
 augmented_matrix = augmented_matrix.fillna(0.) # Fill null values in probability columns (design matrix)
 
-x = augmented_matrix[design_columns].values
-y = augmented_matrix[truth_color_column].values
+augmented_matrix = augmented_matrix.sample(frac=1.) # Be sure to randomize the selection, just in case...
+x_test = augmented_matrix.iloc[:int(training_fraction * augmented_matrix.shape[0])][design_columns].values
+x_validation = augmented_matrix.iloc[int(training_fraction * augmented_matrix.shape[0]):][design_columns].values
+y_test = augmented_matrix.iloc[:int(training_fraction * augmented_matrix.shape[0])][truth_color_column].values
+y_validation = augmented_matrix.iloc[int(training_fraction * augmented_matrix.shape[0]):][truth_color_column].values
 
 # Layer selection
 model = Sequential()
-model.add(Dense(x.shape[1], input_shape=(x.shape[1],), activation='relu', use_bias=True))
+model.add(Dense(x_test.shape[1], input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
 model.add(Dropout(0.2))
-model.add(Dense(len(labels) * 3, input_shape=(x.shape[1],), activation='relu', use_bias=True))
+model.add(Dense(len(labels) * 3, input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
 model.add(Dropout(0.2))
 model.add(Dense(len(labels), activation='softmax'))
 
@@ -96,9 +100,13 @@ model.add(Dense(len(labels), activation='softmax'))
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Convert labels to categorical one-hot encoding
-one_hot_labels = to_categorical(y, num_classes=len(labels))
+y_test_hot = to_categorical(y_test, num_classes=len(labels))
+y_validation_hot = to_categorical(y_validation, num_classes=len(labels))
 # Train the model
-model.fit(x, one_hot_labels, epochs=epochs, batch_size=batch_size)
+model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size)
+
+score = model.evaluate(x_validation, y_validation_hot, batch_size=batch_size)
+print('\nModel validation using independent data - loss: %.6f - acc: %.6f'%(score[0], score[1]))
 
 if output_file != '/dev/null':
     if not os.path.exists(os.path.dirname(output_file)):
