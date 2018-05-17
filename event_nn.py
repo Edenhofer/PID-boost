@@ -88,6 +88,8 @@ y = augmented_matrix[truth_color_column].values
 model = Sequential()
 model.add(Dense(x.shape[1], input_shape=(x.shape[1],), activation='relu', use_bias=True))
 model.add(Dropout(0.2))
+model.add(Dense(len(labels) * 3, input_shape=(x.shape[1],), activation='relu', use_bias=True))
+model.add(Dropout(0.2))
 model.add(Dense(len(labels), activation='softmax'))
 
 # Compilation for a multi-class classification problem
