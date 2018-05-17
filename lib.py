@@ -105,20 +105,18 @@ class ParticleFrame(dict):
     # Dictionary of variables and their boundaries for possible values they might yield
     physical_boundaries = {'pt': (0, 5.5), 'cosTheta': (-1, 1)}
 
-    def __init__(self, input_directory=None, output_directory=None, interactive=None):
+    def __init__(self, input_directory=None, output_directory=None):
         """Initialize and empty ParticleFrame.
 
         Args:
             input_directory (:obj:`str`, optional): Default input directory for root files for each particle.
             output_directory (:obj:`str`, optional): Default output directory for data generated using this ParticleFrame.
-            interactive (:obj:`bool`, optional): Whether plotting should be done interactively.
 
         """
         self.data = {}
         if input_directory is not None:
             self.read_root(input_directory)
         self.output_directory = './res/' if output_directory is None else output_directory
-        self.interactive = True if interactive is None else interactive
 
     def __setitem__(self, key, item):
         self.data[key] = item
@@ -406,6 +404,19 @@ class ParticleFrame(dict):
                 particle_data[cutting_columns_isMax[p]] = np.where(max_columns == cutting_columns[p], 1, 0)
 
         return cutting_columns_isMax
+
+class FancyParticleFrame(ParticleFrame):
+    def __init__(self, input_directory=None, output_directory=None, interactive=None):
+        """Initialize and empty ParticleFrame with the ability to plot visuals, extending the ParticleFrame class.
+
+        Args:
+            input_directory (:obj:`str`, optional): Default input directory for root files for each particle.
+            output_directory (:obj:`str`, optional): Default output directory for data generated using this ParticleFrame.
+            interactive (:obj:`bool`, optional): Whether plotting should be done interactively.
+
+        """
+        super().__init__(input_directory=input_directory, output_directory=output_directory)
+        self.interactive = True if interactive is None else interactive
 
     def pyplot_sanitize_show(self, title, format='pdf', bbox_inches='tight', output_directory=None, interactive=None, **kwargs):
         """Save and show the current figure to a configurable location and sanitize its name.
