@@ -96,7 +96,7 @@ args = parser.parse_args()
 input_directory = args.input_directory
 interactive = args.interactive
 output_directory = args.output_directory
-data = lib.FancyParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
+data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
 
 if args.run_stats:
     norm = args.norm
