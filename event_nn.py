@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # PYTHON_ARGCOMPLETE_OK
 
+import argparse
+import os
+import sys
+
 import numpy as np
 from keras.layers import Activation, Dense, Dropout, MaxPooling1D
 from keras.models import Sequential
@@ -8,9 +12,49 @@ from keras.utils import to_categorical
 
 import lib
 
+try:
+    import seaborn as sns
+
+    # Enable and customize default plotting style
+    sns.set_style("whitegrid")
+except ImportError:
+    pass
+
+try:
+    import argcomplete
+except ImportError:
+    pass
+
 
 ParticleFrame = lib.ParticleFrame
-data = ParticleFrame(input_directory='./', output_directory='./res')
+
+# Assemble the allowed command line options
+parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
+group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
+                    help='Directory in which the program shall search for root files for each particle')
+group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
+                    help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'.')
+group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
+                    help='Run interactively, i.e. show plots')
+group_util.add_argument('--non-interactive', dest='interactive', action='store_false', default=True,
+                    help='Run non-interactively and hence unattended, i.e. show no plots')
+
+try:
+    argcomplete.autocomplete(parser)
+except NameError:
+    pass
+
+
+args = parser.parse_args()
+
+# Evaluate the arguments
+input_directory = args.input_directory
+interactive = args.interactive
+output_directory = args.output_directory
+
+# Read in all the particle's information into a dictionary of pandas-frames
+data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
 
 truth_color_column = 'mcPDG_color'
 
