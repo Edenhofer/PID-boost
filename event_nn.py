@@ -39,6 +39,8 @@ group_util.add_argument('--interactive', dest='interactive', action='store_true'
                     help='Run interactively, i.e. show plots')
 group_util.add_argument('--non-interactive', dest='interactive', action='store_false', default=True,
                     help='Run non-interactively and hence unattended, i.e. show no plots')
+group_util.add_argument('-f', '--file', dest='output_file', action='store', default='./model.h5',
+                    help='Path where the model should be saved to including the filename; Skip saving if given \'/dev/null\'.')
 
 try:
     argcomplete.autocomplete(parser)
@@ -52,6 +54,7 @@ args = parser.parse_args()
 input_directory = args.input_directory
 interactive = args.interactive
 output_directory = args.output_directory
+output_file = args.output_file
 
 # Read in all the particle's information into a dictionary of pandas-frames
 data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
@@ -94,3 +97,10 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['ac
 one_hot_labels = to_categorical(y, num_classes=len(labels))
 # Train the model
 model.fit(x, one_hot_labels, epochs=epochs, batch_size=batch_size)
+
+if output_file != '/dev/null':
+    if not os.path.exists(os.path.dirname(output_file)):
+        print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(output_file), output_file), file=sys.stderr)
+        os.makedirs(os.path.dirname(output_file), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+
+    model.save(output_file)
