@@ -18,5 +18,5 @@ The main inspiration for the actual program code heavily relies on the [b2-start
 * ~~Compare the multi-dependant priors~~
 * ~~Introduce an alternative selection methods, i.e. maximum probability~~
 * ~~Use different sets of data to diversify results~~
+* ~~Add a simple Machine Learning approach using the likelihoods as input and the prediction as output~~
 * Output efficiency tables for various approaches, including e.g. the Area Under Curve for PPV and ROC
-* Add a simple Machine Learning approach using the likelihoods as input and the prediction as output
