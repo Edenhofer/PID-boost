@@ -42,7 +42,7 @@ group_action.add_argument('--mimic-pid', dest='run_mimic_pid', action='store_tru
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis using Bayes')
-group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['pid', 'flat_bayes', 'simple_bayes', 'pidProbability', 'univariate_bayes', *['univariate_bayes_by_' + v for v in ParticleFrame.variable_formats.keys()], 'multivariate_bayes'], default=[],
+group_action.add_argument('--diff', dest='diff_methods', nargs='+', action='store', choices=['pid', 'flat_bayes', 'simple_bayes', 'pidProbability', 'univariate_bayes', *['univariate_bayes_by_' + v for v in ParticleFrame.variable_formats.keys()], 'multivariate_bayes', 'nn'], default=[],
                     help='Compare two given methods of selecting particles')
 group_action.add_argument('--univariate-bayes', dest='run_univariate_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping one variable fixed')
@@ -213,6 +213,10 @@ if args.diff_methods:
         elif m == 'multivariate_bayes':
             c = data.multivariate_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
             title_suffixes += [' by ' + ' & '.join([ParticleFrame.variable_formats[h] for h in holdings])]
+        elif m == 'nn':
+            # In sharp contrast to all the previous approaches this one assumes the columns are already present and will not generate them beforehand!
+            c = {k: 'nn_' + v for k, v in ParticleFrame.particleIDs.items()}
+            title_suffixes += [' via NN']
         else:
             raise ValueError('received unknown method "%s"'%(m))
 
