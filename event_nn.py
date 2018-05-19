@@ -60,6 +60,7 @@ output_file = args.output_file
 data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
 
 truth_color_column = 'mcPDG_color'
+nn_color_column = 'nn_mcPDG'
 
 # Bad hardcoding stuff
 detector = 'all'
@@ -79,14 +80,16 @@ for v in labels:
     particle_data.at[(particle_data['mcPDG'] == v) | (particle_data['mcPDG'] == -1 * v), truth_color_column] = labels.index(v)
 
 augmented_matrix = particle_data[design_columns + [truth_color_column]]
-augmented_matrix = augmented_matrix.dropna(subset=[truth_color_column]) # Drop rows with no mcPDG code
+selection = np.ones(augmented_matrix.shape[0], dtype=bool)
+selection = selection & augmented_matrix[truth_color_column].notnull() # Indirectly drop rows with no mcPDG code
 augmented_matrix = augmented_matrix.fillna(0.) # Fill null values in probability columns (design matrix)
 
-augmented_matrix = augmented_matrix.sample(frac=1.) # Be sure to randomize the selection, just in case...
-x_test = augmented_matrix.iloc[:int(training_fraction * augmented_matrix.shape[0])][design_columns].values
-x_validation = augmented_matrix.iloc[int(training_fraction * augmented_matrix.shape[0]):][design_columns].values
-y_test = augmented_matrix.iloc[:int(training_fraction * augmented_matrix.shape[0])][truth_color_column].values
-y_validation = augmented_matrix.iloc[int(training_fraction * augmented_matrix.shape[0]):][truth_color_column].values
+test_selection = selection & np.random.choice([True, False], augmented_matrix.shape[0], p=[training_fraction, 1-training_fraction])
+validation_selection = selection & np.invert(test_selection)
+x_test = augmented_matrix[test_selection][design_columns].values
+y_test = augmented_matrix[test_selection][truth_color_column].values
+x_validation = augmented_matrix[validation_selection][design_columns].values
+y_validation = augmented_matrix[validation_selection][truth_color_column].values
 
 # Layer selection
 model = Sequential()
@@ -107,6 +110,13 @@ model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size)
 
 score = model.evaluate(x_validation, y_validation_hot, batch_size=batch_size)
 print('\nModel validation using independent data - loss: %.6f - acc: %.6f'%(score[0], score[1]))
+
+# Add predictions of the validation set to the ParticleFrame and save it
+y_prediction_labels = np.argmax(model.predict(x_validation, batch_size=batch_size), axis=1)
+y_prediction = [labels[i] for i in y_prediction_labels]
+particle_data[nn_color_column] = np.nan
+particle_data.at[validation_selection, nn_color_column] = y_prediction
+data.save()
 
 if output_file != '/dev/null':
     if not os.path.exists(os.path.dirname(output_file)):
