@@ -19,4 +19,8 @@ The main inspiration for the actual program code heavily relies on the [b2-start
 * ~~Introduce an alternative selection methods, i.e. maximum probability~~
 * ~~Use different sets of data to diversify results~~
 * ~~Add a simple Machine Learning approach using the likelihoods as input and the prediction as output~~
+* Design a functional Neural Network classifying particles
+  * Utilize automatically selected ROOT variables as input, e.g. depending on their contribution to a PCA
+  * Use a multitude of variables and let the network decide
+  * Visually compare the approaches
 * Output efficiency tables for various approaches, including e.g. the Area Under Curve for PPV and ROC
