@@ -409,7 +409,7 @@ class ParticleFrame(dict):
         return cutting_columns_isMax
 
     def save(self, pickle_file=None, output_directory=None):
-        """Save the current class to a pickle file.
+        """Save the current data of the class to a pickle file.
 
         Args:
             pickle_file (:obj:`str`, optional): Path where to save the pickle file to; Takes precedence when specified; Do not save anything if given '/dev/null'.
@@ -431,7 +431,7 @@ class ParticleFrame(dict):
                 print('Creating desired parent directory "%s" for the pickle file "%s"'%(os.path.dirname(pickle_file), pickle_file), file=sys.stderr)
                 os.makedirs(os.path.dirname(pickle_file), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
-            pickle.dump(self, open(pickle_file, 'wb'), pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.data, open(pickle_file, 'wb'), pickle.HIGHEST_PROTOCOL)
 
     def pyplot_sanitize_show(self, title, format='pdf', bbox_inches='tight', output_directory=None, interactive=None, **kwargs):
         """Save and show the current figure to a configurable location and sanitize its name.
