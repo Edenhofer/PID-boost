@@ -490,7 +490,9 @@ class ParticleFrame(dict):
             # plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
             plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='PPV')
             plt.xlabel('False Positive Rate')
+            plt.xlim(-0.05, 1.05)
             plt.ylabel('Particle Rates')
+            plt.ylim(-0.05, 1.05)
             drawing_title = plt.title('%s Identification'%(self.particle_base_formats[p]))
             plt.legend()
             self.pyplot_sanitize_show('Statistics: ' + drawing_title.get_text())
@@ -520,7 +522,6 @@ class ParticleFrame(dict):
             plt.errorbar(interval_centers, abundance_ratio, yerr=y_err, capsize=3, elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.2)
             drawing_title = plt.title('Relative %s Abundance in Likelihood Ratio Bins%s'%(self.particle_base_formats[p], title_suffix))
             plt.xlabel('%s Likelihood Ratio'%(self.particle_base_formats[p]))
-            plt.gcf().autofmt_xdate()
             plt.ylabel('Relative Abundance')
             plt.ylim(-0.05, 1.05)
             self.pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
@@ -568,6 +569,7 @@ class ParticleFrame(dict):
 
             plt.setp(main_ax.get_xticklabels(), visible=False)
             plt.ylabel('Particle Rates')
+            plt.ylim(-0.05, 1.05)
             plt.legend()
 
             plt.subplot(grid[2, 0], sharex=main_ax)
@@ -590,6 +592,7 @@ class ParticleFrame(dict):
             plt.axhline(y=1., color='dimgrey', linestyle='--')
             plt.grid(b=True, axis='both')
             plt.xlabel('False Positive Rate')
+            plt.xlim(-0.05, 1.05)
             plt.ylabel('Rate Ratios')
             plt.legend()
 
