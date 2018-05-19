@@ -135,7 +135,7 @@ if args.run_pid:
     c = data.add_isMax_column(ParticleFrame.particleIDs) if exclusive_cut else ParticleFrame.particleIDs
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
     plt.figure()
-    plt.imshow(epsilonPIDs, cmap='viridis')
+    plt.imshow(epsilonPIDs, cmap='viridis', vmin=0., vmax=1.)
     for (j, i), label in np.ndenumerate(epsilonPIDs):
         plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
     plt.grid(b=False, axis='both')
@@ -251,7 +251,7 @@ if args.run_univariate_bayes:
     c = data.add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
     plt.figure()
-    plt.imshow(epsilonPIDs, cmap='viridis')
+    plt.imshow(epsilonPIDs, cmap='viridis', vmin=0., vmax=1.)
     for (j, i), label in np.ndenumerate(epsilonPIDs):
         plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
     plt.grid(b=False, axis='both')
@@ -344,7 +344,7 @@ if args.run_multivariate_bayes:
     c = data.add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
     plt.figure()
-    plt.imshow(epsilonPIDs, cmap='viridis')
+    plt.imshow(epsilonPIDs, cmap='viridis', vmin=0., vmax=1.)
     for (j, i), label in np.ndenumerate(epsilonPIDs):
         plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
     plt.grid(b=False, axis='both')
@@ -374,7 +374,7 @@ if args.run_multivariate_bayes_motivation:
 
     correlation_matrix = particle_data[holdings].corr()
     plt.figure()
-    plt.imshow(correlation_matrix, cmap='viridis')
+    plt.imshow(correlation_matrix, cmap='viridis', vmin=-1., vmax=1.)
     for (j, i), label in np.ndenumerate(correlation_matrix):
         plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
     plt.grid(b=False, axis='both')

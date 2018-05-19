@@ -534,7 +534,7 @@ class ParticleFrame(dict):
         drawing_title = plt.suptitle(title_epsilonPIDs)
         for n in range(len(epsilonPIDs_approaches)):
             plt.subplot(1, len(epsilonPIDs_approaches), n+1)
-            plt.imshow(epsilonPIDs_approaches[n], cmap='viridis')
+            plt.imshow(epsilonPIDs_approaches[n], cmap='viridis', vmin=0., vmax=1.)
             for (j, i), label in np.ndenumerate(epsilonPIDs_approaches[n]):
                 plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
             plt.grid(b=False, axis='both')
