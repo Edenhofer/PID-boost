@@ -33,7 +33,7 @@ ParticleFrame = lib.ParticleFrame
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
-                    help='Directory in which the program shall search for root files for each particle')
+                    help='Directory in which the program shall search for ROOT files for each particle')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'.')
 group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,

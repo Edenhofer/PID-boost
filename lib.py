@@ -21,10 +21,10 @@ def pdg_from_name_faulty(particle):
     """Return the pdgCode for a given particle honoring a bug in the float to integer conversion.
 
     Args:
-        particle: The name of the particle which should be translated.
+        particle (str): The name of the particle which should be translated.
 
     Returns:
-        The Particle Data Group (PDG) code compatible with the values in root files.
+        int: The Particle Data Group (PDG) code compatible with the values in ROOT files.
 
     """
     if particle == 'deuteron':
@@ -39,10 +39,10 @@ def pdg_to_name_faulty(pdg_code):
     """Return the particle name for a given Particle Data Group (PDG) code honoring a bug in the float to integer conversion.
 
     Args:
-        pdg_code: PDG code compatible with the values in root files.
+        pdg_code (:obj:`float` or :obj:`int`): PDG code compatible with the values in ROOT files.
 
     Returns:
-        The name of the particle for the given PDG code with 'None' as value for faulty reconstructions and 'nan' for buggy translations.
+        str: The name of the particle for the given PDG code with 'None' as value for faulty reconstructions and 'nan' for buggy translations.
 
     """
     if pdg_code == 0:
@@ -58,10 +58,13 @@ def basf2_Code(particle):
     """Return the pdgCode in a basf2 compatible way with escaped special characters.
 
     Args:
-        particle: The name of the particle which should be translated.
+        particle (str): The name of the particle which should be translated.
 
     Returns:
-        Return the escaped pdgCode.
+        str: Return the escaped pdgCode.
+
+    Raises:
+        ValueError: Bogus particle code of the given particle which is neither > 0 nor < 0.
 
     """
     r = pdg.from_name(particle)
@@ -79,16 +82,16 @@ class ParticleFrame(dict):
     Mimic the behavior of a dictionary containing the particle data as values but include some utility functions and base definitions of stable particles and detector components.
 
     Attributes:
-        particles (list): List of stable particles.
-        particleIDs (dict): Particle IDs according to the generic ID process for stable particles.
-        particle_formats (dict): Format string in a dictionary of stable and unstable particles and anti-particles.
-        particle_base_formats (dict): Format string of the base particle for each stable and unstable particles and anti-particles.
-        detectors (list): List of real detectors.
-        pseudo_detectors (list): List of pseudo detectors which are composed of real detectors.
-        variable_formats (dict): Format strings for ROOT variables.
-        variable_units (dict): Format strings for the unit of ROOT variables.
-        detector_weights (dict): Relative weights of detectors.
-        physical_boundaries (dict): Boundaries for root variables according to which the ParticleFrame is cut to exclude un-physical results.
+        particles (:obj:`list` of :obj:`str`): List of stable particles.
+        particleIDs (:obj:`dict` of :obj:`str`): Particle IDs according to the generic ID process for stable particles.
+        particle_formats (:obj:`dict` of :obj:`str`): Format string in a dictionary of stable and unstable particles and anti-particles.
+        particle_base_formats (:obj:`dict` of :obj:`str`): Format string of the base particle for each stable and unstable particles and anti-particles.
+        detectors (:obj:`list` of :obj:`str`): List of real detectors.
+        pseudo_detectors (:obj:`list` of :obj:`str`): List of pseudo detectors which are composed of real detectors.
+        variable_formats (:obj:`dict` of :obj:`str`): Format strings for ROOT variables.
+        variable_units (:obj:`dict` of :obj:`str`): Format strings for the unit of ROOT variables.
+        detector_weights (:obj:`dict` of :obj:`float`): Relative weights of detectors.
+        physical_boundaries (:obj:`dict` of :obj:`tuple` of :obj:`float`): Boundaries for ROOT variables according to which the ParticleFrame is cut to exclude un-physical results.
 
     """
     # Base definitions of stable particles and detector data
@@ -110,7 +113,7 @@ class ParticleFrame(dict):
         """Initialize and empty ParticleFrame.
 
         Args:
-            input_directory (:obj:`str`, optional): Default input directory for root files for each particle.
+            input_directory (:obj:`str`, optional): Default input directory for ROOT files for each particle.
             input_pickle (:obj:`str`, optional): Default input filepath for a pickle from which to initialize the class object.
             output_directory (:obj:`str`, optional): Default output directory for data generated using this ParticleFrame.
             interactive (:obj:`bool`, optional): Whether plotting should be done interactively.
@@ -121,7 +124,7 @@ class ParticleFrame(dict):
         """
         self.data = {}
         if input_pickle is not None and input_directory is not None:
-            raise ValueError('Invalid number of inputs; Received `input_pickle` and `input_directory`; Please decide upon one method for class initialization')
+            raise ValueError('invalid number of inputs; Received `input_pickle` and `input_directory`; Please decide upon one method for class initialization')
         if input_directory is not None:
             self.read_root(input_directory)
         elif input_pickle is not None:
@@ -181,7 +184,7 @@ class ParticleFrame(dict):
         """Read in the particle information contained within the given directory into the current object.
 
         Args:
-            input_directory (str): Directory in which the program shall search for root files for each particle
+            input_directory (str): Directory in which the program shall search for ROOT files for each particle
 
         """
         # Read in all the particle's information into a dictionary of pandas-frames
@@ -189,8 +192,7 @@ class ParticleFrame(dict):
         # Clean up the data; Remove obviously un-physical values
         for particle_data in self.data.values():
             for k, bounds in self.physical_boundaries.items():
-                particle_data.drop(particle_data[(particle_data[k] < bounds[0]) | (
-                    particle_data[k] > bounds[1])].index, inplace=True)
+                particle_data.drop(particle_data[(particle_data[k] < bounds[0]) | (particle_data[k] > bounds[1])].index, inplace=True)
 
     def read_pickle(self, input_pickle):
         """Read in the particle information from a pickle file.
@@ -201,17 +203,42 @@ class ParticleFrame(dict):
         """
         self.data = pickle.load(open(input_pickle, 'rb'))
 
+    def save(self, pickle_file=None, output_directory=None):
+        """Save the current data of the class to a pickle file.
+
+        Args:
+            pickle_file (:obj:`str`, optional): Path where to save the pickle file to; Takes precedence when specified; Do not save anything if given '/dev/null'.
+            output_directory (:obj:`str`, optional): Directory where to save the pickle file to with class' name as filename; Do not save anything if specifically given '/dev/null' as output directory.
+
+        """
+        if pickle_file is None:
+            if output_directory is None:
+                pickle_file = self.output_directory + '/' + self.__class__.__name__ + '.pkl'
+            elif output_directory == '/dev/null':
+                pickle_file = '/dev/null'
+            else:
+                pickle_file = output_directory + '/' + self.__class__.__name__ + '.pkl'
+        else:
+            pickle_file = pickle_file
+
+        if pickle_file != '/dev/null':
+            if not os.path.exists(os.path.dirname(pickle_file)):
+                print('Creating desired parent directory "%s" for the pickle file "%s"'%(os.path.dirname(pickle_file), pickle_file), file=sys.stderr)
+                os.makedirs(os.path.dirname(pickle_file), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+
+            pickle.dump(self.data, open(pickle_file, 'wb'), pickle.HIGHEST_PROTOCOL)
+
     def stats(self, cut_min=0., cut_max=1., ncuts=50, cutting_columns=None):
         """Calculate, print and plot various values from statistics for further analysis and finally return some values.
 
         Args:
-            cut_min: Lower bound of the cut (default: 0).
-            cut_max: Upper bound of the cut (default: 1).
-            ncuts: Number of cuts to perform on the interval (default: 50).
-            cutting_columns: Dictionary which yields a column name for each particle on which basis the various statistics are calculated.
+            cut_min (:obj:`float`, optional): Lower bound of the cut (default: 0).
+            cut_max (:obj:`float`, optional): Upper bound of the cut (default: 1).
+            ncuts (:obj:`int`, optional): Number of cuts to perform on the interval (default: 50).
+            cutting_columns (:obj:`dict` of :obj:`str`, optional): Dictionary which yields a column name for each particle on which basis the various statistics are calculated.
 
         Returns:
-            A dictionary of dictionaries containing arrays themselfs.
+            :obj:`dict` of :obj:`dict` of :obj:`list` of :obj:`float`: A dictionary of dictionaries containing arrays themselfs.
 
             Each particle has an entry in the dictionary and each particle's dictionary has a dictionary of values from statistics for each cut:
 
@@ -249,11 +276,11 @@ class ParticleFrame(dict):
         """Calculate the epsilon_PID matrix for misclassifying particles: rows represent true particles, columns the classification.
 
         Args:
-            cut: Position of the cut for the cutting_columns.
-            cutting_columns: Dictionary which yields a column name for each particle on which the cuts are performed.
+            cut (:obj:`float`, optional): Position of the cut for the cutting_columns.
+            cutting_columns (:obj:`dict` of :obj:`str`, optional): Dictionary which yields a column name for each particle on which the cuts are performed.
 
         Returns:
-            A numpy matrix of epsilon_PID values. The `epsilon_PID[i][j]` value being the probability given it is a particle ''i'' that it will be categorized as particle ''j''.
+            :obj:`numpy.ndarray`: A numpy matrix of epsilon_PID values. The `epsilon_PID[i][j]` value being the probability given it is a particle ''i'' that it will be categorized as particle ''j''.
 
         """
         cutting_columns = self.particleIDs if cutting_columns is None else cutting_columns
@@ -271,8 +298,8 @@ class ParticleFrame(dict):
         """Mimic the calculation of the particleIDs and compare them to their value provided by the analysis software.
 
         Args:
-            detector_weights: Dictionary of detectors with the weights (default 1.) as values.
-            check: Whether to assert the particleIDs if the detector weights are all 1.
+            detector_weights (:obj:`dict` of :obj:`float`): Dictionary of detectors with the weights (default 1.) as values.
+            check (:obj:`bool`, optional): Whether to assert the particleIDs if the detector weights are all 1.
 
         """
         detector_weights = self.detector_weights if detector_weights is None else detector_weights
@@ -307,11 +334,12 @@ class ParticleFrame(dict):
         """Compute probabilities for particle hypothesis using a Bayesian approach.
 
         Args:
-            priors: Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
-            mc_best: Boolean specifying whether to use the Monte Carlo data for calculating the a prior probabilities.
+            priors (:obj:`dict` of :obj:`float`, optional): Dictionary of 'a priori' weights / probabilities (absolute normalization irrelevant) of detecting a given particle.
+            detector (:obj:`str`, optional): Name of the detector which should be inserted into the column string.
+            mc_best (:obj:`bool`, optional): Boolean specifying whether to use the Monte Carlo data for calculating the a prior probabilities.
 
         Returns:
-            cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
+            cutting_columns (:obj:`dict` of :obj:`str`): A dictionary containing the name of each column by particle which shall be used for cuts.
 
         """
         cutting_columns = {k: 'bayes_' + v for k, v in self.particleIDs.items()}
@@ -333,23 +361,22 @@ class ParticleFrame(dict):
         return cutting_columns
 
     def multivariate_bayes(self, holdings=['pt'], nbins=10, detector='all', mc_best=False, niterations=7, norm='pi+', whis=None):
-        """Compute probabilities for particle hypothesis keeping the `hold` root variable fixed using a Bayesian approach.
+        """Compute probabilities for particle hypothesis keeping the `hold` ROOT variable fixed using a Bayesian approach.
 
         Args:
-            holdings: List of Root variables on which the 'a prior' probability shall depend on.
-            nbins: Number of bins to use for the `hold` variable when calculating probabilities.
-            detector: Name of the detector to be used for pidLogLikelihood extraction.
-            mc_best: Boolean specifying whether to use the Monte Carlo data for prior probabilities or an iterative approach.
-            niterations: Number of iterations for the converging approach.
-            norm: Particle by which abundance to norm the a priori probabilities.
-            whis: Whiskers, scale of the Inter Quartile Range (IQR) for outlier exclusion.
+            holdings (:obj:`dict` of :obj:`str`, optional): List of ROOT variables on which the 'a prior' probability shall depend on.
+            nbins (:obj:`int`, optional): Number of bins to use for the `hold` variable when calculating probabilities.
+            detector (:obj:`str`, optional): Name of the detector to be used for pidLogLikelihood extraction.
+            mc_best (:obj:`bool`, optional): Boolean specifying whether to use the Monte Carlo data for prior probabilities or an iterative approach.
+            niterations (:obj:`int`, optional): Number of iterations for the converging approach.
+            norm (:obj:`str`, optional): Particle by which abundance to norm the a priori probabilities.
+            whis (:obj:`float`, optional): Whiskers, scale of the Inter Quartile Range (IQR) for outlier exclusion.
 
         Returns:
-            cutting_columns: A dictionary containing the name of each column by particle which shall be used for cuts.
-            cutting_columns_isMax: A dictionary containing the name of each column by particle which shall be used for exclusive cuts, yielding the maximum probability particle.
-            category_columns: A dictionary of entries for each `hold` with the name of the column in each dataframe which holds the category for bin selection.
-            intervals: A dictionary of entries for each `hold` containing an array of interval boundaries for every bin.
-            iteration_priors: A dictionary for each dataset of particle dictionaries containing arrays of priors for each iteration.
+            cutting_columns (:obj:`dict` of :obj:`str`): A dictionary containing the name of each column by particle which shall be used for cuts.
+            category_columns (:obj:`dict` of :obj:`str`): A dictionary of entries for each `hold` with the name of the column in each dataframe which holds the category for bin selection.
+            intervals (:obj:`dict` of :obj:`list` of :obj:`float`): A dictionary of entries for each `hold` containing an array of interval boundaries for every bin.
+            iteration_priors (:obj:`dict` of :obj:`dict` of :obj:`list` of :obj:`float`): A dictionary for each dataset of particle dictionaries containing arrays of priors for each iteration.
 
         """
         if mc_best == True:
@@ -410,10 +437,10 @@ class ParticleFrame(dict):
         """Add columns containing ones for each track where the cutting column is maximal and fill zeros otherwise.
 
         Args:
-            cutting_columns: Columns by particles where to find the maximum
+            cutting_columns (:obj:`dict` of :obj:`str`): Columns by particles where to find the maximum
 
         Returns:
-            cutting_columns_isMax: Columns by particle containing ones for maximal values
+            cutting_columns_isMax (:obj:`dict` of :obj:`str`): Columns by particle containing ones for maximal values
 
         """
         for particle_data in self.values():
@@ -425,31 +452,6 @@ class ParticleFrame(dict):
 
         return cutting_columns_isMax
 
-    def save(self, pickle_file=None, output_directory=None):
-        """Save the current data of the class to a pickle file.
-
-        Args:
-            pickle_file (:obj:`str`, optional): Path where to save the pickle file to; Takes precedence when specified; Do not save anything if given '/dev/null'.
-            output_directory (:obj:`str`, optional): Directory where to save the pickle file to with class' name as filename; Do not save anything if specifically given '/dev/null' as output directory.
-
-        """
-        if pickle_file is None:
-            if output_directory is None:
-                pickle_file = self.output_directory + '/' + self.__class__.__name__ + '.pkl'
-            elif output_directory == '/dev/null':
-                pickle_file = '/dev/null'
-            else:
-                pickle_file = output_directory + '/' + self.__class__.__name__ + '.pkl'
-        else:
-            pickle_file = pickle_file
-
-        if pickle_file != '/dev/null':
-            if not os.path.exists(os.path.dirname(pickle_file)):
-                print('Creating desired parent directory "%s" for the pickle file "%s"'%(os.path.dirname(pickle_file), pickle_file), file=sys.stderr)
-                os.makedirs(os.path.dirname(pickle_file), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
-
-            pickle.dump(self.data, open(pickle_file, 'wb'), pickle.HIGHEST_PROTOCOL)
-
     def pyplot_sanitize_show(self, title, format='pdf', bbox_inches='tight', output_directory=None, interactive=None, **kwargs):
         """Save and show the current figure to a configurable location and sanitize its name.
 
@@ -458,7 +460,7 @@ class ParticleFrame(dict):
             format (:obj:`str`, optional): Format in which to save the plot; Its value is also appended to the filename.
             bbox_inches (:obj:`str`, optional): Bbox in inches; If 'tight' figure out the best suitable values.
             output_directory (:obj:`str`, optional): Output directory; Defaulting to the ParticleFrame's `self.output_directory`, do not save anything if given '/dev/null' as output.
-            interactive (:obj:`str`, optional): Whether to run interactive or not; Defaulting to the ParticleFrame's `self.interactive`.
+            interactive (:obj:`bool`, optional): Whether to run interactive or not; Defaulting to the ParticleFrame's `self.interactive`.
             **kwargs: Any keyword arguments valid for `matplotlib.pyplot.savefig()`.
 
         """

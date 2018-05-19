@@ -76,7 +76,7 @@ group_opt.add_argument('--particles-of-interest', dest='particles_of_interest', 
 group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=float, default=None,
                     help='Whiskers with which the IQR will be IQR')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
-                    help='Directory in which the program shall search for root files for each particle')
+                    help='Directory in which the program shall search for ROOT files for each particle')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'.')
 group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
@@ -383,7 +383,7 @@ if args.run_multivariate_bayes_motivation:
     plt.ylabel('True Particle')
     plt.yticks(range(len(holdings)), [ParticleFrame.variable_formats[v] for v in holdings])
     plt.colorbar()
-    drawing_title = plt.title('Heatmap of Correlation Matrix of Root Variables')
+    drawing_title = plt.title('Heatmap of Correlation Matrix of ROOT Variables')
     data.pyplot_sanitize_show('Multivariate Bayesian Approach: ' + drawing_title.get_text())
 
     selection = np.ones(particle_data.shape[0], dtype=bool)
