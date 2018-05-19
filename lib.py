@@ -184,6 +184,15 @@ class ParticleFrame(dict):
                 particle_data.drop(particle_data[(particle_data[k] < bounds[0]) | (
                     particle_data[k] > bounds[1])].index, inplace=True)
 
+    def read_pickle(self, input_pickle):
+        """Read in the particle information from a pickle file.
+
+        Args:
+            input_pickle (str): Filepath of the pickle which shall be loaded.
+
+        """
+        self.data = pickle.load(open(input_pickle, 'rb'))
+
     def stats(self, cut_min=0., cut_max=1., ncuts=50, cutting_columns=None):
         """Calculate, print and plot various values from statistics for further analysis and finally return some values.
 
