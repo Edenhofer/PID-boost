@@ -129,7 +129,7 @@ class ParticleFrame(dict):
             self.read_root(input_directory)
         elif input_pickle is not None:
             self.read_pickle(input_pickle)
-        self.output_directory = './res/' if output_directory is None else output_directory
+        self.output_directory = os.path.join('res', '') if output_directory is None else output_directory
         self.interactive = False if interactive is None else interactive
 
     def __setitem__(self, key, item):
@@ -188,7 +188,7 @@ class ParticleFrame(dict):
 
         """
         # Read in all the particle's information into a dictionary of pandas-frames
-        self.data = {p: rpd.read_root(input_directory + '/' + p + '.root') for p in self.particles}
+        self.data = {p: rpd.read_root(os.path.join(input_directory, p + '.root')) for p in self.particles}
         # Clean up the data; Remove obviously un-physical values
         for particle_data in self.data.values():
             for k, bounds in self.physical_boundaries.items():
@@ -213,11 +213,11 @@ class ParticleFrame(dict):
         """
         if pickle_file is None:
             if output_directory is None:
-                pickle_file = self.output_directory + '/' + self.__class__.__name__ + '.pkl'
+                pickle_file = os.path.join(self.output_directory, self.__class__.__name__ + '.pkl')
             elif output_directory == '/dev/null':
                 pickle_file = '/dev/null'
             else:
-                pickle_file = output_directory + '/' + self.__class__.__name__ + '.pkl'
+                pickle_file = os.path.join(output_directory, self.__class__.__name__ + '.pkl')
         else:
             pickle_file = pickle_file
 
@@ -473,7 +473,7 @@ class ParticleFrame(dict):
                 os.makedirs(output_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
             title = re.sub('[\\\\$_^{}]', '', title)
-            plt.savefig(output_directory + '/' + title + '.' + format, bbox_inches=bbox_inches, format=format, **kwargs)
+            plt.savefig(os.path.join(output_directory, title + '.' + format), bbox_inches=bbox_inches, format=format, **kwargs)
 
         if interactive:
             plt.show(block=False)
