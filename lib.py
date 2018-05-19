@@ -574,19 +574,20 @@ class ParticleFrame(dict):
 
             plt.subplot(grid[2, 0], sharex=main_ax)
             base_approach = stats_approaches[0]
+            # Numpy expects values sorted by x
+            sorted_base_range = np.argsort(base_approach[p]['fpr'])
             for n, approach in enumerate(stats_approaches[1:], 1):
-                x = np.linspace(np.sort(base_approach[p]['fpr'])[1], max(base_approach[p]['fpr']), ninterpolations) # Skip first value FPR value (zero)
+                sorted_approach_range = np.argsort(approach[p]['fpr'])
+                x_min = max(base_approach[p]['fpr'][sorted_base_range][1], approach[p]['fpr'][sorted_approach_range][1]) # Skip the first FPR value (probably zero)
+                x_max = min(base_approach[p]['fpr'][sorted_base_range][-1], approach[p]['fpr'][sorted_approach_range][-1])
+                x = np.linspace(x_min, x_max, ninterpolations)
 
-                sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
-                interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_range], approach[p]['tpr'][sorted_range])
-                sorted_range = np.argsort(base_approach[p]['fpr']) # Numpy expects values sorted by x
-                interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_range], base_approach[p]['tpr'][sorted_range])
+                interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_approach_range], approach[p]['tpr'][sorted_approach_range])
+                interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_base_range], base_approach[p]['tpr'][sorted_base_range])
                 plt.plot(x, interpolated_rate / interpolated_rate_base, label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color=next(colors))
 
-                sorted_range = np.argsort(approach[p]['fpr']) # Numpy expects values sorted by x
-                interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_range], approach[p]['ppv'][sorted_range])
-                sorted_range = np.argsort(base_approach[p]['fpr']) # Numpy expects values sorted by x
-                interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_range], base_approach[p]['ppv'][sorted_range])
+                interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_approach_range], approach[p]['ppv'][sorted_approach_range])
+                interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_base_range], base_approach[p]['ppv'][sorted_base_range])
                 plt.plot(x, interpolated_rate / interpolated_rate_base, label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color=next(colors))
 
             plt.axhline(y=1., color='dimgrey', linestyle='--')
