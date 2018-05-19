@@ -5,6 +5,7 @@ from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to importing argparse
 
 import argparse
+import pickle
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -77,6 +78,8 @@ group_opt.add_argument('--whis', dest='whis', nargs='?', action='store', type=fl
                     help='Whiskers with which the IQR will be IQR')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for ROOT files for each particle')
+group_util.add_argument('--input-pickle', dest='input_pickle', action='store', default=None,
+                    help='Pickle file path containing a ParticleFrame object which shall be read in instead of ROOT files; Takes precedence when specified')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'.')
 group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
@@ -94,9 +97,13 @@ args = parser.parse_args()
 
 # Read in all the particle's information into a dictionary of pandas-frames
 input_directory = args.input_directory
+input_pickle = args.input_pickle
 interactive = args.interactive
 output_directory = args.output_directory
-data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
+if input_pickle:
+    data = ParticleFrame(input_pickle=input_pickle, output_directory=output_directory, interactive=interactive)
+else:
+    data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
 
 if args.run_stats:
     norm = args.norm
