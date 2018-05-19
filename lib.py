@@ -106,18 +106,26 @@ class ParticleFrame(dict):
     # Dictionary of variables and their boundaries for possible values they might yield
     physical_boundaries = {'pt': (0, 5.5), 'cosTheta': (-1, 1)}
 
-    def __init__(self, input_directory=None, output_directory=None, interactive=None):
+    def __init__(self, input_pickle=None, input_directory=None, output_directory=None, interactive=None):
         """Initialize and empty ParticleFrame.
 
         Args:
             input_directory (:obj:`str`, optional): Default input directory for root files for each particle.
+            input_pickle (:obj:`str`, optional): Default input filepath for a pickle from which to initialize the class object.
             output_directory (:obj:`str`, optional): Default output directory for data generated using this ParticleFrame.
             interactive (:obj:`bool`, optional): Whether plotting should be done interactively.
 
+        Raises:
+            ValueError: If given not-none values for both `input_pickle` and `input_directory`.
+
         """
         self.data = {}
+        if input_pickle is not None and input_directory is not None:
+            raise ValueError('Invalid number of inputs; Received `input_pickle` and `input_directory`; Please decide upon one method for class initialization')
         if input_directory is not None:
             self.read_root(input_directory)
+        elif input_pickle is not None:
+            self.read_pickle(input_pickle)
         self.output_directory = './res/' if output_directory is None else output_directory
         self.interactive = False if interactive is None else interactive
 
