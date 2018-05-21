@@ -15,6 +15,7 @@ from keras.layers import Activation, Dense, Dropout, MaxPooling1D
 from keras.models import Sequential
 from keras.utils import to_categorical
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 import lib
 
@@ -112,6 +113,9 @@ elif args.run_pca:
     design_columns = list(set(augmented_matrix.keys()) - {'isSignal', 'mcPDG', 'mcErrors'})
     design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 
+    scaler = StandardScaler()
+    scaler.fit(design_matrix[test_selection])
+    scaler.transform(design_matrix)
     pca = PCA(n_components=n_components)
     pca.fit(design_matrix[test_selection])
     pca.transform(design_matrix)
