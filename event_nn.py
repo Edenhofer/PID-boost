@@ -92,6 +92,9 @@ n_components = args.n_components
 # Take special care about extracting the final result, since this is a copy
 augmented_matrix = pd.concat(data.values(), keys=data.keys())
 
+test_selection = np.random.choice([True, False], augmented_matrix.shape[0], p=[training_fraction, 1-training_fraction])
+validation_selection = np.invert(test_selection) # Use everything not utilized for testing as validation data
+
 # Assemble the array representing the desired output
 labels = list(np.unique(np.abs(augmented_matrix['mcPDG'].values)))
 for v in labels:
@@ -106,15 +109,14 @@ if args.run_pidProbability:
             design_columns += ['pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc']
     design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 elif args.run_pca:
-    pca = PCA(n_components=n_components)
     design_columns = list(set(augmented_matrix.keys()) - {'isSignal', 'mcPDG', 'mcErrors'})
     design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
-    pca.fit(design_matrix)
+
+    pca = PCA(n_components=n_components)
+    pca.fit(design_matrix[test_selection])
     pca.transform(design_matrix)
     print('Selected principal components explain %.4f of the variance in the data'%(pca.explained_variance_ratio_.sum()))
 
-test_selection = np.random.choice([True, False], target.shape[0], p=[training_fraction, 1-training_fraction])
-validation_selection = np.invert(test_selection) # Use everything not utilized for testing as validation data
 x_test = design_matrix[test_selection].values
 y_test = target[test_selection].values
 x_validation = design_matrix[validation_selection].values
