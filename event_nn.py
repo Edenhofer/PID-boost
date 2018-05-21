@@ -14,6 +14,7 @@ from keras.callbacks import TensorBoard
 from keras.layers import Activation, Dense, Dropout, MaxPooling1D
 from keras.models import Sequential
 from keras.utils import to_categorical
+from sklearn.decomposition import PCA
 
 import lib
 
@@ -35,12 +36,19 @@ ParticleFrame = lib.ParticleFrame
 
 # Assemble the allowed command line options
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+group_action = parser.add_mutually_exclusive_group(required=True)
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
+group_action.add_argument('--pca', dest='run_pca', action='store_true', default=False,
+                    help='Run the model on the principal components of the data')
+group_action.add_argument('--pidProbability', dest='run_pidProbability', action='store_true', default=False,
+                    help='Run the model on the `pidProbability` data by detector')
 group_opt.add_argument('--batch-size', dest='batch_size', action='store', type=int, default=32,
                     help='Size of each batch')
 group_opt.add_argument('--epoch', dest='epoch', action='store', type=int, default=10,
                     help='Number of iterations to train the model (epoch)')
+group_opt.add_argument('--ncomponents', dest='n_components', action='store', type=int, default=12,
+                    help='Number of components to keep after performing a PCA on the data')
 group_opt.add_argument('--training-fraction', dest='training_fraction', action='store', type=float, default=0.8,
                     help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
 group_util.add_argument('-f', '--file', dest='output_file', action='store', default='./model.h5',
@@ -78,27 +86,39 @@ detector = 'all' # Bad hardcoding stuff which should actually be configurable
 epochs = args.epoch
 batch_size = args.batch_size
 training_fraction = args.training_fraction
-
-design_columns = []
-for p in ParticleFrame.particles:
-    for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
-        design_columns += ['pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc']
+n_components = args.n_components
 
 # Concatenate the whole data into one huge multi-indexable DataFrame
 # Take special care about extracting the final result, since this is a copy
 augmented_matrix = pd.concat(data.values(), keys=data.keys())
 
+# Assemble the array representing the desired output
 labels = list(np.unique(np.abs(augmented_matrix['mcPDG'].values)))
 for v in labels:
     augmented_matrix.at[(augmented_matrix['mcPDG'] == v) | (augmented_matrix['mcPDG'] == -1 * v), truth_color_column] = labels.index(v)
+target = augmented_matrix[truth_color_column]
 
-augmented_matrix = augmented_matrix.fillna(0.) # Fill null in cells with no value (clean up probability columns)
-test_selection = np.random.choice([True, False], augmented_matrix.shape[0], p=[training_fraction, 1-training_fraction])
+# Assemble the input matrix on which to train the model
+if args.run_pidProbability:
+    design_columns = []
+    for p in ParticleFrame.particles:
+        for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
+            design_columns += ['pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc']
+    design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
+elif args.run_pca:
+    pca = PCA(n_components=n_components)
+    design_columns = list(set(augmented_matrix.keys()) - {'isSignal', 'mcPDG', 'mcErrors'})
+    design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
+    pca.fit(design_matrix)
+    pca.transform(design_matrix)
+    print('Selected principal components explain %.4f of the variance in the data'%(pca.explained_variance_ratio_.sum()))
+
+test_selection = np.random.choice([True, False], target.shape[0], p=[training_fraction, 1-training_fraction])
 validation_selection = np.invert(test_selection) # Use everything not utilized for testing as validation data
-x_test = augmented_matrix[test_selection][design_columns].values
-y_test = augmented_matrix[test_selection][truth_color_column].values
-x_validation = augmented_matrix[validation_selection][design_columns].values
-y_validation = augmented_matrix[validation_selection][truth_color_column].values
+x_test = design_matrix[test_selection].values
+y_test = target[test_selection].values
+x_validation = design_matrix[validation_selection].values
+y_validation = target[validation_selection].values
 
 # Layer selection
 model = Sequential()
