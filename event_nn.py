@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # PYTHON_ARGCOMPLETE_OK
 
+from ROOT import PyConfig
+PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to importing argparse
+
 import argparse
 import os
 import sys
@@ -32,7 +35,16 @@ ParticleFrame = lib.ParticleFrame
 
 # Assemble the allowed command line options
 parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
+group_opt.add_argument('--batch-size', dest='batch_size', action='store', type=int, default=32,
+                    help='Size of each batch')
+group_opt.add_argument('--epoch', dest='epoch', action='store', type=int, default=10,
+                    help='Number of iterations to train the model (epoch)')
+group_opt.add_argument('--training-fraction', dest='training_fraction', action='store', type=float, default=0.8,
+                    help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
+group_util.add_argument('-f', '--file', dest='output_file', action='store', default='./model.h5',
+                    help='Path where the model should be saved to including the filename; Skip saving if given \'/dev/null\'.')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for ROOT files for each particle')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
@@ -41,8 +53,6 @@ group_util.add_argument('--interactive', dest='interactive', action='store_true'
                     help='Run interactively, i.e. show plots')
 group_util.add_argument('--non-interactive', dest='interactive', action='store_false', default=True,
                     help='Run non-interactively and hence unattended, i.e. show no plots')
-group_util.add_argument('-f', '--file', dest='output_file', action='store', default='./model.h5',
-                    help='Path where the model should be saved to including the filename; Skip saving if given \'/dev/null\'.')
 
 try:
     argcomplete.autocomplete(parser)
@@ -63,11 +73,11 @@ data = ParticleFrame(input_directory=input_directory, output_directory=output_di
 
 truth_color_column = 'mcPDG_color'
 nn_color_column = 'nn_mcPDG'
-# Bad hardcoding stuff which should actually be configurable
-detector = 'all'
-training_fraction = 0.8
-batch_size = 32
-epochs = 10
+detector = 'all' # Bad hardcoding stuff which should actually be configurable
+# Evaluate sub-options
+epochs = args.epoch
+batch_size = args.batch_size
+training_fraction = args.training_fraction
 
 design_columns = []
 for p in ParticleFrame.particles:
