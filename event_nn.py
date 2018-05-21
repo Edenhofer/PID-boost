@@ -102,10 +102,12 @@ y_validation = augmented_matrix[validation_selection][truth_color_column].values
 
 # Layer selection
 model = Sequential()
-model.add(Dense(x_test.shape[1], input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
+model.add(Dense(len(labels) * 2, input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
 model.add(Dropout(0.2))
 model.add(Dense(len(labels) * 3, input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
 model.add(Dropout(0.2))
+model.add(Dense(len(labels) * 2, input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
+model.add(Dense(int(len(labels) * 1.5), input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
 model.add(Dense(len(labels), activation='softmax'))
 
 # Compilation for a multi-class classification problem
