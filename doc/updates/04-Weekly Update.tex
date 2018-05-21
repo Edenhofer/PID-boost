@@ -1,0 +1,168 @@
+\documentclass{beamer}
+	\usepackage[utf8]{inputenc}		% required for umlauts
+	\usepackage[ngerman]{babel}		% required for umlauts
+	\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage{libertine}			% enable this on Windows to allow for microtype
+	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
+
+	\usepackage{mathtools}		% required for formulas
+
+	\usepackage{graphicx}		% required to insert images
+	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
+	\usepackage[tracking=true]{microtype} % required to change character spacing
+
+	\usepackage{hyperref}		% insert clickable references
+
+	\usepackage{datetime}		% flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+
+	\usepackage{geometry}
+	\usepackage{scrextend}		% allow arbitrary indentation
+
+	\usepackage{color}
+
+	\usetheme{default}
+	\usecolortheme{beaver}
+
+	\title{Fourth Weekly Update on `Optimization~of~Particle~Identification'}
+	\subtitle{Diversification, Bug Fixes, Streamlining Visuals}
+	\author{Gordian Edenhofer}
+	\date{\today}
+
+
+\begin{document}
+\begin{frame}
+	\frametitle{Git Log}
+
+	\begin{itemize}
+		\item Diversify data by including generic decay events
+		\item Visualize potential gains on generic decay events
+		\item (Fix Bugs)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Dataset}
+	\framesubtitle{MC9 Charged Decay}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Multivariate Bayes}
+	\framesubtitle{MC9 Charged Decay}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/Multivariate Bayesian Approach: Multi-axes Histogram of pt, cosTheta}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes}
+	\framesubtitle{Analysis}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/Multivariate Bayesian Approach: K Spectra Ratios Relative to pi}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes vs. ParticleID}
+	\framesubtitle{$\epsilon_{PID}$-matrix Visualization}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, by pt & cos(Theta)}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes vs. ParticleID}
+	\framesubtitle{Statistics}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/Diff Statistics: K Identification via PID, by pt & cos(Theta)}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes vs. flat Bayes}
+	\framesubtitle{$\epsilon_{PID}$-matrix Visualization}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via flat Bayes, by pt & cos(Theta)}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariate Bayes vs. flat Bayes}
+	\framesubtitle{Statistics}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/Diff Statistics: K Identification via flat Bayes, by pt & cos(Theta)}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Neyman Pearson}
+	\framesubtitle{Goodness of Parameter (`ALL' detector)}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/General Purpose Statistics: Relative K Abundance in Likelihood Ratio Bins for ALL detector}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Neyman Pearson}
+	\framesubtitle{Goodness of Parameter (`ALL' detector)}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for ALL detector}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Appendix --- Neyman Pearson}
+	\framesubtitle{Goodness of Parameter (`SVD' detector)}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for SVD detector}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Appendix --- Neyman Pearson}
+	\framesubtitle{Goodness of Parameter (`CDC' detector)}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for CDC detector}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Appendix --- Neyman Pearson}
+	\framesubtitle{Goodness of Parameter (`TOP' detector)}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for TOP detector}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Appendix --- Neyman Pearson}
+	\framesubtitle{Goodness of Parameter (`ARICH' detector)}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for ARICH detector}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Appendix --- Neyman Pearson}
+	\framesubtitle{Goodness of Parameter (`ECL' detector)}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for ECL detector}}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Appendix --- Neyman Pearson}
+	\framesubtitle{Goodness of Parameter (`KLM' detector)}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{res: charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for KLM detector}}}
+\end{frame}
+
+\end{document}
