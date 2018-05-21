@@ -452,11 +452,16 @@ class ParticleFrame(dict):
 
         return cutting_columns_isMax
 
-    def pyplot_sanitize_show(self, title, format='pdf', bbox_inches='tight', output_directory=None, interactive=None, **kwargs):
-        """Save and show the current figure to a configurable location and sanitize its name.
+    def pyplot_sanitize_show(self, title, savefig_prefix='', savefig_suffix='', suptitle=False, format='pdf', bbox_inches='tight', output_directory=None, interactive=None, **kwargs):
+        """Show and save the current figure to a configurable location and sanitize its name.
+
+        Save the plot currently handled via `matplotlib.pyplot` without the title but an appropriate name, then plot the title and display the plot if run interactively.
 
         Args:
             title (str): Title of the plot and baseline for the name of the file.
+            savefig_prefix (:obj:`str`, optional): Title prefix which gets prepended to the filename of the plot but is not displayed otherwise.
+            savefig_suffix (:obj:`str`, optional): Title suffix which gets appended to the filename of the plot but is not displayed otherwise.
+            suptitle (:obj:`bool`, optional): Whether the title is intended as a super title or as a regular one.
             format (:obj:`str`, optional): Format in which to save the plot; Its value is also appended to the filename.
             bbox_inches (:obj:`str`, optional): Bbox in inches; If 'tight' figure out the best suitable values.
             output_directory (:obj:`str`, optional): Output directory; Defaulting to the ParticleFrame's `self.output_directory`, do not save anything if given '/dev/null' as output.
@@ -472,8 +477,13 @@ class ParticleFrame(dict):
                 print('Creating desired output directory "%s"'%(output_directory), file=sys.stderr)
                 os.makedirs(output_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
-            title = re.sub('[\\\\$_^{}]', '', title)
-            plt.savefig(os.path.join(output_directory, title + '.' + format), bbox_inches=bbox_inches, format=format, **kwargs)
+            sanitized_title = re.sub('[\\\\$_^{}]', '', savefig_prefix + title + savefig_suffix)
+            plt.savefig(os.path.join(output_directory, sanitized_title + '.' + format), bbox_inches=bbox_inches, format=format, **kwargs)
+
+        if suptitle:
+            plt.suptitle(title)
+        else:
+            plt.title(title)
 
         if interactive:
             plt.show(block=False)
@@ -493,9 +503,8 @@ class ParticleFrame(dict):
             plt.xlim(-0.05, 1.05)
             plt.ylabel('Particle Rates')
             plt.ylim(-0.05, 1.05)
-            drawing_title = plt.title('%s Identification'%(self.particle_base_formats[p]))
             plt.legend()
-            self.pyplot_sanitize_show('Statistics: ' + drawing_title.get_text())
+            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), savefig_prefix='Statistics: ')
 
     def plot_neyman_pearson(self, nbins=10, cutting_columns=None, title_suffix='', particles_of_interest=None):
         cutting_columns = self.particleIDs if cutting_columns is None else cutting_columns
@@ -520,18 +529,16 @@ class ParticleFrame(dict):
 
             plt.figure()
             plt.errorbar(interval_centers, abundance_ratio, yerr=y_err, capsize=3, elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.2)
-            drawing_title = plt.title('Relative %s Abundance in Likelihood Ratio Bins%s'%(self.particle_base_formats[p], title_suffix))
             plt.xlabel('%s Likelihood Ratio'%(self.particle_base_formats[p]))
             plt.ylabel('Relative Abundance')
             plt.ylim(-0.05, 1.05)
-            self.pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
+            self.pyplot_sanitize_show('Relative %s Abundance in Likelihood Ratio Bins%s'%(self.particle_base_formats[p], title_suffix), savefig_prefix='General Purpose Statistics: ')
 
     def plot_diff_epsilonPIDs(self, epsilonPIDs_approaches=[], title_suffixes=[], title_epsilonPIDs=''):
         if len(epsilonPIDs_approaches) >= 0 and len(epsilonPIDs_approaches) != len(title_suffixes):
             raise ValueError('epsilonPIDs_approaches array must be of same length as the title_suffixes array')
 
         fig, _ = plt.subplots(nrows=len(epsilonPIDs_approaches), ncols=1)
-        drawing_title = plt.suptitle(title_epsilonPIDs)
         for n in range(len(epsilonPIDs_approaches)):
             plt.subplot(1, len(epsilonPIDs_approaches), n+1)
             plt.imshow(epsilonPIDs_approaches[n], cmap='viridis', vmin=0., vmax=1.)
@@ -548,7 +555,7 @@ class ParticleFrame(dict):
         fig.subplots_adjust(right=0.85)
         cbar_ax = fig.add_axes([0.88, 0.20, 0.05, 0.6])
         plt.colorbar(cax=cbar_ax)
-        self.pyplot_sanitize_show('Diff Heatmap: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes))
+        self.pyplot_sanitize_show(title_epsilonPIDs, savefig_prefix='Diff Heatmap: ', savefig_suffix=','.join(str(suffix) for suffix in title_suffixes), suptitle=True)
 
     def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], particles_of_interest=None, ninterpolations=100):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
@@ -562,7 +569,6 @@ class ParticleFrame(dict):
             colors = iter(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])
 
             main_ax = plt.subplot(grid[:2, 0])
-            drawing_title = plt.title('%s Identification'%(self.particle_base_formats[p]))
             for n, approach in enumerate(stats_approaches):
                 drawing = plt.plot(approach[p]['fpr'], approach[p]['tpr'], label='ROC' + title_suffixes[n], color=next(colors))
                 plt.plot(approach[p]['fpr'], approach[p]['ppv'], label='PPV' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
@@ -597,4 +603,4 @@ class ParticleFrame(dict):
             plt.ylabel('Rate Ratios')
             plt.legend()
 
-            self.pyplot_sanitize_show('Diff Statistics: ' + drawing_title.get_text() + ','.join(str(suffix) for suffix in title_suffixes))
+            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), savefig_prefix='Diff Statistics: ', savefig_suffix=','.join(str(suffix) for suffix in title_suffixes))

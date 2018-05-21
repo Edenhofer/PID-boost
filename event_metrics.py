@@ -124,8 +124,7 @@ if args.run_stats:
     plt.grid(b=False, axis='x')
     plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
     plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles])
-    drawing_title = plt.title('True Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[norm]))
-    data.pyplot_sanitize_show('General Purpose Statistics: ' + drawing_title.get_text())
+    data.pyplot_sanitize_show('True Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[norm]), savefig_prefix='General Purpose Statistics: ')
 
     for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
@@ -152,10 +151,10 @@ if args.run_pid:
     plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
     plt.colorbar()
     if exclusive_cut:
-        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
     else:
-        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
-    data.pyplot_sanitize_show('Particle ID Approach: ' + drawing_title.get_text())
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
+    data.pyplot_sanitize_show(drawing_title, savefig_prefix='Particle ID Approach: ')
 
 if args.run_mimic_pid:
     data.mimic_pid()
@@ -248,7 +247,6 @@ if args.run_univariate_bayes:
     particles_of_interest = args.particles_of_interest
 
     plt.figure()
-    drawing_title = plt.title('True Positive Rate for a Cut at %.2f'%(cut))
     for p in particles_of_interest:
         assumed_abundance = np.array([data[p][((data[p]['mcPDG'] == lib.pdg_from_name_faulty(p)) | (data[p]['mcPDG'] == -1 * lib.pdg_from_name_faulty(p))) & (data[p][category_columns[hold]] == it) & (data[p][cutting_columns[p]] > cut)].shape[0] for it in range(nbins)])
         actual_abundance = np.array([data[p][((data[p]['mcPDG'] == lib.pdg_from_name_faulty(p)) | (data[p]['mcPDG'] == -1 * lib.pdg_from_name_faulty(p))) & (data[p][category_columns[hold]] == it)].shape[0] for it in range(nbins)])
@@ -257,7 +255,7 @@ if args.run_univariate_bayes:
     plt.xlabel(ParticleFrame.variable_formats[hold] + ' (' + ParticleFrame.variable_units[hold] + ')')
     plt.ylabel('True Positive Rate')
     plt.legend()
-    data.pyplot_sanitize_show('Univariate Bayesian Approach: ' + drawing_title.get_text())
+    data.pyplot_sanitize_show('True Positive Rate for a Cut at %.2f'%(cut), savefig_prefix='Univariate Bayesian Approach: ')
 
     c = data.add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
@@ -271,10 +269,10 @@ if args.run_univariate_bayes:
     plt.ylabel('True Particle')
     plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
     if exclusive_cut:
-        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
     else:
-        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
-    data.pyplot_sanitize_show('Univariate Bayesian Approach: ' + drawing_title.get_text())
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
+    data.pyplot_sanitize_show(drawing_title, savefig_prefix='Univariate Bayesian Approach: ')
 
     data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
 
@@ -293,7 +291,6 @@ if args.run_univariate_bayes_priors:
 
     for p in particles_of_interest:
         plt.figure()
-        drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(ParticleFrame.particle_base_formats[p], ParticleFrame.particle_base_formats[norm]))
         plt.errorbar(interval_centers[p], iteration_priors_viaBest[norm][p][-1], xerr=interval_widths[p], label='Truth', fmt='*')
         for n in range(niterations):
             plt.errorbar(interval_centers[p], iteration_priors_viaIter[norm][p][n], xerr=interval_widths[p], label='Iteration %d'%(n+1), fmt='o')
@@ -301,7 +298,7 @@ if args.run_univariate_bayes_priors:
         plt.xlabel(ParticleFrame.variable_formats[hold] + ' (' + ParticleFrame.variable_units[hold] + ')')
         plt.ylabel('Relative Abundance')
         plt.legend()
-        data.pyplot_sanitize_show('Univariate Bayesian Approach: ' + drawing_title.get_text())
+        data.pyplot_sanitize_show('%s Spectra Ratios Relative to %s'%(ParticleFrame.particle_base_formats[p], ParticleFrame.particle_base_formats[norm]), savefig_prefix='Univariate Bayesian Approach: ')
 
 if args.run_univariate_bayes_outliers:
     hold = args.hold
@@ -313,11 +310,10 @@ if args.run_univariate_bayes_outliers:
         plt.boxplot(data[norm][hold], whis=whis, sym='+')
     else:
         plt.boxplot(data[norm][hold], whis='range', sym='+')
-    drawing_title = plt.title('Outliers Outside of ' + str(whis) + ' IQR on a Logarithmic Scale')
     plt.yscale('log')
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
     plt.ylabel(ParticleFrame.variable_formats[hold] + ' (' + ParticleFrame.variable_units[hold] + ')')
-    data.pyplot_sanitize_show('Univariate Bayesian Approach: ' + drawing_title.get_text())
+    data.pyplot_sanitize_show('Outliers Outside of ' + str(whis) + ' IQR on a Logarithmic Scale', savefig_prefix='Univariate Bayesian Approach: ')
 
 if args.run_multivariate_bayes:
     cut = args.cut
@@ -348,9 +344,8 @@ if args.run_multivariate_bayes:
         fig.autofmt_xdate()
         plt.ylabel(ParticleFrame.variable_formats[holdings[1]] + ' (' + ParticleFrame.variable_units[holdings[1]] + ')')
         plt.yticks(range(nbins), interval_centers[holdings[1]][p])
-        drawing_title = plt.title('%s Spectra Ratios Relative to %s'%(ParticleFrame.particle_base_formats[p], ParticleFrame.particle_base_formats[norm]))
         plt.colorbar()
-        data.pyplot_sanitize_show('Multivariate Bayesian Approach: ' + drawing_title.get_text())
+        data.pyplot_sanitize_show('%s Spectra Ratios Relative to %s'%(ParticleFrame.particle_base_formats[p], ParticleFrame.particle_base_formats[norm]), savefig_prefix='Multivariate Bayesian Approach: ')
 
     c = data.add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
@@ -364,11 +359,11 @@ if args.run_multivariate_bayes:
     plt.ylabel('True Particle')
     plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
     if exclusive_cut:
-        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut')
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
     else:
-        drawing_title = plt.title(r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut))
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
     plt.colorbar()
-    data.pyplot_sanitize_show('Multivariate Bayesian Approach: ' + drawing_title.get_text())
+    data.pyplot_sanitize_show(drawing_title, 'Multivariate Bayesian Approach: ')
 
     data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
 
@@ -394,8 +389,7 @@ if args.run_multivariate_bayes_motivation:
     plt.ylabel('True Particle')
     plt.yticks(range(len(holdings)), [ParticleFrame.variable_formats[v] for v in holdings])
     plt.colorbar()
-    drawing_title = plt.title('Heatmap of Correlation Matrix of ROOT Variables')
-    data.pyplot_sanitize_show('Multivariate Bayesian Approach: ' + drawing_title.get_text())
+    data.pyplot_sanitize_show('Heatmap of Correlation Matrix of ROOT Variables', savefig_prefix='Multivariate Bayesian Approach: ')
 
     selection = np.ones(particle_data.shape[0], dtype=bool)
     if whis:
@@ -407,7 +401,6 @@ if args.run_multivariate_bayes_motivation:
             selection = selection & (particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)
 
     fig = plt.figure(figsize=(6, 6))
-    drawing_title = plt.suptitle('Multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings))
     grid = plt.GridSpec(4, 4, hspace=0.2, wspace=0.2)
 
     main_ax = plt.subplot(grid[:-1, 1:])
@@ -433,7 +426,7 @@ if args.run_multivariate_bayes_motivation:
     cbar.set_ticklabels([ParticleFrame.particle_formats[lib.pdg_to_name_faulty(v)] for v in np.unique(particle_data[selection]['mcPDG'].values)])
     cbar.draw_all()
 
-    data.pyplot_sanitize_show('Multivariate Bayesian Approach: ' + drawing_title.get_text())
+    data.pyplot_sanitize_show('Multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings), savefig_prefix='Multivariate Bayesian Approach: ', suptitle=True)
 
 
 plt.show()
