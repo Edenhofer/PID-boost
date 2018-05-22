@@ -6,6 +6,7 @@ PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to im
 
 import argparse
 import os
+import pickle
 import sys
 
 import numpy as np
@@ -55,8 +56,10 @@ group_opt.add_argument('--ncomponents', dest='n_components', action='store', typ
                     help='Number of components to keep after performing a PCA on the data')
 group_opt.add_argument('--training-fraction', dest='training_fraction', action='store', type=float, default=0.8,
                     help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
-group_util.add_argument('-f', '--file', dest='module_path', action='store', default=None,
-                    help='Path where the model should be saved to including the filename; Skip saving if given \'/dev/null\'')
+group_util.add_argument('--module-file', dest='module_path', action='store', default=None,
+                    help='Path including the filename where the model should be saved to; Skip saving if given \'/dev/null\'')
+group_util.add_argument('--history-file', dest='history_path', action='store', default=None,
+                    help='Path including the filename where the history of the model-fitting should be saved to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for ROOT files for each particle')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
@@ -93,6 +96,7 @@ input_directory = args.input_directory
 interactive = args.interactive
 output_directory = args.output_directory
 module_path = args.module_path
+history_path = args.history_path
 
 # Read in all the particle's information into a dictionary of pandas-frames
 data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
@@ -168,7 +172,7 @@ y_validation_hot = to_categorical(y_validation, num_classes=len(labels))
 # Visualize the training
 tensorboard_callback = TensorBoard(log_dir=os.path.join(output_directory, 'logs'), histogram_freq=1, batch_size=batch_size)
 # Train the model
-model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, validation_data=(x_validation, y_validation_hot), shuffle=True, callbacks=[tensorboard_callback])
+history = model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, validation_data=(x_validation, y_validation_hot), shuffle=True, callbacks=[tensorboard_callback])
 
 score = model.evaluate(x_validation, y_validation_hot, batch_size=batch_size)
 print('\nModel validation using independent data - loss: %.6f - acc: %.6f'%(score[0], score[1]))
@@ -191,15 +195,26 @@ for p, particle_data in data.items():
     # Since sensible data has only been estimated for the validation set, it makes sense to also just save this portion and disregard the rest
     particle_data.dropna(subset=[nn_color_column], inplace=True)
 
+# Save the ParticleFrame data
 data.save()
-
+# Set a sensibles default suffix for filenames
+config = model.get_config()
+savefile_suffix = run + '_nLayers' + str(len(config)) + '_nEpochs' + str(epochs) + '.h5'
+# Save model-fitting history if requested
+if history_path != '/dev/null':
+    if history_path == None:
+        history_path = os.path.join(output_directory, 'history_' + savefile_suffix + '.pkl')
+    if not os.path.exists(os.path.dirname(history_path)):
+        print('Creating desired parent directory "%s" for the model-fitting history pickle file "%s"'%(os.path.dirname(history_path), history_path), file=sys.stderr)
+        os.makedirs(os.path.dirname(history_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+    # Selectively specify which data to save as the whole object can not be pickled
+    pickle_data = {'history': history.history, 'epoch': history.epoch, 'params': history.params}
+    pickle.dump(pickle_data, open(history_path, 'wb'), pickle.HIGHEST_PROTOCOL)
+# Save module if requested
 if module_path != '/dev/null':
-    config = model.get_config()
     if module_path == None:
-        module_path = os.path.join(output_directory, 'model_' + run + '_nLayers' + str(len(config)) + '_nEpochs' + str(epochs) + '.h5')
-
+        module_path = os.path.join(output_directory, 'model_' + savefile_suffix + '.h5')
     if not os.path.exists(os.path.dirname(module_path)):
         print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(module_path), module_path), file=sys.stderr)
         os.makedirs(os.path.dirname(module_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
-
     model.save(module_path)
