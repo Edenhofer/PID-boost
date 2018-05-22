@@ -200,7 +200,7 @@ if history_path != '/dev/null':
         print('Creating desired parent directory "%s" for the model-fitting history pickle file "%s"'%(os.path.dirname(history_path), history_path), file=sys.stderr)
         os.makedirs(os.path.dirname(history_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
     # Selectively specify which data to save as the whole object can not be pickled
-    pickle_data = {'history': history.history, 'epoch': history.epoch, 'params': history.params}
+    pickle_data = {'history': history.history, 'epoch': history.epoch, 'params': history.params, 'run': run, 'n_components': n_components, 'training_fraction': training_fraction}
     pickle.dump(pickle_data, open(history_path, 'wb'), pickle.HIGHEST_PROTOCOL)
 # Save module if requested
 if module_path != '/dev/null':
