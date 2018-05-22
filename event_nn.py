@@ -97,9 +97,13 @@ test_selection = np.random.choice([True, False], augmented_matrix.shape[0], p=[t
 validation_selection = np.invert(test_selection) # Use everything not utilized for testing as validation data
 
 # Assemble the array representing the desired output
-labels = list(np.unique(np.abs(augmented_matrix['mcPDG'].values)))
-for v in labels:
-    augmented_matrix.at[(augmented_matrix['mcPDG'] == v) | (augmented_matrix['mcPDG'] == -1 * v), truth_color_column] = labels.index(v)
+# By not setting the labesl to list(np.unique(np.abs(augmented_matrix['mcPDG'].values))) we certainly missclassify some particles, however to be able to compare the epsilonPID matrices we should still have an absolute classification into the classes available to pidProbability; Include 'none' either way
+labels = [0] + [lib.pdg_from_name_faulty(p) for p in ParticleFrame.particles]
+for v in list(np.unique(np.abs(augmented_matrix['mcPDG'].values))):
+    try:
+        augmented_matrix.at[(augmented_matrix['mcPDG'] == v) | (augmented_matrix['mcPDG'] == -1 * v), truth_color_column] = labels.index(v)
+    except ValueError:
+        augmented_matrix.at[(augmented_matrix['mcPDG'] == v) | (augmented_matrix['mcPDG'] == -1 * v), truth_color_column] = labels.index(0)
 target = augmented_matrix[truth_color_column]
 
 # Assemble the input matrix on which to train the model
