@@ -36,7 +36,7 @@ except ImportError:
 ParticleFrame = lib.ParticleFrame
 
 # Assemble the allowed command line options
-parser = argparse.ArgumentParser(description='Calculating and visualizing metrics.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(description='Train a configurable neural network.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 group_action = parser.add_mutually_exclusive_group(required=True)
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
@@ -53,11 +53,11 @@ group_opt.add_argument('--ncomponents', dest='n_components', action='store', typ
 group_opt.add_argument('--training-fraction', dest='training_fraction', action='store', type=float, default=0.8,
                     help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
 group_util.add_argument('-f', '--file', dest='output_file', action='store', default='./model.h5',
-                    help='Path where the model should be saved to including the filename; Skip saving if given \'/dev/null\'.')
+                    help='Path where the model should be saved to including the filename; Skip saving if given \'/dev/null\'')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for ROOT files for each particle')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
-                    help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'.')
+                    help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'')
 group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
                     help='Run interactively, i.e. show plots')
 group_util.add_argument('--non-interactive', dest='interactive', action='store_false', default=True,
