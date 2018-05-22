@@ -12,15 +12,6 @@ import numpy as np
 
 import lib
 
-
-try:
-    import seaborn as sns
-
-    # Enable and customize default plotting style
-    sns.set_style("whitegrid")
-except ImportError:
-    pass
-
 try:
     import argcomplete
 except ImportError:

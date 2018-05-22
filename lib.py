@@ -16,6 +16,14 @@ import root_pandas as rpd
 
 import pdg
 
+try:
+    import seaborn as sns
+
+    # Enable and customize default plotting style
+    sns.set_style("whitegrid")
+except ImportError:
+    pass
+
 
 def pdg_from_name_faulty(particle):
     """Return the pdgCode for a given particle honoring a bug in the float to integer conversion.
