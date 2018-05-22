@@ -114,6 +114,7 @@ if args.run_stats:
     # Ignore this for now and just plot the dataset belonging to the `norm` particle
     particle_data = data[norm]
 
+    # NOTE: This is one of the few place where we differentiate between particle and anti-particle
     unique_particles = np.unique(particle_data['mcPDG'].values)
     true_abundance = np.array([particle_data[particle_data['mcPDG'] == code].shape[0] for code in unique_particles])
     sorted_range = np.argsort(true_abundance)
@@ -404,6 +405,7 @@ if args.run_multivariate_bayes_motivation:
     grid = plt.GridSpec(4, 4, hspace=0.2, wspace=0.2)
 
     main_ax = plt.subplot(grid[:-1, 1:])
+    # NOTE: This is one of the few place where we differentiate between particle and anti-particle
     for v in np.unique(particle_data[selection]['mcPDG'].values):
         particle_data.at[selection & (particle_data[selection]['mcPDG'] == v), truth_color_column] = list(np.unique(particle_data[selection]['mcPDG'].values)).index(v)
     plt.scatter(particle_data[selection][holdings[0]], particle_data[selection][holdings[1]], c=particle_data[selection][truth_color_column], cmap=plt.cm.get_cmap('viridis', np.unique(particle_data[selection]['mcPDG'].values).shape[0]), s=5., alpha=.1)
