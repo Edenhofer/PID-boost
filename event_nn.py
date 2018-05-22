@@ -40,9 +40,9 @@ parser = argparse.ArgumentParser(description='Train a configurable neural networ
 group_action = parser.add_mutually_exclusive_group(required=True)
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
-group_action.add_argument('--pca', dest='run_pca', action='store_true', default=False,
+group_action.add_argument('--pca', dest='run', action='store_const', default=None, const='pca',
                     help='Run the model on the principal components of the data')
-group_action.add_argument('--pidProbability', dest='run_pidProbability', action='store_true', default=False,
+group_action.add_argument('--pidProbability', dest='run', action='store_const', default=None, const='pidProbability',
                     help='Run the model on the `pidProbability` data by detector')
 group_opt.add_argument('--batch-size', dest='batch_size', action='store', type=int, default=32,
                     help='Size of each batch')
@@ -52,7 +52,7 @@ group_opt.add_argument('--ncomponents', dest='n_components', action='store', typ
                     help='Number of components to keep after performing a PCA on the data')
 group_opt.add_argument('--training-fraction', dest='training_fraction', action='store', type=float, default=0.8,
                     help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
-group_util.add_argument('-f', '--file', dest='module_path', action='store', default='./model.h5',
+group_util.add_argument('-f', '--file', dest='module_path', action='store', default=None,
                     help='Path where the model should be saved to including the filename; Skip saving if given \'/dev/null\'')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for ROOT files for each particle')
@@ -103,13 +103,14 @@ for v in labels:
 target = augmented_matrix[truth_color_column]
 
 # Assemble the input matrix on which to train the model
-if args.run_pidProbability:
+run = args.run
+if run == 'pidProbability':
     design_columns = []
     for p in ParticleFrame.particles:
         for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
             design_columns += ['pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc']
     design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
-elif args.run_pca:
+elif run == 'pca':
     design_columns = list(set(augmented_matrix.keys()) - {'isSignal', 'mcPDG', 'mcErrors'})
     design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 
@@ -172,6 +173,10 @@ for p, particle_data in data.items():
 data.save()
 
 if module_path != '/dev/null':
+    config = model.get_config()
+    if module_path == None:
+        module_path = os.path.join(output_directory, 'model_' + run + '_nLayers' + str(len(config)) + '_nEpochs' + str(epochs) + '.h5')
+
     if not os.path.exists(os.path.dirname(module_path)):
         print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(module_path), module_path), file=sys.stderr)
         os.makedirs(os.path.dirname(module_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
