@@ -1,0 +1,172 @@
+\documentclass{beamer}
+	\usepackage[utf8]{inputenc}		% required for umlauts
+	\usepackage[english]{babel}		% required for umlauts
+	\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage{libertine}			% enable this on Windows to allow for microtype
+	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
+
+	\usepackage{mathtools}		% required for formulas
+
+	\usepackage{graphicx}		% required to insert images
+	\usepackage{subcaption}		% enable sub-figure
+	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
+	\usepackage[tracking=true]{microtype} % required to change character spacing
+
+	\usepackage{hyperref}		% insert clickable references
+
+	\usepackage{datetime}		% flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+
+	\usepackage{geometry}
+	\usepackage{scrextend}		% allow arbitrary indentation
+
+	\usepackage{color}
+
+	\usetheme{default}
+	\usecolortheme{beaver}
+
+	\title{Fifth Weekly Update on `Optimization~of~Particle~Identification'}
+	\subtitle{Neural Network using pidProbabilities, using main PCA Components, as Parameter Selector}
+	\author{Gordian Edenhofer}
+	\date{\today}
+
+
+\begin{document}
+\begin{frame}
+	\frametitle{Git Log}
+
+	\begin{itemize}
+		\item Simple Neural Network using `pidProbabilities' as input
+		\begin{itemize}
+			\item{Train}
+			\item{Validate}
+			\item{Visualize}
+		  \end{itemize}
+		\item \dots using main PCA Components
+		\begin{itemize}
+			\item{Standardize data}
+			\item{Pick $n$ principal components and transform data}
+			\item{Repeat steps from simple}
+		  \end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Neural Network}
+	\framesubtitle{Model Architecture}
+
+	\begin{columns}[T]
+		\begin{column}{.5\textwidth}
+			\vspace{4.5em}
+			\begin{itemize}
+				\item 5 $\times$ Dense
+				\item 2 $\times$ Dropout
+				\item Successive reduction in free Parameters
+			\end{itemize}
+		\end{column}
+		\begin{column}{.5\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/Neural Network Design}}}
+				\caption{Design of the Neural Network}
+			\end{figure}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Sample Decay --- Training}
+	\framesubtitle{`pidProbability'}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{{{../res/sample/Neural Network Model pidProbability: Training Accuracy with 20 epochs, with 64 batchsize, with 12 ncomponents}}}
+			\caption{Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{{{../res/sample/Neural Network Model pidProbability: Training Loss with 20 epochs, with 64 batchsize, with 12 ncomponents}}}
+			\caption{Loss}
+		\end{subfigure}
+		\caption{Training results of a neural network using `pidProbability'}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Sample Decay --- Validation Evolution}
+	\framesubtitle{`pidProbability'}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{{{../res/sample/Neural Network Model pidProbability: Validation Accuracy with 20 epochs, with 64 batchsize, with 12 ncomponents}}}
+			\caption{Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{{{../res/sample/Neural Network Model pidProbability: Validation Loss with 20 epochs, with 64 batchsize, with 12 ncomponents}}}
+			\caption{Loss}
+		\end{subfigure}
+		\caption{Validation results of a neural network using `pidProbability'}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Sample Decay --- Training}
+	\framesubtitle{PCA}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{{{../res/sample/Neural Network Model pca: Training Accuracy with 20 epochs, with 64 batchsize, with 12 ncomponents}}}
+			\caption{Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{{{../res/sample/Neural Network Model pca: Training Loss with 20 epochs, with 64 batchsize, with 12 ncomponents}}}
+			\caption{Loss}
+		\end{subfigure}
+		\caption{Training results of a neural network using PCA}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Sample Decay --- Validation Evolution}
+	\framesubtitle{PCA}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{{{../res/sample/Neural Network Model pca: Validation Accuracy with 20 epochs, with 64 batchsize, with 12 ncomponents}}}
+			\caption{Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{{{../res/sample/Neural Network Model pca: Validation Loss with 20 epochs, with 64 batchsize, with 12 ncomponents}}}
+			\caption{Loss}
+		\end{subfigure}
+		\caption{Validation results of a neural network using PCA}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Sample Decay --- Method comparisons}
+	\framesubtitle{$\epsilon_{PID}$-matrix Visualization}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{../res/sample/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via flat Bayes, via NN}}}
+		\caption{Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut via flat Bayes and via a neural network using PCA}
+	\end{figure}
+\end{frame}
+
+\end{document}
