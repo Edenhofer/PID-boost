@@ -146,7 +146,7 @@ y_validation_hot = to_categorical(y_validation, num_classes=len(labels))
 # Visualize the training
 tensorboard_callback = TensorBoard(log_dir=os.path.join(output_directory, 'logs'), histogram_freq=1, batch_size=batch_size)
 # Train the model
-model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, callbacks=[tensorboard_callback])
+model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, validation_data=(x_validation, y_validation_hot), shuffle=True, callbacks=[tensorboard_callback])
 
 score = model.evaluate(x_validation, y_validation_hot, batch_size=batch_size)
 print('\nModel validation using independent data - loss: %.6f - acc: %.6f'%(score[0], score[1]))
