@@ -52,7 +52,7 @@ group_opt.add_argument('--ncomponents', dest='n_components', action='store', typ
                     help='Number of components to keep after performing a PCA on the data')
 group_opt.add_argument('--training-fraction', dest='training_fraction', action='store', type=float, default=0.8,
                     help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
-group_util.add_argument('-f', '--file', dest='output_file', action='store', default='./model.h5',
+group_util.add_argument('-f', '--file', dest='module_path', action='store', default='./model.h5',
                     help='Path where the model should be saved to including the filename; Skip saving if given \'/dev/null\'')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for ROOT files for each particle')
@@ -75,7 +75,7 @@ args = parser.parse_args()
 input_directory = args.input_directory
 interactive = args.interactive
 output_directory = args.output_directory
-output_file = args.output_file
+module_path = args.module_path
 
 # Read in all the particle's information into a dictionary of pandas-frames
 data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
@@ -171,9 +171,9 @@ for p, particle_data in data.items():
 
 data.save()
 
-if output_file != '/dev/null':
-    if not os.path.exists(os.path.dirname(output_file)):
-        print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(output_file), output_file), file=sys.stderr)
-        os.makedirs(os.path.dirname(output_file), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+if module_path != '/dev/null':
+    if not os.path.exists(os.path.dirname(module_path)):
+        print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(module_path), module_path), file=sys.stderr)
+        os.makedirs(os.path.dirname(module_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
-    model.save(output_file)
+    model.save(module_path)
