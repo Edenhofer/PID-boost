@@ -10,6 +10,8 @@ import sys
 
 import numpy as np
 import pandas as pd
+import tensorflow as tf
+from keras import backend as K
 from keras.callbacks import TensorBoard
 from keras.layers import Activation, Dense, Dropout, MaxPooling1D
 from keras.models import Sequential
@@ -40,6 +42,7 @@ parser = argparse.ArgumentParser(description='Train a configurable neural networ
 group_action = parser.add_mutually_exclusive_group(required=True)
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
+group_backend = parser.add_argument_group('backend options', 'Parameters for configuring the backend used for modelling and training')
 group_action.add_argument('--pca', dest='run', action='store_const', default=None, const='pca',
                     help='Run the model on the principal components of the data')
 group_action.add_argument('--pidProbability', dest='run', action='store_const', default=None, const='pidProbability',
@@ -62,6 +65,10 @@ group_util.add_argument('--interactive', dest='interactive', action='store_true'
                     help='Run interactively, i.e. show plots')
 group_util.add_argument('--non-interactive', dest='interactive', action='store_false', default=True,
                     help='Run non-interactively and hence unattended, i.e. show no plots')
+group_backend.add_argument('--cpu', dest='backend_cpu', nargs='?', action='store', type=int, default=1, const=1,
+                    help='Whether to use the CPU for processing and optionally the device count; 0 disables its usage')
+group_backend.add_argument('--gpu', dest='backend_gpu', nargs='?', action='store', type=int, default=0, const=1,
+                    help='Whether to use the GPU for processing and optionally the device count; 0 disables its usage')
 
 try:
     argcomplete.autocomplete(parser)
@@ -71,7 +78,17 @@ except NameError:
 
 args = parser.parse_args()
 
-# Evaluate the arguments
+# Evaluate the backend options
+backend_gpu = args.backend_gpu
+backend_cpu = args.backend_cpu
+# Enforce the specified options using the tensorflow backend; Remember the GPU will always be initialized regardless
+num_GPU = backend_gpu if backend_gpu else 0
+num_CPU = backend_cpu if backend_cpu else 0
+config = tf.ConfigProto(allow_soft_placement=True, device_count = {'CPU': num_CPU, 'GPU': num_GPU})
+session = tf.Session(config=config)
+K.set_session(session)
+
+# Evaluate the input-output arguments
 input_directory = args.input_directory
 interactive = args.interactive
 output_directory = args.output_directory
