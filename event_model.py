@@ -53,6 +53,6 @@ for key, title, ylabel in [('val_loss', 'Validation Loss', 'Loss'), ('val_acc', 
     plt.plot(history['epoch'], history['history'][key], color='orange')
     plt.xlabel('Epoch')
     plt.ylabel(ylabel)
-    data.pyplot_sanitize_show(title, savefig_prefix='Neural Network Model %s: '%(history['run']), savefig_suffix=','.join([' with %d %s'%(value, key) for key, value in [('epochs', history['params']['epochs']), ('batch_size', history['params']['batch_size']), ('n_components', history['n_components'])]]))
+    data.pyplot_sanitize_show(title, savefig_prefix='Neural Network Model %s: '%(history['run']), savefig_suffix=','.join([' with %d %s'%(value, key) for key, value in [('epochs', history['params']['epochs']), ('batch_size', history['params']['batch_size'])]]))
 
 plt.show()
