@@ -226,8 +226,6 @@ class ParticleFrame(dict):
                 pickle_file = '/dev/null'
             else:
                 pickle_file = os.path.join(output_directory, self.__class__.__name__ + '.pkl')
-        else:
-            pickle_file = pickle_file
 
         if pickle_file != '/dev/null':
             if not os.path.exists(os.path.dirname(pickle_file)):
