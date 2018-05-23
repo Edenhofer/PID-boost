@@ -56,6 +56,8 @@ group_util.add_argument('-i', '--input', dest='input_directory', action='store',
                     help='Directory in which the program shall search for ROOT files for each particle')
 group_util.add_argument('--input-pickle', dest='input_pickle', action='store', default=None,
                     help='Pickle file path containing a ParticleFrame object which shall be read in instead of ROOT files; Takes precedence when specified')
+group_util.add_argument('--log-dir', dest='log_directory', action='store', default=None,
+                    help='Directory where TensorFlow is supposed to log to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'')
 group_util.add_argument('--output-pickle', dest='output_pickle', action='store', default=None,
@@ -91,6 +93,7 @@ K.set_session(session)
 input_directory = args.input_directory
 input_pickle = args.input_pickle
 interactive = args.interactive
+log_directory = args.log_directory
 output_directory = args.output_directory
 output_pickle = args.output_pickle
 history_path = args.history_path
@@ -171,9 +174,17 @@ y_test_hot = to_categorical(y_test, num_classes=len(labels))
 y_validation_hot = to_categorical(y_validation, num_classes=len(labels))
 
 # Visualize the training
-tensorboard_callback = TensorBoard(log_dir=os.path.join(output_directory, 'logs'), histogram_freq=1, batch_size=batch_size)
+keras_callbacks = []
+if log_directory != '/dev/null':
+    if log_directory == None:
+        log_directory = os.path.join(output_directory, 'logs')
+    if not os.path.exists(log_directory):
+        print('Creating desired log directory "%s"'%(log_directory), file=sys.stderr)
+        os.makedirs(log_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+    keras_callbacks += [TensorBoard(log_dir=log_directory, histogram_freq=1, batch_size=batch_size)]
+
 # Train the model
-history = model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, validation_data=(x_validation, y_validation_hot), shuffle=True, callbacks=[tensorboard_callback])
+history = model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, validation_data=(x_validation, y_validation_hot), shuffle=True, callbacks=keras_callbacks)
 
 score = model.evaluate(x_validation, y_validation_hot, batch_size=batch_size)
 print('\nModel validation using independent data - loss: %.6f - acc: %.6f'%(score[0], score[1]))
