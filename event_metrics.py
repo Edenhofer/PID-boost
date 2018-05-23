@@ -92,7 +92,7 @@ input_pickle = args.input_pickle
 interactive = args.interactive
 output_directory = args.output_directory
 if input_pickle:
-    data = ParticleFrame(input_pickle=input_pickle, output_directory=output_directory, interactive=interactive)
+    data = ParticleFrame(pickle_path=input_pickle, output_directory=output_directory, interactive=interactive)
 else:
     data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
 

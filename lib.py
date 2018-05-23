@@ -117,26 +117,26 @@ class ParticleFrame(dict):
     # Dictionary of variables and their boundaries for possible values they might yield
     physical_boundaries = {'pt': (0, 5.5), 'cosTheta': (-1, 1)}
 
-    def __init__(self, input_pickle=None, input_directory=None, output_directory=None, interactive=None):
+    def __init__(self, pickle_path=None, input_directory=None, output_directory=None, interactive=None):
         """Initialize and empty ParticleFrame.
 
         Args:
             input_directory (:obj:`str`, optional): Default input directory for ROOT files for each particle.
-            input_pickle (:obj:`str`, optional): Default input filepath for a pickle from which to initialize the class object.
+            pickle_path (:obj:`str`, optional): Default input filepath for a pickle from which to initialize the class object.
             output_directory (:obj:`str`, optional): Default output directory for data generated using this ParticleFrame.
             interactive (:obj:`bool`, optional): Whether plotting should be done interactively.
 
         Raises:
-            ValueError: If given not-none values for both `input_pickle` and `input_directory`.
+            ValueError: If given not-none values for both `pickle_path` and `input_directory`.
 
         """
         self.data = {}
-        if input_pickle is not None and input_directory is not None:
-            raise ValueError('invalid number of inputs; Received `input_pickle` and `input_directory`; Please decide upon one method for class initialization')
+        if pickle_path is not None and input_directory is not None:
+            raise ValueError('invalid number of inputs; Received `pickle_path` and `input_directory`; Please decide upon one method for class initialization')
         if input_directory is not None:
             self.read_root(input_directory)
-        elif input_pickle is not None:
-            self.read_pickle(input_pickle)
+        elif pickle_path is not None:
+            self.read_pickle(pickle_path)
         self.output_directory = os.path.join('res', '') if output_directory is None else output_directory
         self.interactive = False if interactive is None else interactive
 
@@ -202,37 +202,37 @@ class ParticleFrame(dict):
             for k, bounds in self.physical_boundaries.items():
                 particle_data.drop(particle_data[(particle_data[k] < bounds[0]) | (particle_data[k] > bounds[1])].index, inplace=True)
 
-    def read_pickle(self, input_pickle):
+    def read_pickle(self, pickle_path):
         """Read in the particle information from a pickle file.
 
         Args:
-            input_pickle (str): Filepath of the pickle which shall be loaded.
+            pickle_path (str): Filepath of the pickle which shall be loaded.
 
         """
-        self.data = pickle.load(open(input_pickle, 'rb'))
+        self.data = pickle.load(open(pickle_path, 'rb'))
 
-    def save(self, pickle_file=None, output_directory=None):
+    def save(self, pickle_path=None, output_directory=None):
         """Save the current data of the class to a pickle file.
 
         Args:
-            pickle_file (:obj:`str`, optional): Path where to save the pickle file to; Takes precedence when specified; Do not save anything if given '/dev/null'.
+            pickle_path (:obj:`str`, optional): Path where to save the pickle file to; Takes precedence when specified; Do not save anything if given '/dev/null'.
             output_directory (:obj:`str`, optional): Directory where to save the pickle file to with class' name as filename; Do not save anything if specifically given '/dev/null' as output directory.
 
         """
-        if pickle_file is None:
+        if pickle_path is None:
             if output_directory is None:
-                pickle_file = os.path.join(self.output_directory, self.__class__.__name__ + '.pkl')
+                pickle_path = os.path.join(self.output_directory, self.__class__.__name__ + '.pkl')
             elif output_directory == '/dev/null':
-                pickle_file = '/dev/null'
+                pickle_path = '/dev/null'
             else:
-                pickle_file = os.path.join(output_directory, self.__class__.__name__ + '.pkl')
+                pickle_path = os.path.join(output_directory, self.__class__.__name__ + '.pkl')
 
-        if pickle_file != '/dev/null':
-            if not os.path.exists(os.path.dirname(pickle_file)):
-                print('Creating desired parent directory "%s" for the pickle file "%s"'%(os.path.dirname(pickle_file), pickle_file), file=sys.stderr)
-                os.makedirs(os.path.dirname(pickle_file), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+        if pickle_path != '/dev/null':
+            if not os.path.exists(os.path.dirname(pickle_path)):
+                print('Creating desired parent directory "%s" for the pickle file "%s"'%(os.path.dirname(pickle_path), pickle_path), file=sys.stderr)
+                os.makedirs(os.path.dirname(pickle_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
-            pickle.dump(self.data, open(pickle_file, 'wb'), pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.data, open(pickle_path, 'wb'), pickle.HIGHEST_PROTOCOL)
 
     def stats(self, cut_min=0., cut_max=1., ncuts=50, cutting_columns=None):
         """Calculate, print and plot various values from statistics for further analysis and finally return some values.
