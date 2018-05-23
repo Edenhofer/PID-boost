@@ -54,6 +54,8 @@ group_util.add_argument('--history-file', dest='history_path', action='store', d
                     help='Path including the filename where the history of the model-fitting should be saved to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
                     help='Directory in which the program shall search for ROOT files for each particle')
+group_util.add_argument('--input-pickle', dest='input_pickle', action='store', default=None,
+                    help='Pickle file path containing a ParticleFrame object which shall be read in instead of ROOT files; Takes precedence when specified')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'')
 group_util.add_argument('--output-pickle', dest='output_pickle', action='store', default=None,
@@ -87,6 +89,7 @@ K.set_session(session)
 
 # Evaluate the input-output arguments
 input_directory = args.input_directory
+input_pickle = args.input_pickle
 interactive = args.interactive
 output_directory = args.output_directory
 output_pickle = args.output_pickle
@@ -94,7 +97,10 @@ history_path = args.history_path
 module_path = args.module_path
 
 # Read in all the particle's information into a dictionary of pandas-frames
-data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
+if input_pickle:
+    data = ParticleFrame(pickle_path=input_pickle, output_directory=output_directory, interactive=interactive)
+else:
+    data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
 
 truth_color_column = 'mcPDG_color'
 nn_color_column = 'nn_mcPDG'
