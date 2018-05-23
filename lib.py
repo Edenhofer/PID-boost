@@ -99,7 +99,7 @@ class ParticleFrame(dict):
         variable_formats (:obj:`dict` of :obj:`str`): Format strings for ROOT variables.
         variable_units (:obj:`dict` of :obj:`str`): Format strings for the unit of ROOT variables.
         detector_weights (:obj:`dict` of :obj:`float`): Relative weights of detectors.
-        physical_boundaries (:obj:`dict` of :obj:`tuple` of :obj:`float`): Boundaries for ROOT variables according to which the ParticleFrame is cut to exclude un-physical results.
+        physical_boundaries (:obj:`set` of :obj:`str`): Queries for ROOT variables which select the data that physically make sense.
 
     """
     # Base definitions of stable particles and detector data
@@ -114,8 +114,8 @@ class ParticleFrame(dict):
     # Use the detector weights to exclude certain detectors, e.g. for debugging purposes
     # Bare in mind that if all likelihoods are calculated correctly this should never improve the result
     detector_weights = {d: 1. for d in detectors + pseudo_detectors}
-    # Dictionary of variables and their boundaries for possible values they might yield
-    physical_boundaries = {'pt': (0, 5.5), 'cosTheta': (-1, 1)}
+    # Queries for variables for selecting physically sensible results
+    physical_boundaries = {'0. < pt < 5.5', '-1. < cosTheta < 1.'}
 
     def __init__(self, pickle_path=None, input_directory=None, output_directory=None, interactive=None):
         """Initialize and empty ParticleFrame.
@@ -189,7 +189,7 @@ class ParticleFrame(dict):
         return iter(self.data)
 
     def read_root(self, input_directory):
-        """Read in the particle information contained within the given directory into the current object.
+        """Read in the particle information contained within the given directory into the current object and drop un-physical values.
 
         Args:
             input_directory (str): Directory in which the program shall search for ROOT files for each particle
@@ -199,8 +199,8 @@ class ParticleFrame(dict):
         self.data = {p: rpd.read_root(os.path.join(input_directory, p + '.root')) for p in self.particles}
         # Clean up the data; Remove obviously un-physical values
         for particle_data in self.data.values():
-            for k, bounds in self.physical_boundaries.items():
-                particle_data.drop(particle_data[(particle_data[k] < bounds[0]) | (particle_data[k] > bounds[1])].index, inplace=True)
+            for query in self.physical_boundaries:
+                particle_data.query(query, inplace=True)
 
     def read_pickle(self, pickle_path):
         """Read in the particle information from a pickle file.
