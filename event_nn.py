@@ -56,6 +56,8 @@ group_util.add_argument('-i', '--input', dest='input_directory', action='store',
                     help='Directory in which the program shall search for ROOT files for each particle')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'')
+group_util.add_argument('--output-pickle', dest='output_pickle', action='store', default=None,
+                    help='Pickle file path containing a ParticleFrame object which shall be read in instead of ROOT files; Takes precedence when specified')
 group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
                     help='Run interactively, i.e. show plots')
 group_util.add_argument('--non-interactive', dest='interactive', action='store_false', default=True,
@@ -87,8 +89,9 @@ K.set_session(session)
 input_directory = args.input_directory
 interactive = args.interactive
 output_directory = args.output_directory
-module_path = args.module_path
+output_pickle = args.output_pickle
 history_path = args.history_path
+module_path = args.module_path
 
 # Read in all the particle's information into a dictionary of pandas-frames
 data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
@@ -187,11 +190,17 @@ for p, particle_data in data.items():
     # Since sensible data has only been estimated for the validation set, it makes sense to also just save this portion and disregard the rest
     particle_data.dropna(subset=[nn_color_column], inplace=True)
 
-# Save the ParticleFrame data
-data.save()
 # Set a sensibles default suffix for filenames
 config = model.get_config()
-savefile_suffix = run + '_nLayers' + str(len(config)) + '_nEpochs' + str(epochs) + '.h5'
+savefile_suffix = run + '_nLayers' + str(len(config)) + '_nEpochs' + str(history.params['epochs']) + '.h5'
+# Save the ParticleFrame data
+if output_pickle != '/dev/null':
+    if output_pickle == None:
+        output_pickle = os.path.join(output_directory, data.__class__.__name__ + savefile_suffix + '.pkl')
+    if not os.path.exists(os.path.dirname(output_pickle)):
+        print('Creating desired parent directory "%s" for the particle-data pickle file "%s"'%(os.path.dirname(output_pickle), output_pickle), file=sys.stderr)
+        os.makedirs(os.path.dirname(output_pickle), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+    data.save(pickle_path=output_pickle)
 # Save model-fitting history if requested
 if history_path != '/dev/null':
     if history_path == None:
@@ -200,8 +209,8 @@ if history_path != '/dev/null':
         print('Creating desired parent directory "%s" for the model-fitting history pickle file "%s"'%(os.path.dirname(history_path), history_path), file=sys.stderr)
         os.makedirs(os.path.dirname(history_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
     # Selectively specify which data to save as the whole object can not be pickled
-    pickle_data = {'history': history.history, 'epoch': history.epoch, 'params': history.params, 'run': run, 'n_components': n_components, 'training_fraction': training_fraction}
-    pickle.dump(pickle_data, open(history_path, 'wb'), pickle.HIGHEST_PROTOCOL)
+    history_data = {'history': history.history, 'epoch': history.epoch, 'params': history.params, 'run': run, 'n_components': n_components, 'training_fraction': training_fraction}
+    pickle.dump(history_data, open(history_path, 'wb'), pickle.HIGHEST_PROTOCOL)
 # Save module if requested
 if module_path != '/dev/null':
     if module_path == None:
