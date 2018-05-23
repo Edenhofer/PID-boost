@@ -102,21 +102,22 @@ if args.run_stats:
     particles_of_interest = args.particles_of_interest
 
     # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction
-    # Ignore this for now and just plot the dataset belonging to the `norm` particle
-    particle_data = data[norm]
+    # ~~Ignore this for now and just plot the dataset belonging to the `norm` particle~~ --> Do this for every particle in particle_of_interest
+    for p in particles_of_interest:
+        particle_data = data[p]
 
-    # NOTE: This is one of the few place where we differentiate between particle and anti-particle
-    unique_particles = np.unique(particle_data['mcPDG'].values)
-    true_abundance = np.array([particle_data[particle_data['mcPDG'] == code].shape[0] for code in unique_particles])
-    sorted_range = np.argsort(true_abundance)
-    true_abundance = true_abundance[sorted_range][::-1]
-    unique_particles = unique_particles[sorted_range][::-1]
+        # NOTE: This is one of the few place where we differentiate between particle and anti-particle
+        unique_particles = np.unique(particle_data['mcPDG'].values)
+        true_abundance = np.array([particle_data[particle_data['mcPDG'] == code].shape[0] for code in unique_particles])
+        sorted_range = np.argsort(true_abundance)
+        true_abundance = true_abundance[sorted_range][::-1]
+        unique_particles = unique_particles[sorted_range][::-1]
 
-    fig = plt.figure()
-    plt.grid(b=False, axis='x')
-    plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
-    plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles])
-    data.pyplot_sanitize_show('True Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[norm]), savefig_prefix='General Purpose Statistics: ')
+        fig = plt.figure()
+        plt.grid(b=False, axis='x')
+        plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
+        plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles])
+        data.pyplot_sanitize_show('True Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[p]), savefig_prefix='General Purpose Statistics: ')
 
     for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
