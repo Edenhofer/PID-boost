@@ -41,6 +41,8 @@ group_action.add_argument('--univariate-bayes-priors', dest='run_univariate_baye
                     help='Visualize the evolution of priors for the univariate Bayesian approach')
 group_action.add_argument('--univariate-bayes-outliers', dest='run_univariate_bayes_outliers', action='store_true', default=False,
                     help='Visualize the outliers of the univariate Bayesian approach')
+group_action.add_argument('--neyman-pearson', dest='run_neyman_pearson', action='store_true', default=False,
+                    help='Visualize the goodness of a fit using a test based on the Neyman-Pearson lemma')
 group_action.add_argument('--multivariate-bayes', dest='run_multivariate_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping multiple variables fixed')
 group_action.add_argument('--multivariate-bayes-motivation', dest='run_multivariate_bayes_motivation', action='store_true', default=False,
@@ -97,8 +99,6 @@ else:
     data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
 
 if args.run_stats:
-    norm = args.norm
-    nbins = args.nbins
     particles_of_interest = args.particles_of_interest
 
     # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction
@@ -118,6 +118,10 @@ if args.run_stats:
         plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
         plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles])
         data.pyplot_sanitize_show('True Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[p]), savefig_prefix='General Purpose Statistics: ')
+
+if args.run_neyman_pearson:
+    nbins = args.nbins
+    particles_of_interest = args.particles_of_interest
 
     for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
