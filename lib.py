@@ -106,6 +106,7 @@ class ParticleFrame(dict):
     # Base definitions of stable particles and detector data
     particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
     particles_bar = ['K-', 'pi-', 'e-', 'mu-', 'anti-p-', 'anti-deuteron']
+    particles_charge_conjugate = {'K+': 'K-', 'K-': 'K+', 'pi+': 'pi-', 'pi-': 'pi+', 'e+': 'e-', 'e-': 'e+', 'mu+': 'mu-', 'mu-': 'mu+', 'p+': 'anti-p-', 'anti-p-': 'p+', 'deuteron': 'anti-deuteron', 'anti-deuteron': 'deuteron'}
     particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
     particle_formats = {'K+': r'$K^+$', 'K-': r'$K^-$', 'pi+': r'$\pi^+$', 'pi-': r'$\pi^-$', 'e+': r'$e^+$', 'e-': r'$e^-$', 'mu+': r'$\mu^+$', 'mu-': r'$\mu^-$', 'p+': r'$p^+$', 'p-': r'$p^-$', 'anti-p-': r'$\bar{p}^-$', 'deuteron': r'$d$', 'anti-deuteron': r'$\bar{d}$', 'Sigma+': r'$\Sigma^+$', 'Sigma-': r'$\Sigma^-$', 'anti-Sigma+': r'$\bar{\Sigma}^+$', 'anti-Sigma-': r'$\bar{\Sigma}^-$', 'Xi+': r'$\Xi^+$', 'Xi-': r'$\Xi^-$', 'anti-Xi+': r'$\bar{\Xi}^+$', 'anti-Xi-': r'$\bar{\Xi}^-$', 'none': r'$?$', 'nan': r'$NaN$'}
     particle_base_formats = {'K+': r'$K$', 'K-': r'$K$', 'pi+': r'$\pi$', 'pi-': r'$\pi$', 'e+': r'$e$', 'e-': r'$e$', 'mu+': r'$\mu$', 'mu-': r'$\mu$', 'p+': r'$p$', 'p-': r'$p$', 'deuteron': r'$d$', 'Sigma+': r'$\Sigma$', 'Sigma-': r'$\Sigma$', 'Xi+': r'$\Xi$', 'Xi-': r'$\Xi$', 'None': r'$None$', 'nan': r'$NaN$'}
