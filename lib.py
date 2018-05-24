@@ -566,7 +566,7 @@ class ParticleFrame(dict):
             plt.subplot(1, len(epsilonPIDs_approaches), n+1)
             plt.imshow(epsilonPIDs_approaches[n], cmap='viridis', vmin=0., vmax=1.)
             for (j, i), label in np.ndenumerate(epsilonPIDs_approaches[n]):
-                plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+                plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-label))
             plt.grid(b=False, axis='both')
             plt.xlabel('Predicted Particle')
             plt.xticks(range(len(self.particles)), [self.particle_base_formats[p] for p in self.particles])

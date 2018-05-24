@@ -147,7 +147,7 @@ if args.run_pid:
     plt.figure()
     plt.imshow(epsilonPIDs, cmap='viridis', vmin=0., vmax=1.)
     for (j, i), label in np.ndenumerate(epsilonPIDs):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-label))
     plt.grid(b=False, axis='both')
     plt.xlabel('Predicted Particle')
     plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
@@ -270,7 +270,7 @@ if args.run_univariate_bayes:
     plt.figure()
     plt.imshow(epsilonPIDs, cmap='viridis', vmin=0., vmax=1.)
     for (j, i), label in np.ndenumerate(epsilonPIDs):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-label))
     plt.grid(b=False, axis='both')
     plt.xlabel('Predicted Particle')
     plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
@@ -361,7 +361,7 @@ if args.run_multivariate_bayes:
     plt.figure()
     plt.imshow(epsilonPIDs, cmap='viridis', vmin=0., vmax=1.)
     for (j, i), label in np.ndenumerate(epsilonPIDs):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-label))
     plt.grid(b=False, axis='both')
     plt.xlabel('Predicted Particle')
     plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
@@ -392,7 +392,7 @@ if args.run_multivariate_bayes_motivation:
     plt.figure()
     plt.imshow(correlation_matrix, cmap='viridis', vmin=-1., vmax=1.)
     for (j, i), label in np.ndenumerate(correlation_matrix):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small')
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-(label+1)/2))
     plt.grid(b=False, axis='both')
     plt.xlabel('Predicted Particle')
     plt.xticks(range(len(holdings)), [ParticleFrame.variable_formats[v] for v in holdings])
