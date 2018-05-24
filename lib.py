@@ -115,7 +115,7 @@ class ParticleFrame(dict):
     variable_formats = {'p': r'$p$', 'pErr': r'$p_{Err}$', 'phi': r'$\phi$', 'phiErr': r'$\phi_{Err}$', 'pt': r'$p_t$', 'ptErr': r'${p_t}_{Err}$', 'z0': r'$z0$', 'd0': r'$d0$', 'omega': r'$\omega$', 'omegaErr': r'$\omega_{Err}$', 'Theta': r'$\Theta$', 'ThetaErr': r'$\Theta_{Err}$', 'cosTheta': r'$\cos(\Theta)$'}
     variable_units = {'p': r'$\mathrm{GeV/c}$', 'phi': r'$Rad$', 'pt': r'$\mathrm{GeV/c}$', 'z0': r'$?$', 'd0': r'$?$', 'omega': r'$?$', 'Theta': r'$Rad$', 'cosTheta': r'$unitless$'}
     # Use the detector weights to exclude certain detectors, e.g. for debugging purposes
-    # Bare in mind that if all likelihoods are calculated correctly this should never improve the result
+    # Bear in mind that if all likelihoods are calculated correctly this should never improve the result
     detector_weights = {d: 1. for d in detectors + pseudo_detectors}
     # Queries for variables for selecting physically sensible results
     physical_boundaries = {'0.05 < pt < 5.29', 'z0 < 5', 'd0 < 2', 'mcPDG != 0'}
