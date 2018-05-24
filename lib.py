@@ -515,19 +515,33 @@ class ParticleFrame(dict):
             plt.legend()
             self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), savefig_prefix='Statistics: ')
 
-    def plot_neyman_pearson(self, nbins=10, cutting_columns=None, title_suffix='', particles_of_interest=None):
+    def plot_neyman_pearson(self, nbins=10, cutting_columns=None, title_suffix='', particles_of_interest=None, bar_particles=False):
         cutting_columns = self.particleIDs if cutting_columns is None else cutting_columns
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
 
-        for p in particles_of_interest:
-            particle_data = self[p]
+        # NOTE: This is one of the few place where we differentiate between particle and anti-particle
+        charge_queries = ['charge > 0', 'charge < 0'] if bar_particles else ['charge != 0']
+        for query, p in itertools.product(charge_queries, particles_of_interest):
+            particle_data_charged = self[p].query(query)
+            if query == 'charge > 0':
+                current_format = self.particle_formats[p]
+            elif query == 'charge < 0':
+                current_format = self.particle_formats[self.particles_charge_conjugate[p]]
+            else:
+                current_format = self.particle_base_formats[p]
 
-            likelihood_ratio_bins, intervals = pd.cut(particle_data[cutting_columns[p]], nbins, labels=range(nbins), retbins=True)
+            likelihood_ratio_bins, intervals = pd.cut(particle_data_charged[cutting_columns[p]], nbins, labels=range(nbins), retbins=True)
             abundance_ratio = np.zeros(nbins)
             y_err = np.zeros(nbins)
             for i in range(nbins):
-                particle_data_bin = particle_data[likelihood_ratio_bins == i]
-                numerator = particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0]
+                particle_data_bin = particle_data_charged[likelihood_ratio_bins == i]
+                if query == 'charge > 0':
+                    numerator = particle_data_bin[particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)].shape[0]
+                elif query == 'charge < 0':
+                    numerator = particle_data_bin[particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p)].shape[0]
+                else:
+                    numerator = particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0]
+
                 denominator = np.array([particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p_2)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p_2))].shape[0] for p_2 in self.particles]).sum()
 
                 abundance_ratio[i] = numerator / denominator
@@ -538,10 +552,10 @@ class ParticleFrame(dict):
 
             plt.figure()
             plt.errorbar(interval_centers, abundance_ratio, yerr=y_err, capsize=3, elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.2)
-            plt.xlabel('%s Likelihood Ratio'%(self.particle_base_formats[p]))
+            plt.xlabel('%s Likelihood Ratio'%(current_format))
             plt.ylabel('Relative Abundance')
             plt.ylim(-0.05, 1.05)
-            self.pyplot_sanitize_show('Relative %s Abundance in Likelihood Ratio Bins%s'%(self.particle_base_formats[p], title_suffix), savefig_prefix='General Purpose Statistics: ')
+            self.pyplot_sanitize_show('Relative %s Abundance in Likelihood Ratio Bins%s'%(current_format, title_suffix), savefig_prefix='General Purpose Statistics: ')
 
     def plot_diff_epsilonPIDs(self, epsilonPIDs_approaches=[], title_suffixes=[], title_epsilonPIDs=''):
         if len(epsilonPIDs_approaches) >= 0 and len(epsilonPIDs_approaches) != len(title_suffixes):
