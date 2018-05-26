@@ -1,13 +1,16 @@
 \documentclass{beamer}
 	\usepackage[utf8]{inputenc}		% required for umlauts
 	\usepackage[english]{babel}		% language
-	\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
 	%\usepackage{libertine}			% enable this on Windows to allow for microtype
 	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
 
 	\usepackage{mathtools}		% required for formulas
 
+	\usepackage{caption}		% Customize caption aesthetics
 	\usepackage{tcolorbox}		% fancy colored boxes
+	\usepackage{xcolor}			% Highlighting
+	\usepackage{soul}
 	\usepackage{graphicx}		% required to insert images
 	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
 	\usepackage{float}			% allow to forcefully set the location of an object
@@ -20,6 +23,7 @@
 	\usepackage{datetime}		% flexible date specification
 	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
 	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+	\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
 
 	\usepackage{geometry}
 	\usepackage{scrextend}		% allow arbitrary indentation
@@ -28,8 +32,26 @@
 
 	\addbibresource{../literature.bib}
 
-	\usetheme{Madrid}
-	\usecolortheme{default}
+	\setbeamercolor{title}{fg=orange}
+	\setbeamertemplate{title}{
+		\color{orange}
+		\textbf{\inserttitle}
+	}
+	\setbeamercolor{tableofcontents}{fg=orange}
+	\setbeamercolor{section in toc}{fg=black}
+	\setbeamercolor{subsection in toc}{fg=black}
+	\setbeamertemplate{frametitle}{
+		%\vspace{0.5em}
+		\color{orange}
+		\begin{center}
+			\textbf{\insertframetitle} \\
+			{\small \insertframesubtitle}
+		\end{center}
+	}
+	\setbeamertemplate{itemize item}{\color{black}$\bullet$}
+	\setbeamertemplate{itemize subitem}{\color{black}$\circ$}
+	\setbeamercolor{block title}{fg=black}
+	\captionsetup{font=scriptsize,labelfont={bf,scriptsize}}
 
 	\title{Optimization of Particle Identification}
 	\subtitle{The Analysis Software behind Particle Discoveries}
@@ -50,7 +72,7 @@
 
 \begin{frame}
 	\frametitle{Table of Contents}
-	\tableofcontents
+	\tableofcontents[hideallsubsections]
 \end{frame}
 
 \section[Belle 2]{Belle 2 Experiment}
@@ -114,17 +136,17 @@
 
 
 \section[Statistics]{Statistics for Particle Analysis}
-\subsection{Bayes}
+\subsection{Bayes' Theorem}
 \begin{frame}
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
 
-	A quick reminder: \\
-
 	\begin{alertblock}{Bayes' Theorem}
 		\centering
-		$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$
+		$\mathcolorbox{yellow}{P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}}$
 	\end{alertblock}
+	\vspace{1em}
+
 	The likelihood of a particle may vary depending on its
 	\begin{itemize}
 		\item abundance
@@ -141,26 +163,28 @@
 	\begin{columns}
 		\begin{column}{0.47\textwidth}
 			\begin{block}{\textbf{T}rue \textbf{P}ositive \textbf{R}ate (TPR)}
-				Elements which are correct identified as being correct.
+				Elements which are correctly identified as being correct
 			\end{block}
 			\begin{block}{\textbf{T}rue \textbf{N}egative \textbf{R}ate (TNR)}
-				Elements which are incorrect identified as being incorrect.
+				Elements which are incorrectly identified as being incorrect
 			\end{block}
 		\end{column}
 		\begin{column}{0.5\textwidth}
 			\begin{block}{\textbf{F}alse \textbf{P}ositive \textbf{R}ate (FPR)}
-				Elements which are incorrect identified as being correct.
+				Elements which are incorrectly identified as being correct
 			\end{block}
 			\begin{block}{\textbf{F}alse \textbf{N}egative \textbf{R}ate (FNR)}
-				Elements which are correct identified as being incorrect.
+				Elements which are correctly identified as being incorrect
 			\end{block}
 		\end{column}
 	\end{columns}
 	\vspace{2em}
-	\begin{tabular}{l|ll}
-		Veracity & True = correct & False = incorrect \\
-		Identification & Positive = accepted & Negative = rejected
-	\end{tabular}
+	\mathcolorbox{yellow}{
+		\begin{tabular}{l|ll}
+			Veracity & True = correct & False = incorrect \\
+			Identification & Positive = accepted & Negative = rejected
+		\end{tabular}
+	}
 \end{frame}
 
 \subsection{Receiving Operating Characteristic}
@@ -169,7 +193,7 @@
 	\framesubtitle{\insertsubsection}
 
 	Measurement of `goodness' of a selection via \\
-	$\hspace{1em}$ True Positive Rate / False Positive Rate
+	True Positive Rate / False Positive Rate
 
 	\begin{figure}
 		\centering
@@ -188,12 +212,12 @@
 		\begin{column}{0.47\textwidth}
 			\begin{table}
 				\begin{tabular}{l|l}
-					pionID & $\mathcal{L}_{\pi} / (\mathcal{L}_{\pi} + \mathcal{L}_{K})$ \\
-					kaonID & $\mathcal{L}_{\mathrm{K}} / (\mathcal{L}_{\mathrm{K}} + \mathcal{L}_{\pi})$ \\
-					protonID & $\mathcal{L}_{\mathrm{p}} / (\mathcal{L}_{\mathrm{p}} + \mathcal{L}_{\pi})$ \\
-					electronID & $\mathcal{L}_{e} / (\mathcal{L}_{e} + \mathcal{L}_{\pi})$ \\
-					muonID & $\mathcal{L}_{\mu} / (\mathcal{L}_{\mu} + \mathcal{L}_{\pi})$ \\
-					deuteronID & $\mathcal{L}_{\mathrm{d}} / (\mathcal{L}_{\mathrm{d}} + \mathcal{L}_{\pi})$
+					pionID & $\mathcal{L}_{\pi} / (\mathcolorbox{yellow}{\mathcal{L}_{\pi}} + \mathcal{L}_{K})$ \\
+					kaonID & $\mathcal{L}_{\mathrm{K}} / (\mathcal{L}_{\mathrm{K}} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
+					protonID & $\mathcal{L}_{\mathrm{p}} / (\mathcal{L}_{\mathrm{p}} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
+					electronID & $\mathcal{L}_{e} / (\mathcal{L}_{e} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
+					muonID & $\mathcal{L}_{\mu} / (\mathcal{L}_{\mu} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
+					deuteronID & $\mathcal{L}_{\mathrm{d}} / (\mathcal{L}_{\mathrm{d}} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$
 				\end{tabular}
 				\caption{ParticleID detector variables for selection and further analysis.}
 			\end{table}
@@ -223,13 +247,11 @@
 
 	\textbf{Univariate:} \\
 	Probability dependant on one detector variable, e.g. $P(\pi|p_t)$ \\
-	Hence depending on the track's transverse momentum the particle may be identified differently.
 
 	\vspace{2em}
 
 	\textbf{Multivariate:} \\
 	Probability dependant on a multitude of detector variable, e.g. $P(\pi|p_t, \Theta)$
-	Hence depending on the track's transverse momentum and its angle relative to the beam the particle may be identified differently.
 \end{frame}
 
 \section{Results}
@@ -252,17 +274,6 @@
 
 	\begin{figure}
 		\centering
-		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, by pt & cos(Theta)}}}
-		\caption{Heatmaps of $\epsilon_{PID}$-matrices for an exclusive Cut via PID and Bayes by $p_t$ \& $\cos(\Theta)$ showing the particle identification and confusion rates.}
-	\end{figure}
-\end{frame}
-
-\begin{frame}
-	\frametitle{\insertsection}
-	\framesubtitle{\insertsubsection}
-
-	\begin{figure}
-		\centering
 		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/Diff Statistics: K Identification via PID, by pt & cos(Theta)}}}
 		\caption{Kaon Identification via PID and Bayes by $p_t$ \& $\cos(\Theta)$.}
 	\end{figure}
@@ -279,11 +290,23 @@
 	\end{figure}
 \end{frame}
 
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, by pt & cos(Theta)}}}
+		\caption{Heatmaps of $\epsilon_{PID}$-matrices for an exclusive Cut via PID and Bayes by $p_t$ \& $\cos(\Theta)$ showing the particle identification and confusion rates.}
+	\end{figure}
+\end{frame}
+
 \subsection{Conclusion}
 \begin{frame}
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
 
+	\textbf{Current work:}\\
 	\begin{itemize}
 		\item Overall noticeable improvements
 		\item Slight losses for certain False Positive Rates
