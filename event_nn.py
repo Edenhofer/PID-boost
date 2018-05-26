@@ -46,6 +46,8 @@ group_opt.add_argument('--epoch', dest='epoch', action='store', type=int, defaul
                     help='Number of iterations to train the model (epoch)')
 group_opt.add_argument('--ncomponents', dest='n_components', action='store', type=int, default=12,
                     help='Number of components to keep after performing a PCA on the data')
+group_opt.add_argument('--sampling-method', dest='sampling_method', action='store', choices=['fair', 'biased'], default='fair',
+                    help='Specification of which sampling method should be applied')
 group_opt.add_argument('--training-fraction', dest='training_fraction', action='store', type=float, default=0.8,
                     help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
 group_util.add_argument('--module-file', dest='module_path', action='store', default=None,
@@ -106,6 +108,7 @@ else:
     data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
 
 truth_color_column = 'mcPDG_color'
+sampling_weight_column = 'sampling_weight'
 nn_color_column = 'nn_mcPDG'
 detector = 'all' # Bad hardcoding stuff which should actually be configurable
 # Evaluate sub-options
@@ -113,23 +116,32 @@ epochs = args.epoch
 batch_size = args.batch_size
 training_fraction = args.training_fraction
 n_components = args.n_components
+sampling_method = args.sampling_method
 
 # Concatenate the whole data into one huge multi-indexable DataFrame
 # Take special care about extracting the final result, since this is a copy
 augmented_matrix = pd.concat(data.values(), keys=data.keys())
 
-test_selection = np.random.choice([True, False], augmented_matrix.shape[0], p=[training_fraction, 1-training_fraction])
-validation_selection = np.invert(test_selection) # Use everything not utilized for testing as validation data
-
 # Assemble the array representing the desired output
 # By not setting the labels to list(np.unique(np.abs(augmented_matrix['mcPDG'].values))) we certainly missclassify some particles, however to be able to compare the epsilonPID matrices we should still have an absolute classification into the classes available to pidProbability
-labels = [lib.pdg_from_name_faulty(p) for p in ParticleFrame.particles]
+labels = [abs(lib.pdg_from_name_faulty(p)) for p in ParticleFrame.particles]
 for v in list(np.unique(np.abs(augmented_matrix['mcPDG'].values))):
     try:
         augmented_matrix.at[(augmented_matrix['mcPDG'] == v) | (augmented_matrix['mcPDG'] == -1 * v), truth_color_column] = labels.index(v)
     except ValueError:
         augmented_matrix.at[(augmented_matrix['mcPDG'] == v) | (augmented_matrix['mcPDG'] == -1 * v), truth_color_column] = labels.index(0)
-target = augmented_matrix[truth_color_column]
+augmented_matrix[truth_color_column] = augmented_matrix[truth_color_column].astype(int)
+
+if sampling_method == 'fair':
+    frequency_bins = list(np.bincount(augmented_matrix[truth_color_column]))
+    for i in range(len(labels)):
+        augmented_matrix.at[augmented_matrix[truth_color_column] == i, sampling_weight_column] = 1. / frequency_bins[i]
+elif sampling_method == 'biased':
+    augmented_matrix[sampling_weight_column] = 1.
+# Allow sampling rows multiple times to not limit the sample size too much by the particles with a lower abundance
+test_selection = augmented_matrix.sample(frac=training_fraction, weights=sampling_weight_column, replace=True)
+# Use everything not utilized for testing as validation data
+validation_selection = augmented_matrix.drop(test_selection.index)
 
 # Assemble the input matrix on which to train the model
 run = args.run
@@ -138,23 +150,31 @@ if run == 'pidProbability':
     for p in ParticleFrame.particles:
         for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
             design_columns += ['pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc']
-    design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
+
+    x_test = test_selection[design_columns].fillna(0.).values
+    y_test = test_selection[truth_color_column].values
+    x_validation = validation_selection[design_columns].fillna(0.).values
+    y_validation = validation_selection[truth_color_column].values
 elif run == 'pca':
-    design_columns = list(set(augmented_matrix.keys()) - {'isSignal', 'mcPDG', 'mcErrors'})
-    design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
+    y_test = test_selection[truth_color_column].values
+    y_validation = validation_selection[truth_color_column].values
+
+    design_columns = list(set(test_selection.keys()) - {'isSignal', 'mcPDG', 'mcErrors'})
+    test_selection = test_selection[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
+    validation_selection = validation_selection[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 
     scaler = StandardScaler()
-    scaler.fit(design_matrix[test_selection])
-    scaler.transform(design_matrix)
+    scaler.fit(test_selection)
+    scaler.transform(test_selection)
+    scaler.transform(validation_selection)
     pca = PCA(n_components=n_components)
-    pca.fit(design_matrix[test_selection])
-    pca.transform(design_matrix)
+    pca.fit(test_selection)
+    pca.transform(test_selection)
+    pca.transform(validation_selection)
     print('Selected principal components explain %.4f of the variance in the data'%(pca.explained_variance_ratio_.sum()))
 
-x_test = design_matrix[test_selection].values
-y_test = target[test_selection].values
-x_validation = design_matrix[validation_selection].values
-y_validation = target[validation_selection].values
+    x_test = test_selection.values
+    x_validation = validation_selection.values
 
 # Layer selection
 model = Sequential()
@@ -193,15 +213,15 @@ print('\nModel validation using independent data - loss: %.6f - acc: %.6f'%(scor
 y_prediction_labels = np.argmax(model.predict(x_validation, batch_size=batch_size), axis=1)
 y_prediction = [labels[i] for i in y_prediction_labels]
 augmented_matrix[nn_color_column] = np.nan
-augmented_matrix.at[validation_selection, nn_color_column] = y_prediction
+augmented_matrix.at[validation_selection.index, nn_color_column] = y_prediction
 
 # Add cutting columns baring the various particleIDs generated by the network to the object
 cutting_columns = {k: 'nn_' + v for k, v in ParticleFrame.particleIDs.items()}
 for p, c in cutting_columns.items():
-    augmented_matrix.at[validation_selection, c] = 0.
-    augmented_matrix.at[validation_selection & (augmented_matrix[nn_color_column] == lib.pdg_from_name_faulty(p)), c] = 1.
+    augmented_matrix.at[validation_selection.index, c] = 0.
+    augmented_matrix.loc[validation_selection.index].at[(augmented_matrix[nn_color_column] == lib.pdg_from_name_faulty(p)), c] = 1.
 
-output_columns = [nn_color_column] + list(cutting_columns.values())
+output_columns = [nn_color_column, sampling_weight_column] + list(cutting_columns.values())
 for p, particle_data in data.items():
     particle_data[output_columns] = augmented_matrix.loc[(p,)][output_columns]
     # Since sensible data has only been estimated for the validation set, it makes sense to also just save this portion and disregard the rest
