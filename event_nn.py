@@ -221,7 +221,7 @@ for p, particle_data in data.items():
 
 # Set a sensibles default suffix for filenames
 config = model.get_config()
-savefile_suffix = run + '_nLayers' + str(len(config)) + '_nEpochs' + str(history.params['epochs'])
+savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_nEpochs' + str(history.params['epochs'])
 # Save the ParticleFrame data
 if output_pickle != '/dev/null':
     if output_pickle == None:
