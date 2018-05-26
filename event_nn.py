@@ -213,7 +213,7 @@ savefile_suffix = run + '_nLayers' + str(len(config)) + '_nEpochs' + str(history
 # Save the ParticleFrame data
 if output_pickle != '/dev/null':
     if output_pickle == None:
-        output_pickle = os.path.join(output_directory, data.__class__.__name__ + savefile_suffix + '.pkl')
+        output_pickle = os.path.join(output_directory, data.__class__.__name__ + '_' + savefile_suffix + '.pkl')
     if not os.path.exists(os.path.dirname(output_pickle)):
         print('Creating desired parent directory "%s" for the particle-data pickle file "%s"'%(os.path.dirname(output_pickle), output_pickle), file=sys.stderr)
         os.makedirs(os.path.dirname(output_pickle), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
@@ -231,7 +231,7 @@ if history_path != '/dev/null':
 # Save module if requested
 if module_path != '/dev/null':
     if module_path == None:
-        module_path = os.path.join(output_directory, 'model_' + savefile_suffix + '.h5')
+        module_path = os.path.join(output_directory, 'model_' + run + '_nLayers' + str(len(config)) + '.h5')
     if not os.path.exists(os.path.dirname(module_path)):
         print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(module_path), module_path), file=sys.stderr)
         os.makedirs(os.path.dirname(module_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
