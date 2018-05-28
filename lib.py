@@ -632,4 +632,4 @@ class ParticleFrame(dict):
             plt.ylabel('Rate Ratios')
             plt.legend()
 
-            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), savefig_prefix='Diff Statistics: ', savefig_suffix=','.join(str(suffix) for suffix in title_suffixes))
+            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), savefig_prefix='Diff Statistics: ', savefig_suffix=','.join(str(suffix) for suffix in title_suffixes), suptitle=True)
