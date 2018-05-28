@@ -142,7 +142,8 @@ elif sampling_method == 'biased':
 test_selection = augmented_matrix.sample(frac=training_fraction, weights=sampling_weight_column, replace=True).index
 # Use everything not utilized for testing as validation data
 validation_selection = augmented_matrix.drop(test_selection).index
-print('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair particle treatment)'%(sum(test_selection.duplicated()), sum(test_selection.duplicated())/test_selection.shape[0]*100))
+n_duplicated = test_selection.duplicated()
+print('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair particle treatment)'%(sum(n_duplicated), sum(n_duplicated)/test_selection.shape[0]*100))
 
 # Assemble the input matrix on which to train the model
 run = args.run
