@@ -307,7 +307,7 @@ class ParticleFrame(dict):
                 epsilonPIDs[i][j] = np.float64(self[i_p][((self[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (self[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))) & (self[i_p][cutting_columns[j_p]] > cut)].shape[0]) / np.float64(self[i_p][(self[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (self[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))].shape[0])
 
         print("epsilon_PID matrix:\n%s"%(epsilonPIDs))
-        return epsilonPIDs
+        return np.nan_to_num(epsilonPIDs)
 
     def mimic_pid(self, detector_weights=None, check=True):
         """Mimic the calculation of the particleIDs and compare them to their value provided by the analysis software.
