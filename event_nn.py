@@ -230,6 +230,7 @@ if output_pickle != '/dev/null':
     if not os.path.exists(os.path.dirname(output_pickle)):
         print('Creating desired parent directory "%s" for the particle-data pickle file "%s"'%(os.path.dirname(output_pickle), output_pickle), file=sys.stderr)
         os.makedirs(os.path.dirname(output_pickle), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+    data.descriptions['nn'] = savefile_suffix.replace('_', ' ')
     data.save(pickle_path=output_pickle)
 # Save model-fitting history if requested
 if history_path != '/dev/null':
