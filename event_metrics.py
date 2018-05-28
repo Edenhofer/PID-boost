@@ -197,6 +197,8 @@ if args.diff_methods:
     stats_approaches = []
     title_suffixes = []
     for m in methods:
+        current_ncuts = ncuts
+
         if m == 'pid':
             c = ParticleFrame.particleIDs
             title_suffixes += [' via PID']
@@ -223,13 +225,14 @@ if args.diff_methods:
         elif m == 'nn':
             # In sharp contrast to all the previous approaches this one assumes the columns are already present and will not generate them beforehand!
             c = {k: 'nn_' + v for k, v in ParticleFrame.particleIDs.items()}
+            current_ncuts = 1
             title_suffixes += [' via NN']
         else:
             raise ValueError('received unknown method "%s"'%(m))
 
         c_choice = data.add_isMax_column(c) if exclusive_cut else c
         epsilonPIDs_approaches += [data.epsilonPID_matrix(cutting_columns=c_choice, cut=cut)]
-        stats_approaches += [data.stats(cutting_columns=c, ncuts=ncuts)]
+        stats_approaches += [data.stats(cutting_columns=c, ncuts=current_ncuts)]
 
     if exclusive_cut:
         title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
