@@ -249,7 +249,7 @@ class ParticleFrame(dict):
         Args:
             cut_min (:obj:`float`, optional): Lower bound of the cut (default: 0).
             cut_max (:obj:`float`, optional): Upper bound of the cut (default: 1).
-            ncuts (:obj:`int`, optional): Number of cuts to perform on the interval (default: 50).
+            ncuts (:obj:`int`, optional): Number of cuts to perform on the interval (default: 50). If given 1 the cut will be at 0.5.
             cutting_columns (:obj:`dict` of :obj:`str`, optional): Dictionary which yields a column name for each particle on which basis the various statistics are calculated.
 
         Returns:
@@ -271,7 +271,7 @@ class ParticleFrame(dict):
         cutting_columns = self.particleIDs if cutting_columns is None else cutting_columns
 
         stat = {}
-        cuts = np.linspace(cut_min, cut_max, num=ncuts)
+        cuts = np.array([0.5]) if ncuts == 1 else np.linspace(cut_min, cut_max, num=ncuts)
         for p, particle_data in self.items():
             stat[p] = {'tpr': np.array([]), 'fpr': np.array([]), 'tnr': np.array([]), 'ppv': np.array([])}
             for cut in cuts:
