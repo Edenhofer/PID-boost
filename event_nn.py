@@ -133,9 +133,7 @@ for v in list(np.unique(np.abs(augmented_matrix['mcPDG'].values))):
 augmented_matrix[truth_color_column] = augmented_matrix[truth_color_column].astype(int)
 
 if sampling_method == 'fair':
-    frequency_bins = list(np.bincount(augmented_matrix[truth_color_column]))
-    for i in range(len(labels)):
-        augmented_matrix.at[augmented_matrix[truth_color_column] == i, sampling_weight_column] = 1. / frequency_bins[i]
+    augmented_matrix[sampling_weight_column] = 1. / augmented_matrix.groupby(truth_color_column)[truth_color_column].transform('count')
 elif sampling_method == 'biased':
     augmented_matrix[sampling_weight_column] = 1.
 # Allow sampling rows multiple times to not limit the sample size too much by the particles with a lower abundance
