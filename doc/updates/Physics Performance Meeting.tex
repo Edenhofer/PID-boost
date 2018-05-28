@@ -1,0 +1,213 @@
+\documentclass{beamer}
+	\usepackage[utf8]{inputenc}		% required for umlauts
+	\usepackage[english]{babel}		% language
+	%\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage{libertine}			% enable this on Windows to allow for microtype
+	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
+
+	\usepackage{mathtools}		% required for formulas
+
+	\usepackage{caption}		% Customize caption aesthetics
+	\usepackage{tcolorbox}		% fancy colored boxes
+	\usepackage{xcolor}			% Highlighting
+	\usepackage{soul}
+	\usepackage{graphicx}		% required to insert images
+	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
+	\usepackage[tracking=true]{microtype} % required to change character spacing
+
+	\usepackage[style=numeric,backend=biber]{biblatex}
+	\usepackage{hyperref}		% insert clickable references
+
+	\usepackage{datetime}		% flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+	\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+
+	\usepackage{geometry}
+	\usepackage{scrextend}		% allow arbitrary indentation
+
+	\usepackage{color}
+
+	\setbeamercolor{title}{fg=orange}
+	\setbeamertemplate{title}{
+		\color{orange}
+		\textbf{\inserttitle}
+	}
+	\setbeamercolor{tableofcontents}{fg=orange}
+	\setbeamercolor{section in toc}{fg=black}
+	\setbeamercolor{subsection in toc}{fg=black}
+	\setbeamertemplate{frametitle}{
+		%\vspace{0.5em}
+		\color{orange}
+		\begin{center}
+			\textbf{\insertframetitle} \\
+			{\small \insertframesubtitle}
+		\end{center}
+	}
+	\setbeamertemplate{itemize item}{\color{black}$\bullet$}
+	\setbeamertemplate{itemize subitem}{\color{black}$\circ$}
+	\setbeamercolor{block title}{fg=black}
+	\captionsetup{font=scriptsize,labelfont={bf,scriptsize}}
+
+	\title{Bachelor Thesis on `Optimization~of~Particle~Identification'}
+	\subtitle{Preliminary Studies}
+	\author[Edenhofer]{Gordian Edenhofer}
+	\institute[LMU]{
+		Working Group of Prof.~Kuhr, Faculty of Physics \\
+		University of Munich
+	}
+	\date{Physics Performance Meeting, 29. Mai 2018}
+	\subject{Particle Physics}
+
+
+\begin{document}
+
+\section{Neyman Pearson}
+\subsection{Intuition}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/Neyman-Pearson Visualization}}}
+		\caption{Example for relative pi Abundance over Likelihood Ratio}
+	\end{figure}
+\end{frame}
+
+\subsection{`ALL' detector; charge insensitive}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for ALL detector}}}
+		\caption{Relative pi Abundance in Likelihood Ratio Bins for `ALL' detector}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative K Abundance in Likelihood Ratio Bins for ALL detector}}}
+		\caption{Relative K Abundance in Likelihood Ratio Bins for `ALL' detector}
+	\end{figure}
+\end{frame}
+
+\subsection{`ALL' detector; negatively charged}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative pi- Abundance in Likelihood Ratio Bins for ALL detector}}}
+		\caption{Relative pi- Abundance in Likelihood Ratio Bins for `ALL' detector}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative K- Abundance in Likelihood Ratio Bins for ALL detector}}}
+		\caption{Relative K- Abundance in Likelihood Ratio Bins for `ALL' detector}
+	\end{figure}
+\end{frame}
+
+\subsection{`ALL' detector; positively charged}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative pi+ Abundance in Likelihood Ratio Bins for ALL detector}}}
+		\caption{Relative pi+ Abundance in Likelihood Ratio Bins for `ALL' detector}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative K+ Abundance in Likelihood Ratio Bins for ALL detector}}}
+		\caption{Relative K+ Abundance in Likelihood Ratio Bins for `ALL' detector}
+	\end{figure}
+\end{frame}
+
+\section{Appendix}
+\subsection{Particle Abundance in MC9 Charged Decay}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
+\end{frame}
+
+\subsection{`SVD' detector}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for SVD detector}}}
+\end{frame}
+
+\subsection{`CDC' detector}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for CDC detector}}}
+\end{frame}
+
+\subsection{`TOP' detector}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for TOP detector}}}
+\end{frame}
+
+\subsection{`ARICH' detector}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for ARICH detector}}}
+\end{frame}
+
+\subsection{`ECL' detector}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for ECL detector}}}
+\end{frame}
+
+\subsection{`KLM' detector}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\centering
+	\includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative pi Abundance in Likelihood Ratio Bins for KLM detector}}}
+\end{frame}
+
+\end{document}
