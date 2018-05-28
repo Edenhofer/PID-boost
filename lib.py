@@ -599,8 +599,9 @@ class ParticleFrame(dict):
 
             main_ax = plt.subplot(grid[:2, 0])
             for n, approach in enumerate(stats_approaches):
-                drawing = plt.plot(approach[p]['fpr'], approach[p]['tpr'], label='ROC' + title_suffixes[n], color=next(colors))
-                plt.plot(approach[p]['fpr'], approach[p]['ppv'], label='PPV' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
+                markers = ('o', '^') if len(approach[p]['fpr']) == 1 else (None, None)
+                drawing = plt.plot(approach[p]['fpr'], approach[p]['tpr'], marker=markers[0], label='ROC' + title_suffixes[n], color=next(colors))
+                plt.plot(approach[p]['fpr'], approach[p]['ppv'], marker=markers[1], label='PPV' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
 
             plt.setp(main_ax.get_xticklabels(), visible=False)
             plt.ylabel('Particle Rates')
@@ -612,6 +613,10 @@ class ParticleFrame(dict):
             # Numpy expects values sorted by x
             sorted_base_range = np.argsort(base_approach[p]['fpr'])
             for n, approach in enumerate(stats_approaches[1:], 1):
+                # Skip interpolation if the approach contains only one point
+                if len(approach[p]['fpr']) == 1:
+                    continue
+
                 sorted_approach_range = np.argsort(approach[p]['fpr'])
                 x_min = max(base_approach[p]['fpr'][sorted_base_range][1], approach[p]['fpr'][sorted_approach_range][1]) # Skip the first FPR value (probably zero)
                 x_max = min(base_approach[p]['fpr'][sorted_base_range][-1], approach[p]['fpr'][sorted_approach_range][-1])
