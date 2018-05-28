@@ -123,8 +123,8 @@ sampling_method = args.sampling_method
 augmented_matrix = pd.concat(data.values(), keys=data.keys())
 
 # Assemble the array representing the desired output
-# By not setting the labels to list(np.unique(np.abs(augmented_matrix['mcPDG'].values))) we certainly missclassify some particles, however to be able to compare the epsilonPID matrices we should still have an absolute classification into the classes available to pidProbability
-labels = [abs(lib.pdg_from_name_faulty(p)) for p in ParticleFrame.particles]
+# By not setting the labels to list(np.unique(np.abs(augmented_matrix['mcPDG'].values))) we certainly missclassify some particles, however to be able to compare the epsilonPID matrices we should still have an absolute classification into the classes available to pidProbability; Include 'none' either way
+labels = [0] + [lib.pdg_from_name_faulty(p) for p in ParticleFrame.particles]
 for v in list(np.unique(np.abs(augmented_matrix['mcPDG'].values))):
     try:
         augmented_matrix.at[(augmented_matrix['mcPDG'] == v) | (augmented_matrix['mcPDG'] == -1 * v), truth_color_column] = labels.index(v)
