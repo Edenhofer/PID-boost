@@ -120,7 +120,7 @@ class ParticleFrame(dict):
     # Queries for variables for selecting physically sensible results
     physical_boundaries = {'0.05 < pt < 5.29', 'z0 < 5', 'd0 < 2', 'mcPDG != 0'}
 
-    def __init__(self, pickle_path=None, input_directory=None, output_directory=None, interactive=None):
+    def __init__(self, pickle_path=None, input_directory=None, output_directory=None, interactive=None, descriptions=None):
         """Initialize and empty ParticleFrame.
 
         Args:
@@ -128,6 +128,7 @@ class ParticleFrame(dict):
             pickle_path (:obj:`str`, optional): Default input filepath for a pickle from which to initialize the class object.
             output_directory (:obj:`str`, optional): Default output directory for data generated using this ParticleFrame.
             interactive (:obj:`bool`, optional): Whether plotting should be done interactively.
+            descriptions (:obj:`dict` of :obj:`str`, optional): Descriptions for cutting columns. For each key there shall exist a correspond cutting column.
 
         Raises:
             ValueError: If given not-none values for both `pickle_path` and `input_directory`.
@@ -142,6 +143,7 @@ class ParticleFrame(dict):
             self.read_pickle(pickle_path)
         self.output_directory = os.path.join('res', '') if output_directory is None else output_directory
         self.interactive = False if interactive is None else interactive
+        self.descriptions = {} if descriptions is None else descriptions
 
     def __setitem__(self, key, item):
         self.data[key] = item
@@ -212,7 +214,11 @@ class ParticleFrame(dict):
             pickle_path (str): Filepath of the pickle which shall be loaded.
 
         """
-        self.data = pickle.load(open(pickle_path, 'rb'))
+        loaded = pickle.load(open(pickle_path, 'rb'))
+        if type(loaded) == list and len(loaded) == 2:
+            self.data, self.descriptions = loaded
+        else:
+            self.data = loaded
 
     def save(self, pickle_path=None, output_directory=None):
         """Save the current data of the class to a pickle file.
@@ -235,7 +241,7 @@ class ParticleFrame(dict):
                 print('Creating desired parent directory "%s" for the pickle file "%s"'%(os.path.dirname(pickle_path), pickle_path), file=sys.stderr)
                 os.makedirs(os.path.dirname(pickle_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
-            pickle.dump(self.data, open(pickle_path, 'wb'), pickle.HIGHEST_PROTOCOL)
+            pickle.dump([self.data, self.descriptions], open(pickle_path, 'wb'), pickle.HIGHEST_PROTOCOL)
 
     def stats(self, cut_min=0., cut_max=1., ncuts=50, cutting_columns=None):
         """Calculate, print and plot various values from statistics for further analysis and finally return some values.
