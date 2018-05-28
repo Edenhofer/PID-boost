@@ -210,7 +210,7 @@ augmented_matrix.at[validation_selection, nn_color_column] = y_prediction
 cutting_columns = {k: 'nn_' + v for k, v in ParticleFrame.particleIDs.items()}
 for p, c in cutting_columns.items():
     augmented_matrix.at[validation_selection, c] = 0.
-    augmented_matrix.loc[validation_selection].at[(augmented_matrix[nn_color_column] == lib.pdg_from_name_faulty(p)), c] = 1.
+    augmented_matrix.at[augmented_matrix[nn_color_column] == abs(lib.pdg_from_name_faulty(p)), c] = 1.
 
 output_columns = [nn_color_column, sampling_weight_column] + list(cutting_columns.values())
 for p, particle_data in data.items():
