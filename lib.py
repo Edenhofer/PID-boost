@@ -586,7 +586,7 @@ class ParticleFrame(dict):
         plt.colorbar(cax=cbar_ax)
         self.pyplot_sanitize_show(title_epsilonPIDs, savefig_prefix='Diff Heatmap: ', savefig_suffix=','.join(str(suffix) for suffix in title_suffixes), suptitle=True)
 
-    def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=['tpr', 'ppv'], particles_of_interest=None, ninterpolations=100):
+    def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=['tpr', 'ppv'], x_lim=(-0.05, 1.05), y_lim=(-0.05, 1.05), particles_of_interest=None, ninterpolations=100):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
 
         if len(stats_approaches) >= 0 and len(stats_approaches) != len(title_suffixes):
@@ -601,11 +601,12 @@ class ParticleFrame(dict):
             for n, approach in enumerate(stats_approaches):
                 markers = ('o', '^') if len(approach[p][x_axis[0]]) == 1 else (None, None)
                 drawing = plt.plot(approach[p][x_axis[0]], approach[p][y_multi_axis[0]], marker=markers[0], label=y_multi_axis[0].upper() + title_suffixes[n], color=next(colors))
-                plt.plot(approach[p][x_axis[0]], approach[p][y_multi_axis[1]], marker=markers[1], label=y_multi_axis[1].upper() + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
+                for y_axis in y_multi_axis[1:]:
+                    plt.plot(approach[p][x_axis[0]], approach[p][y_axis], marker=markers[1], label=y_axis.upper() + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
 
             plt.setp(main_ax.get_xticklabels(), visible=False)
             plt.ylabel('Particle Rates')
-            plt.ylim(-0.05, 1.05)
+            plt.ylim(y_lim)
             plt.legend()
 
             plt.subplot(grid[2, 0], sharex=main_ax)
@@ -622,18 +623,16 @@ class ParticleFrame(dict):
                 x_max = min(base_approach[p][x_axis[0]][sorted_base_range][-1], approach[p][x_axis[0]][sorted_approach_range][-1])
                 x = np.linspace(x_min, x_max, ninterpolations)
 
-                interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_multi_axis[0]][sorted_approach_range])
-                interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_multi_axis[0]][sorted_base_range])
-                plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_multi_axis[0].upper(), title_suffixes[n], title_suffixes[0]), color=next(colors))
-
-                interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_multi_axis[1]][sorted_approach_range])
-                interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_multi_axis[1]][sorted_base_range])
-                plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_multi_axis[1].upper(), title_suffixes[n], title_suffixes[0]), linestyle=':', color=next(colors))
+                for i, y_axis in enumerate(y_multi_axis):
+                    linestyle = None if i == 1 else ':'
+                    interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_axis][sorted_approach_range])
+                    interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_axis][sorted_base_range])
+                    plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_axis.upper(), title_suffixes[n], title_suffixes[0]), linestyle=linestyle, color=next(colors))
 
             plt.axhline(y=1., color='dimgrey', linestyle='--')
             plt.grid(b=True, axis='both')
             plt.xlabel(x_axis[1])
-            plt.xlim(-0.05, 1.05)
+            plt.xlim(x_lim)
             plt.ylabel('Rate Ratios')
             plt.legend()
 
