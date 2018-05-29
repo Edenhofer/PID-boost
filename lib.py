@@ -110,7 +110,7 @@ class ParticleFrame(dict):
     particleIDs = {'K+': 'kaonID', 'pi+': 'pionID', 'e+': 'electronID', 'mu+': 'muonID', 'p+': 'protonID', 'deuteron': 'deuteronID'}
     particle_formats = {'K+': r'$K^+$', 'K-': r'$K^-$', 'pi+': r'$\pi^+$', 'pi-': r'$\pi^-$', 'e+': r'$e^+$', 'e-': r'$e^-$', 'mu+': r'$\mu^+$', 'mu-': r'$\mu^-$', 'p+': r'$p^+$', 'p-': r'$p^-$', 'anti-p-': r'$\bar{p}^-$', 'deuteron': r'$d$', 'anti-deuteron': r'$\bar{d}$', 'Sigma+': r'$\Sigma^+$', 'Sigma-': r'$\Sigma^-$', 'anti-Sigma+': r'$\bar{\Sigma}^+$', 'anti-Sigma-': r'$\bar{\Sigma}^-$', 'Xi+': r'$\Xi^+$', 'Xi-': r'$\Xi^-$', 'anti-Xi+': r'$\bar{\Xi}^+$', 'anti-Xi-': r'$\bar{\Xi}^-$', 'none': r'$?$', 'nan': r'$NaN$'}
     particle_base_formats = {'K+': r'$K$', 'K-': r'$K$', 'pi+': r'$\pi$', 'pi-': r'$\pi$', 'e+': r'$e$', 'e-': r'$e$', 'mu+': r'$\mu$', 'mu-': r'$\mu$', 'p+': r'$p$', 'p-': r'$p$', 'deuteron': r'$d$', 'Sigma+': r'$\Sigma$', 'Sigma-': r'$\Sigma$', 'Xi+': r'$\Xi$', 'Xi-': r'$\Xi$', 'None': r'$None$', 'nan': r'$NaN$'}
-    detectors = ['pxd', 'svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
+    detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm']
     pseudo_detectors = ['all', 'default']
     variable_formats = {'p': r'$p$', 'pErr': r'$p_{Err}$', 'phi': r'$\phi$', 'phiErr': r'$\phi_{Err}$', 'pt': r'$p_t$', 'ptErr': r'${p_t}_{Err}$', 'z0': r'$z0$', 'd0': r'$d0$', 'omega': r'$\omega$', 'omegaErr': r'$\omega_{Err}$', 'Theta': r'$\Theta$', 'ThetaErr': r'$\Theta_{Err}$', 'cosTheta': r'$\cos(\Theta)$'}
     variable_units = {'p': r'$\mathrm{GeV/c}$', 'phi': r'$Rad$', 'pt': r'$\mathrm{GeV/c}$', 'z0': r'$?$', 'd0': r'$?$', 'omega': r'$?$', 'Theta': r'$Rad$', 'cosTheta': r'$unitless$'}
