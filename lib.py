@@ -262,7 +262,8 @@ class ParticleFrame(dict):
                         'tpr': [True Positive Rate for each cut],
                         'fpr': [False Positive Rate for each cut],
                         'tnr': [True Negative Rate for each cut],
-                        'ppv': [Positive Predicted Value for each cut]
+                        'ppv': [Positive Predicted Value for each cut],
+                        'fdr': [False Discovery Rate for each cut]
                     },
                     ...
                 }
@@ -273,17 +274,19 @@ class ParticleFrame(dict):
         stat = {}
         cuts = np.array([0.5]) if ncuts == 1 else np.linspace(cut_min, cut_max, num=ncuts)
         for p, particle_data in self.items():
-            stat[p] = {'tpr': np.array([]), 'fpr': np.array([]), 'tnr': np.array([]), 'ppv': np.array([])}
+            stat[p] = {'tpr': np.array([]), 'fpr': np.array([]), 'tnr': np.array([]), 'ppv': np.array([]), 'fdr': np.array([])}
             for cut in cuts:
+                # TODO: Simplify the multitude of duplicate calculations
                 stat[p]['tpr'] = np.append(stat[p]['tpr'], [np.float64(particle_data[((particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[(particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0])])
                 stat[p]['fpr'] = np.append(stat[p]['fpr'], [np.float64(particle_data[((particle_data['mcPDG'] != pdg_from_name_faulty(p)) & (particle_data['mcPDG'] != -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[(particle_data['mcPDG'] != pdg_from_name_faulty(p)) & (particle_data['mcPDG'] != -1 * pdg_from_name_faulty(p))].shape[0])])
                 stat[p]['tnr'] = np.append(stat[p]['tnr'], [np.float64(particle_data[((particle_data['mcPDG'] != pdg_from_name_faulty(p)) & (particle_data['mcPDG'] != -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] <= cut)].shape[0]) / np.float64(particle_data[(particle_data['mcPDG'] != pdg_from_name_faulty(p)) & (particle_data['mcPDG'] != -1 * pdg_from_name_faulty(p))].shape[0])])
                 stat[p]['ppv'] = np.append(stat[p]['ppv'], [np.float64(particle_data[((particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[particle_data[cutting_columns[p]] > cut].shape[0])])
+                stat[p]['fdr'] = np.append(stat[p]['fdr'], [np.float64(particle_data[((particle_data['mcPDG'] != pdg_from_name_faulty(p)) & (particle_data['mcPDG'] != -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] > cut)].shape[0]) / np.float64(particle_data[particle_data[cutting_columns[p]] > cut].shape[0])])
 
                 if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
                     print('VALUES INCONSISTENT: ', end='')
 
-                print('Particle %10s: TPR=%6.6f; FPR=%6.6f; TNR=%6.6f; PPV=%6.6f; cut=%4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], stat[p]['ppv'][-1], cut))
+                print('Particle %10s: TPR=%6.6f; FPR=%6.6f; TNR=%6.6f; PPV=%6.6f; FDR=%6.6f; cut=%4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], stat[p]['ppv'][-1], stat[p]['fdr'][-1], cut))
 
         return stat
 
