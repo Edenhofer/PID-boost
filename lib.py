@@ -586,7 +586,7 @@ class ParticleFrame(dict):
         plt.colorbar(cax=cbar_ax)
         self.pyplot_sanitize_show(title_epsilonPIDs, savefig_prefix='Diff Heatmap: ', savefig_suffix=','.join(str(suffix) for suffix in title_suffixes), suptitle=True)
 
-    def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], particles_of_interest=None, ninterpolations=100):
+    def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=['tpr', 'ppv'], particles_of_interest=None, ninterpolations=100):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
 
         if len(stats_approaches) >= 0 and len(stats_approaches) != len(title_suffixes):
@@ -599,9 +599,9 @@ class ParticleFrame(dict):
 
             main_ax = plt.subplot(grid[:2, 0])
             for n, approach in enumerate(stats_approaches):
-                markers = ('o', '^') if len(approach[p]['fpr']) == 1 else (None, None)
-                drawing = plt.plot(approach[p]['fpr'], approach[p]['tpr'], marker=markers[0], label='ROC' + title_suffixes[n], color=next(colors))
-                plt.plot(approach[p]['fpr'], approach[p]['ppv'], marker=markers[1], label='PPV' + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
+                markers = ('o', '^') if len(approach[p][x_axis[0]]) == 1 else (None, None)
+                drawing = plt.plot(approach[p][x_axis[0]], approach[p][y_multi_axis[0]], marker=markers[0], label=y_multi_axis[0].upper() + title_suffixes[n], color=next(colors))
+                plt.plot(approach[p][x_axis[0]], approach[p][y_multi_axis[1]], marker=markers[1], label=y_multi_axis[1].upper() + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
 
             plt.setp(main_ax.get_xticklabels(), visible=False)
             plt.ylabel('Particle Rates')
@@ -611,28 +611,28 @@ class ParticleFrame(dict):
             plt.subplot(grid[2, 0], sharex=main_ax)
             base_approach = stats_approaches[0]
             # Numpy expects values sorted by x
-            sorted_base_range = np.argsort(base_approach[p]['fpr'])
+            sorted_base_range = np.argsort(base_approach[p][x_axis[0]])
             for n, approach in enumerate(stats_approaches[1:], 1):
                 # Skip interpolation if the approach contains only one point
-                if len(approach[p]['fpr']) == 1:
+                if len(approach[p][x_axis[0]]) == 1:
                     continue
 
-                sorted_approach_range = np.argsort(approach[p]['fpr'])
-                x_min = max(base_approach[p]['fpr'][sorted_base_range][1], approach[p]['fpr'][sorted_approach_range][1]) # Skip the first FPR value (probably zero)
-                x_max = min(base_approach[p]['fpr'][sorted_base_range][-1], approach[p]['fpr'][sorted_approach_range][-1])
+                sorted_approach_range = np.argsort(approach[p][x_axis[0]])
+                x_min = max(base_approach[p][x_axis[0]][sorted_base_range][1], approach[p][x_axis[0]][sorted_approach_range][1]) # Skip the first FPR value (probably zero)
+                x_max = min(base_approach[p][x_axis[0]][sorted_base_range][-1], approach[p][x_axis[0]][sorted_approach_range][-1])
                 x = np.linspace(x_min, x_max, ninterpolations)
 
-                interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_approach_range], approach[p]['tpr'][sorted_approach_range])
-                interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_base_range], base_approach[p]['tpr'][sorted_base_range])
-                plt.plot(x, interpolated_rate / interpolated_rate_base, label='TPR%s /%s'%(title_suffixes[n], title_suffixes[0]), color=next(colors))
+                interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_multi_axis[0]][sorted_approach_range])
+                interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_multi_axis[0]][sorted_base_range])
+                plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_multi_axis[0].upper(), title_suffixes[n], title_suffixes[0]), color=next(colors))
 
-                interpolated_rate = np.interp(x, approach[p]['fpr'][sorted_approach_range], approach[p]['ppv'][sorted_approach_range])
-                interpolated_rate_base = np.interp(x, base_approach[p]['fpr'][sorted_base_range], base_approach[p]['ppv'][sorted_base_range])
-                plt.plot(x, interpolated_rate / interpolated_rate_base, label='PPV%s /%s'%(title_suffixes[n], title_suffixes[0]), linestyle=':', color=next(colors))
+                interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_multi_axis[1]][sorted_approach_range])
+                interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_multi_axis[1]][sorted_base_range])
+                plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_multi_axis[1].upper(), title_suffixes[n], title_suffixes[0]), linestyle=':', color=next(colors))
 
             plt.axhline(y=1., color='dimgrey', linestyle='--')
             plt.grid(b=True, axis='both')
-            plt.xlabel('False Positive Rate')
+            plt.xlabel(x_axis[1])
             plt.xlim(-0.05, 1.05)
             plt.ylabel('Rate Ratios')
             plt.legend()
