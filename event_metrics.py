@@ -29,6 +29,8 @@ group_action.add_argument('--stats', dest='run_stats', action='store_true', defa
                     help='Visualize some general purpose statistics of the dataset')
 group_action.add_argument('--pid', dest='run_pid', action='store_true', default=False,
                     help='Print out and visualize some statistics and the epsilonPID-matrix for the default particle ID cut')
+group_action.add_argument('--pidProbability', dest='run_pidProbability', action='store_true', default=False,
+                    help='Print out and visualize some statistics and the epsilonPID-matrix for the pidProbability cut')
 group_action.add_argument('--mimic-pid', dest='run_mimic_pid', action='store_true', default=False,
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
@@ -148,6 +150,24 @@ if args.run_pid:
     else:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
     data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Particle ID Approach: ')
+
+if args.run_pidProbability:
+    cut = args.cut
+    exclusive_cut = args.exclusive_cut
+
+    particles_of_interest = args.particles_of_interest
+
+    detector = 'all'
+
+    c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in ParticleFrame.particles}
+    c = data.add_isMax_column(c) if exclusive_cut else c
+    data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Particle ID Approach: ')
+    epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
+    if exclusive_cut:
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
+    else:
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
+    data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='pidProbability Approach: ')
 
 if args.run_mimic_pid:
     data.mimic_pid()
