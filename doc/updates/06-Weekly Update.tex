@@ -1,0 +1,328 @@
+\documentclass{beamer}
+	\usepackage[utf8]{inputenc}		% required for umlauts
+	\usepackage[english]{babel}		% language
+	%\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage{libertine}			% enable this on Windows to allow for microtype
+	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
+
+	\usepackage{mathtools}		% required for formulas
+
+	\usepackage{caption}		% Customize caption aesthetics
+	\usepackage{tcolorbox}		% fancy colored boxes
+	\usepackage{xcolor}			% Highlighting
+	\usepackage{soul}
+
+	\usepackage{graphicx}		% required to insert images
+	\usepackage{subcaption}		% enable sub-figure
+	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
+	\usepackage[tracking=true]{microtype} % required to change character spacing
+
+	\usepackage[style=numeric,backend=biber]{biblatex}
+	\usepackage{hyperref}		% insert clickable references
+
+	\usepackage{datetime}		% flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+	\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+
+	\usepackage{geometry}
+	\usepackage{scrextend}		% allow arbitrary indentation
+
+	\usepackage{color}
+
+	\setbeamercolor{title}{fg=orange}
+	\setbeamertemplate{title}{
+		\color{orange}
+		\textbf{\inserttitle}
+	}
+	\setbeamercolor{tableofcontents}{fg=orange}
+	\setbeamercolor{section in toc}{fg=black}
+	\setbeamercolor{subsection in toc}{fg=black}
+	\setbeamertemplate{frametitle}{
+		%\vspace{0.5em}
+		\color{orange}
+		\begin{center}
+			\textbf{\insertframetitle} \\
+			{\small \insertframesubtitle}
+		\end{center}
+	}
+	\setbeamertemplate{itemize item}{\color{black}$\bullet$}
+	\setbeamertemplate{itemize subitem}{\color{black}$\circ$}
+	\setbeamercolor{block title}{fg=black}
+	\captionsetup{font=scriptsize,labelfont={bf,scriptsize}}
+	\captionsetup[sub]{font=scriptsize,labelfont={bf,scriptsize}}
+
+	\title{Sixth Weekly Update on `Optimization~of~Particle~Identification'}
+	\subtitle{Neyman Pearson with multiple variables, Neural Network with new sampling methods}
+	\author[Edenhofer]{Gordian Edenhofer}
+	\institute[LMU]{
+		Working Group of Prof.~Kuhr, Faculty of Physics \\
+		University of Munich
+	}
+	\date{Weekly Update, \today}
+	\subject{Particle Physics}
+
+
+\begin{document}
+\section{Git log}
+\begin{frame}
+	\frametitle{\insertsection}
+
+	\begin{itemize}
+		\item Neyman Pearson
+		\begin{itemize}
+			\item{By detector}
+			\item{By charge}
+			\item{For different variables}
+		  \end{itemize}
+		\item Neural Network
+		\begin{itemize}
+			\item{Fair sampling}
+			\item{Biased sampling}
+		  \end{itemize}
+	\end{itemize}
+\end{frame}
+
+\section{Neyman Pearson}
+\subsection{Anomalies}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for ALL detector}}}
+		\caption{Relative $p$ abundance in likelihood ratio bins for the `ALL' detector.}
+	\end{figure}
+\end{frame}
+
+\subsection{Anomalies by detector}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for SVD detector}}}
+			\caption{`SVD'}
+		\end{subfigure}
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for CDC detector}}}
+			\caption{`CDC'}
+		\end{subfigure}
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for TOP detector}}}
+			\caption{`TOP'}
+		\end{subfigure}
+
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for ARICH detector}}}
+			\caption{`ARICH'}
+		\end{subfigure}
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for ECL detector}}}
+			\caption{`ECL'}
+		\end{subfigure}
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for KLM detector}}}
+			\caption{`KLM'}
+		\end{subfigure}
+
+		\caption{Relative $p$ abundance in likelihood ratio bins for various detectors.}
+	\end{figure}
+\end{frame}
+
+\subsection{Anomalies by charge}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p+ Abundance in Likelihood Ratio Bins for ALL detector}}}
+			\caption{$p^+$}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative barp- Abundance in Likelihood Ratio Bins for ALL detector}}}
+			\caption{$\bar{p}^-$}
+		\end{subfigure}
+
+		\caption{Relative abundance in likelihood ratio bins for various detectors.}
+	\end{figure}
+\end{frame}
+
+\subsection{For different variables}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for ALL detector}}}
+			\caption{`pidProbability'}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: Relative p Abundance in Likelihood Ratio Bins by pt & cos(Theta)}}}
+			\caption{Multivariate Bayes}
+		\end{subfigure}
+
+		\caption{Relative abundance in likelihood ratio bins for various identification methods.}
+	\end{figure}
+\end{frame}
+
+\section{Neural Network}
+\subsection{Fair sampling}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/fair/Neural Network Model pca: Training Accuracy with 20 epochs, with 64 batchsize}}}
+			\caption{Training Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/fair/Neural Network Model pca: Training Loss with 20 epochs, with 64 batchsize}}}
+			\caption{Training Loss}
+		\end{subfigure}
+
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/fair/Neural Network Model pca: Validation Accuracy with 20 epochs, with 64 batchsize}}}
+			\caption{Validation Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/fair/Neural Network Model pca: Validation Loss with 20 epochs, with 64 batchsize}}}
+			\caption{Validation Loss}
+		\end{subfigure}
+		\caption{Accuracy and loss for the PCA model using fair sampling.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/fair/Neural Network Model pidProbability: Training Accuracy with 20 epochs, with 64 batchsize}}}
+			\caption{Training Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/fair/Neural Network Model pidProbability: Training Loss with 20 epochs, with 64 batchsize}}}
+			\caption{Training Loss}
+		\end{subfigure}
+
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/fair/Neural Network Model pidProbability: Validation Accuracy with 20 epochs, with 64 batchsize}}}
+			\caption{Validation Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/fair/Neural Network Model pidProbability: Validation Loss with 20 epochs, with 64 batchsize}}}
+			\caption{Validation Loss}
+		\end{subfigure}
+		\caption{Accuracy and loss for the `pidProbability' model using fair sampling.}
+	\end{figure}
+\end{frame}
+
+\subsection{Biased sampling}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/biased/Neural Network Model pca: Training Accuracy with 20 epochs, with 64 batchsize}}}
+			\caption{Training Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/biased/Neural Network Model pca: Training Loss with 20 epochs, with 64 batchsize}}}
+			\caption{Training Loss}
+		\end{subfigure}
+
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/biased/Neural Network Model pca: Validation Accuracy with 20 epochs, with 64 batchsize}}}
+			\caption{Validation Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/biased/Neural Network Model pca: Validation Loss with 20 epochs, with 64 batchsize}}}
+			\caption{Validation Loss}
+		\end{subfigure}
+		\caption{Accuracy and loss for the PCA model using fair sampling.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/biased/Neural Network Model pidProbability: Training Accuracy with 20 epochs, with 64 batchsize}}}
+			\caption{Training Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/biased/Neural Network Model pidProbability: Training Loss with 20 epochs, with 64 batchsize}}}
+			\caption{Training Loss}
+		\end{subfigure}
+
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/biased/Neural Network Model pidProbability: Validation Accuracy with 20 epochs, with 64 batchsize}}}
+			\caption{Validation Accuracy}
+		\end{subfigure}
+		\begin{subfigure}{.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{{{../res/charged 01/biased/Neural Network Model pidProbability: Validation Loss with 20 epochs, with 64 batchsize}}}
+			\caption{Validation Loss}
+		\end{subfigure}
+		\caption{Accuracy and loss for the `pidProbability' model using fair sampling.}
+	\end{figure}
+\end{frame}
+
+\section{Appendix}
+\subsection{Particle abundance in MC9 charged decay}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
+		\caption{True particle abundances in the simulated data.}
+	\end{figure}
+\end{frame}
+
+\end{document}
