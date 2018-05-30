@@ -180,9 +180,9 @@ if args.run_bayes:
     c = data.bayes(mc_best=mc_best)
     data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
     if mc_best:
-        data.plot_neyman_pearson(cutting_columns=c, particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via simple Bayes', particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
     else:
-        data.plot_neyman_pearson(cutting_columns=c, particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via flat Bayes', particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
 
 if args.diff_methods:
     methods = args.diff_methods
