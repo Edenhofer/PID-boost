@@ -530,6 +530,19 @@ class ParticleFrame(dict):
             plt.legend()
             self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), savefig_prefix='Statistics: ')
 
+    def plot_epsilonPIDs(self, epsilonPIDs_approach, **kwargs):
+        plt.figure()
+        plt.imshow(epsilonPIDs_approach, cmap='viridis', vmin=0., vmax=1.)
+        for (j, i), label in np.ndenumerate(epsilonPIDs_approach):
+            plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-label))
+        plt.grid(b=False, axis='both')
+        plt.xlabel('Predicted Particle')
+        plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
+        plt.ylabel('True Particle')
+        plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
+        plt.colorbar()
+        self.pyplot_sanitize_show(**kwargs)
+
     def plot_neyman_pearson(self, nbins=10, cutting_columns=None, title_suffix='', particles_of_interest=None, bar_particles=False):
         cutting_columns = self.particleIDs if cutting_columns is None else cutting_columns
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
