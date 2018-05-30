@@ -543,7 +543,7 @@ class ParticleFrame(dict):
         plt.colorbar()
         self.pyplot_sanitize_show(**kwargs)
 
-    def plot_neyman_pearson(self, nbins=10, cutting_columns=None, title_suffix='', particles_of_interest=None, bar_particles=False):
+    def plot_neyman_pearson(self, nbins=10, cutting_columns=None, title_suffix='', particles_of_interest=None, bar_particles=False, **kwargs):
         cutting_columns = self.particleIDs if cutting_columns is None else cutting_columns
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
 
@@ -584,7 +584,7 @@ class ParticleFrame(dict):
             plt.xlabel('%s Likelihood Ratio'%(current_format))
             plt.ylabel('Relative Abundance')
             plt.ylim(-0.05, 1.05)
-            self.pyplot_sanitize_show('Relative %s Abundance in Likelihood Ratio Bins%s'%(current_format, title_suffix), savefig_prefix='General Purpose Statistics: ')
+            self.pyplot_sanitize_show('Relative %s Abundance in Likelihood Ratio Bins%s'%(current_format, title_suffix), **kwargs)
 
     def plot_diff_epsilonPIDs(self, epsilonPIDs_approaches=[], title_suffixes=[], title_epsilonPIDs=''):
         if len(epsilonPIDs_approaches) >= 0 and len(epsilonPIDs_approaches) != len(title_suffixes):
