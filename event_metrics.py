@@ -55,8 +55,8 @@ group_opt.add_argument('--hold', dest='hold', nargs='?', action='store', default
                     help='Variable upon which the a priori probabilities shall depend on')
 group_opt.add_argument('--holdings', dest='holdings', nargs='+', action='store', choices=['pt', 'cosTheta'], default=['pt', 'cosTheta'],
                     help='Variables upon which the multivariate a priori probabilities shall depend on')
-group_opt.add_argument('--neyman-pearson-method', dest='neyman_pearson_method', action='store', choices=['stem', 'diff'], default='stem',
-                    help='Method for particle stemming for the visuals for the test based on the Neyman-Pearson lemma')
+group_opt.add_argument('--bar-particles', dest='bar_particles', action='store_true', default=False,
+                    help='Whether to additionally differentiate by charge when performing the test based on the Neyman-Pearson lemma')
 group_opt.add_argument('--norm', dest='norm', nargs='?', action='store', default='pi+',
                     help='Particle by which to norm the a priori probabilities in the univariate and multivariate Bayesian approach')
 group_opt.add_argument('--nbins', dest='nbins', nargs='?', action='store', type=int, default=10,
@@ -141,16 +141,11 @@ if args.run_pidProbability:
     cut = args.cut
     nbins = args.nbins
     exclusive_cut = args.exclusive_cut
+    bar_particles = args.bar_particles
 
     particles_of_interest = args.particles_of_interest
 
     detector = 'all'
-
-    neyman_pearson_method = args.neyman_pearson_method
-    if neyman_pearson_method == 'stem':
-        bar_particles = False
-    elif neyman_pearson_method == 'diff':
-        bar_particles = True
 
     c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in ParticleFrame.particles}
     data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Particle ID Approach: ')
@@ -172,13 +167,8 @@ if args.run_mimic_pid:
 
 if args.run_bayes:
     mc_best = args.mc_best
+    bar_particles = args.bar_particles
     particles_of_interest = args.particles_of_interest
-
-    neyman_pearson_method = args.neyman_pearson_method
-    if neyman_pearson_method == 'stem':
-        bar_particles = False
-    elif neyman_pearson_method == 'diff':
-        bar_particles = True
 
     c = data.bayes(mc_best=mc_best)
     data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
@@ -256,6 +246,7 @@ if args.diff_methods:
 
 if args.run_univariate_bayes:
     cut = args.cut
+    bar_particles = args.bar_particles
 
     hold = args.hold
     whis = args.whis
@@ -269,12 +260,6 @@ if args.run_univariate_bayes:
     interval_widths = {key: np.array([value[i] - value[i-1] for i in range(1, len(value))]) / 2. for key, value in intervals[hold].items()}
 
     particles_of_interest = args.particles_of_interest
-
-    neyman_pearson_method = args.neyman_pearson_method
-    if neyman_pearson_method == 'stem':
-        bar_particles = False
-    elif neyman_pearson_method == 'diff':
-        bar_particles = True
 
     plt.figure()
     for p in particles_of_interest:
@@ -343,17 +328,12 @@ if args.run_multivariate_bayes:
     holdings = args.holdings
     mc_best = args.mc_best
     exclusive_cut = args.exclusive_cut
+    bar_particles = args.bar_particles
     whis = args.whis
     niterations = args.niterations
     nbins = args.nbins
     norm = args.norm
     particles_of_interest = args.particles_of_interest
-
-    neyman_pearson_method = args.neyman_pearson_method
-    if neyman_pearson_method == 'stem':
-        bar_particles = False
-    elif neyman_pearson_method == 'diff':
-        bar_particles = True
 
     cutting_columns, category_columns, intervals, iteration_priors = data.multivariate_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
 
