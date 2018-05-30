@@ -140,9 +140,8 @@ if args.run_pid:
 
     particles_of_interest = args.particles_of_interest
 
-    data.plot_stats_by_particle(data.stats(), particles_of_interest=particles_of_interest, savefig_prefix='Particle ID Approach: ')
-
     c = data.add_isMax_column(ParticleFrame.particleIDs) if exclusive_cut else ParticleFrame.particleIDs
+    data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Particle ID Approach: ')
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
     if exclusive_cut:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
