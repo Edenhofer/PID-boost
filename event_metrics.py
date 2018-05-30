@@ -43,8 +43,6 @@ group_action.add_argument('--univariate-bayes-priors', dest='run_univariate_baye
                     help='Visualize the evolution of priors for the univariate Bayesian approach')
 group_action.add_argument('--univariate-bayes-outliers', dest='run_univariate_bayes_outliers', action='store_true', default=False,
                     help='Visualize the outliers of the univariate Bayesian approach')
-group_action.add_argument('--neyman-pearson', dest='neyman_pearson', nargs='?', action='store', choices=['stem', 'diff'], default='', const='stem',
-                    help='Visualize the goodness of a fit using a test based on the Neyman-Pearson lemma either by differentiating by particle or by stemming')
 group_action.add_argument('--multivariate-bayes', dest='run_multivariate_bayes', action='store_true', default=False,
                     help='Calculate an accumulated probability for particle hypothesis keeping multiple variables fixed')
 group_action.add_argument('--multivariate-bayes-motivation', dest='run_multivariate_bayes_motivation', action='store_true', default=False,
@@ -57,6 +55,8 @@ group_opt.add_argument('--hold', dest='hold', nargs='?', action='store', default
                     help='Variable upon which the a priori probabilities shall depend on')
 group_opt.add_argument('--holdings', dest='holdings', nargs='+', action='store', choices=['pt', 'cosTheta'], default=['pt', 'cosTheta'],
                     help='Variables upon which the multivariate a priori probabilities shall depend on')
+group_opt.add_argument('--neyman-pearson-method', dest='neyman_pearson_method', action='store', choices=['stem', 'diff'], default='stem',
+                    help='Method for particle stemming for the visuals for the test based on the Neyman-Pearson lemma')
 group_opt.add_argument('--norm', dest='norm', nargs='?', action='store', default='pi+',
                     help='Particle by which to norm the a priori probabilities in the univariate and multivariate Bayesian approach')
 group_opt.add_argument('--nbins', dest='nbins', nargs='?', action='store', type=int, default=10,
@@ -121,21 +121,6 @@ if args.run_stats:
         plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles])
         data.pyplot_sanitize_show('True Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[p]), savefig_prefix='General Purpose Statistics: ')
 
-if args.neyman_pearson:
-    method = args.neyman_pearson
-
-    nbins = args.nbins
-    particles_of_interest = args.particles_of_interest
-
-    if method == 'stem':
-        bar_particles = False
-    elif method == 'diff':
-        bar_particles = True
-
-    for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
-        c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='General Purpose Statistics: ')
-
 if args.run_pid:
     cut = args.cut
     exclusive_cut = args.exclusive_cut
@@ -154,11 +139,18 @@ if args.run_pid:
 
 if args.run_pidProbability:
     cut = args.cut
+    nbins = args.nbins
     exclusive_cut = args.exclusive_cut
 
     particles_of_interest = args.particles_of_interest
 
     detector = 'all'
+
+    neyman_pearson_method = args.neyman_pearson_method
+    if neyman_pearson_method == 'stem':
+        bar_particles = False
+    elif neyman_pearson_method == 'diff':
+        bar_particles = True
 
     c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in ParticleFrame.particles}
     data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Particle ID Approach: ')
@@ -169,6 +161,11 @@ if args.run_pidProbability:
     else:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
     data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='pidProbability Approach: ')
+
+    # NOTE: In contrast to the other methods we differentiate by detector for the `pidProbability` variable
+    for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
+        c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='General Purpose Statistics: ')
 
 if args.run_mimic_pid:
     data.mimic_pid()
