@@ -132,7 +132,7 @@ if args.neyman_pearson:
 
     for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=bar_particles)
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='General Purpose Statistics: ')
 
 if args.run_pid:
     cut = args.cut
@@ -160,9 +160,9 @@ if args.run_bayes:
     c = data.bayes(mc_best=mc_best)
     data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
     if mc_best:
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via simple Bayes', particles_of_interest=particles_of_interest)
+        data.plot_neyman_pearson(cutting_columns=c, particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
     else:
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via flat Bayes', particles_of_interest=particles_of_interest)
+        data.plot_neyman_pearson(cutting_columns=c, particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
 
 if args.diff_methods:
     methods = args.diff_methods
@@ -267,7 +267,7 @@ if args.run_univariate_bayes:
     data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Univariate Bayesian Approach: ')
 
     data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest, savefig_prefix='Univariate Bayesian Approach: ')
-    data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ParticleFrame.variable_formats[hold], particles_of_interest=particles_of_interest)
+    data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ParticleFrame.variable_formats[hold], particles_of_interest=particles_of_interest, savefig_prefix='Univariate Bayesian Approach: ')
 
 if args.run_univariate_bayes_priors:
     particles_of_interest = args.particles_of_interest
@@ -359,7 +359,7 @@ if args.run_multivariate_bayes:
     data.pyplot_sanitize_show(drawing_title, 'Multivariate Bayesian Approach: ')
 
     data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest, savefig_prefix='Multivariate Bayesian Approach: ')
-    data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ' & '.join([ParticleFrame.variable_formats[h] for h in holdings]), particles_of_interest=particles_of_interest)
+    data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ' & '.join([ParticleFrame.variable_formats[h] for h in holdings]), particles_of_interest=particles_of_interest, savefig_prefix='Multivariate Bayesian Approach: ')
 
 if args.run_multivariate_bayes_motivation:
     norm = args.norm
