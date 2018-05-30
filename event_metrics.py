@@ -140,7 +140,7 @@ if args.run_pid:
 
     particles_of_interest = args.particles_of_interest
 
-    data.plot_stats_by_particle(data.stats(), particles_of_interest=particles_of_interest)
+    data.plot_stats_by_particle(data.stats(), particles_of_interest=particles_of_interest, savefig_prefix='Particle ID Approach: ')
 
     c = data.add_isMax_column(ParticleFrame.particleIDs) if exclusive_cut else ParticleFrame.particleIDs
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
@@ -158,7 +158,7 @@ if args.run_bayes:
     particles_of_interest = args.particles_of_interest
 
     c = data.bayes(mc_best=mc_best)
-    data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest)
+    data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
     if mc_best:
         data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via simple Bayes', particles_of_interest=particles_of_interest)
     else:
@@ -266,7 +266,7 @@ if args.run_univariate_bayes:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
     data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Univariate Bayesian Approach: ')
 
-    data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
+    data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest, savefig_prefix='Univariate Bayesian Approach: ')
     data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ParticleFrame.variable_formats[hold], particles_of_interest=particles_of_interest)
 
 if args.run_univariate_bayes_priors:
@@ -358,7 +358,7 @@ if args.run_multivariate_bayes:
     plt.colorbar()
     data.pyplot_sanitize_show(drawing_title, 'Multivariate Bayesian Approach: ')
 
-    data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
+    data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest, savefig_prefix='Multivariate Bayesian Approach: ')
     data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ' & '.join([ParticleFrame.variable_formats[h] for h in holdings]), particles_of_interest=particles_of_interest)
 
 if args.run_multivariate_bayes_motivation:
