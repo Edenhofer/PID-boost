@@ -176,7 +176,7 @@ if args.run_bayes:
 
 if args.diff_methods:
     methods = args.diff_methods
-    assert (len(methods) >= 2), 'Specify at least two methods'
+    assert (len(methods) >= 1), 'Specify at least one methods'
 
     cut = args.cut
     ncuts = args.ncuts
