@@ -548,7 +548,7 @@ class ParticleFrame(dict):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
 
         # NOTE: This is one of the few place where we differentiate between particle and anti-particle
-        charge_queries = ['charge > 0', 'charge < 0'] if bar_particles else ['charge != 0']
+        charge_queries = ['charge > 0', 'charge < 0', 'charge != 0'] if bar_particles else ['charge != 0']
         for query, p in itertools.product(charge_queries, particles_of_interest):
             particle_data_charged = self[p].query(query)
             if query == 'charge > 0':
