@@ -47,12 +47,13 @@ history_path = args.history_path
 # Initialize an empty ParticleFrame and load the pickle_file
 data = ParticleFrame(output_directory=output_directory, interactive=interactive)
 history = pickle.load(open(history_path, 'rb'))
+savefile_suffix = history['savefile_suffix']
 
 for key, title, ylabel in [('val_loss', 'Validation Loss', 'Loss'), ('val_acc', 'Validation Accuracy', 'Accuracy'), ('loss', 'Training Loss', 'Loss'), ('acc', 'Training Accuracy', 'Accuracy')]:
     plt.figure()
     plt.plot(history['epoch'], history['history'][key], color='orange')
     plt.xlabel('Epoch')
     plt.ylabel(ylabel)
-    data.pyplot_sanitize_show(title, savefig_prefix='Neural Network Model %s: '%(history['run']), savefig_suffix=','.join([' with %d %s'%(value, key) for key, value in [('epochs', history['params']['epochs']), ('batch_size', history['params']['batch_size'])]]))
+    data.pyplot_sanitize_show(title, savefig_prefix='Neural Network Model: ', savefig_suffix=savefile_suffix)
 
 plt.show()
