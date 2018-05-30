@@ -174,12 +174,18 @@ if args.run_bayes:
     mc_best = args.mc_best
     particles_of_interest = args.particles_of_interest
 
+    neyman_pearson_method = args.neyman_pearson_method
+    if neyman_pearson_method == 'stem':
+        bar_particles = False
+    elif neyman_pearson_method == 'diff':
+        bar_particles = True
+
     c = data.bayes(mc_best=mc_best)
     data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
     if mc_best:
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via simple Bayes', particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via simple Bayes', particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='Bayesian Approach: ')
     else:
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via flat Bayes', particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via flat Bayes', particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='Bayesian Approach: ')
 
 if args.diff_methods:
     methods = args.diff_methods
@@ -264,6 +270,12 @@ if args.run_univariate_bayes:
 
     particles_of_interest = args.particles_of_interest
 
+    neyman_pearson_method = args.neyman_pearson_method
+    if neyman_pearson_method == 'stem':
+        bar_particles = False
+    elif neyman_pearson_method == 'diff':
+        bar_particles = True
+
     plt.figure()
     for p in particles_of_interest:
         assumed_abundance = np.array([data[p][((data[p]['mcPDG'] == lib.pdg_from_name_faulty(p)) | (data[p]['mcPDG'] == -1 * lib.pdg_from_name_faulty(p))) & (data[p][category_columns[hold]] == it) & (data[p][cutting_columns[p]] > cut)].shape[0] for it in range(nbins)])
@@ -284,7 +296,7 @@ if args.run_univariate_bayes:
     data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Univariate Bayesian Approach: ')
 
     data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest, savefig_prefix='Univariate Bayesian Approach: ')
-    data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ParticleFrame.variable_formats[hold], particles_of_interest=particles_of_interest, savefig_prefix='Univariate Bayesian Approach: ')
+    data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ParticleFrame.variable_formats[hold], particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='Univariate Bayesian Approach: ')
 
 if args.run_univariate_bayes_priors:
     particles_of_interest = args.particles_of_interest
@@ -337,6 +349,12 @@ if args.run_multivariate_bayes:
     norm = args.norm
     particles_of_interest = args.particles_of_interest
 
+    neyman_pearson_method = args.neyman_pearson_method
+    if neyman_pearson_method == 'stem':
+        bar_particles = False
+    elif neyman_pearson_method == 'diff':
+        bar_particles = True
+
     cutting_columns, category_columns, intervals, iteration_priors = data.multivariate_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)
 
     interval_centers = {}
@@ -376,7 +394,7 @@ if args.run_multivariate_bayes:
     data.pyplot_sanitize_show(drawing_title, 'Multivariate Bayesian Approach: ')
 
     data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest, savefig_prefix='Multivariate Bayesian Approach: ')
-    data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ' & '.join([ParticleFrame.variable_formats[h] for h in holdings]), particles_of_interest=particles_of_interest, savefig_prefix='Multivariate Bayesian Approach: ')
+    data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ' & '.join([ParticleFrame.variable_formats[h] for h in holdings]), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='Multivariate Bayesian Approach: ')
 
 if args.run_multivariate_bayes_motivation:
     norm = args.norm
