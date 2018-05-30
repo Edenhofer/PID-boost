@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from keras import backend as K
-from keras.callbacks import TensorBoard
+from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras.layers import Activation, Dense, Dropout, MaxPooling1D
 from keras.models import Sequential
 from keras.utils import to_categorical
@@ -52,6 +52,8 @@ group_opt.add_argument('--training-fraction', dest='training_fraction', action='
                     help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
 group_util.add_argument('--module-file', dest='module_path', action='store', default=None,
                     help='Path including the filename where the model should be saved to; Skip saving if given \'/dev/null\'')
+group_util.add_argument('--checkpoint-file', dest='checkpoint_path', action='store', default=None,
+                    help='Path including the filename where to periodically save the best performing module to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('--history-file', dest='history_path', action='store', default=None,
                     help='Path including the filename where the history of the model-fitting should be saved to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('-i', '--input', dest='input_directory', action='store', default='./',
@@ -100,6 +102,7 @@ output_directory = args.output_directory
 output_pickle = args.output_pickle
 history_path = args.history_path
 module_path = args.module_path
+checkpoint_path = args.checkpoint_path
 
 # Read in all the particle's information into a dictionary of pandas-frames
 if input_pickle:
@@ -112,7 +115,7 @@ sampling_weight_column = 'sampling_weight'
 nn_color_column = 'nn_mcPDG'
 detector = 'all' # Bad hardcoding stuff which should actually be configurable
 # Evaluate sub-options
-epochs = args.epoch
+epochs = args.epochs
 batch_size = args.batch_size
 training_fraction = args.training_fraction
 n_components = args.n_components
@@ -184,7 +187,11 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['ac
 y_test_hot = to_categorical(y_test, num_classes=len(labels))
 y_validation_hot = to_categorical(y_validation, num_classes=len(labels))
 
-# Visualize the training
+# Set a sensibles default suffix for filenames
+config = model.get_config()
+savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_nEpochs' + str(epochs)
+
+# Visualize and save the training
 keras_callbacks = []
 if log_directory != '/dev/null':
     if log_directory == None:
@@ -193,6 +200,13 @@ if log_directory != '/dev/null':
         print('Creating desired log directory "%s"'%(log_directory), file=sys.stderr)
         os.makedirs(log_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
     keras_callbacks += [TensorBoard(log_dir=log_directory, histogram_freq=1, batch_size=batch_size)]
+if checkpoint_path != '/dev/null':
+    if checkpoint_path == None:
+        checkpoint_path = os.path.join(output_directory, 'model_checkpoint_' + savefile_suffix + '.h5')
+    if not os.path.exists(os.path.dirname(checkpoint_path)):
+        print('Creating desired parent directory "%s" for the checkpoint file "%s"'%(os.path.dirname(checkpoint_path), checkpoint_path), file=sys.stderr)
+        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+    keras_callbacks += [ModelCheckpoint(checkpoint_path, monitor='val_acc', save_best_only=True, save_weights_only=False, period=1)]
 
 # Train the model
 history = model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, validation_data=(x_validation, y_validation_hot), shuffle=True, callbacks=keras_callbacks)
@@ -218,9 +232,6 @@ for p, particle_data in data.items():
     # Since sensible data has only been estimated for the validation set, it makes sense to also just save this portion and disregard the rest
     particle_data.dropna(subset=[nn_color_column], inplace=True)
 
-# Set a sensibles default suffix for filenames
-config = model.get_config()
-savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_nEpochs' + str(history.params['epochs'])
 # Save the ParticleFrame data
 if output_pickle != '/dev/null':
     if output_pickle == None:
