@@ -42,8 +42,8 @@ group_action.add_argument('--pidProbability', dest='run', action='store_const', 
                     help='Run the model on the `pidProbability` data by detector')
 group_opt.add_argument('--batch-size', dest='batch_size', action='store', type=int, default=32,
                     help='Size of each batch')
-group_opt.add_argument('--epoch', dest='epoch', action='store', type=int, default=10,
-                    help='Number of iterations to train the model (epoch)')
+group_opt.add_argument('--epochs', dest='epochs', action='store', type=int, default=10,
+                    help='Number of iterations to train the model (epochs)')
 group_opt.add_argument('--ncomponents', dest='n_components', action='store', type=int, default=12,
                     help='Number of components to keep after performing a PCA on the data')
 group_opt.add_argument('--sampling-method', dest='sampling_method', action='store', choices=['fair', 'biased'], default='fair',
