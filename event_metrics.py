@@ -144,21 +144,11 @@ if args.run_pid:
 
     c = data.add_isMax_column(ParticleFrame.particleIDs) if exclusive_cut else ParticleFrame.particleIDs
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
-    plt.figure()
-    plt.imshow(epsilonPIDs, cmap='viridis', vmin=0., vmax=1.)
-    for (j, i), label in np.ndenumerate(epsilonPIDs):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-label))
-    plt.grid(b=False, axis='both')
-    plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
-    plt.ylabel('True Particle')
-    plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
-    plt.colorbar()
     if exclusive_cut:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
     else:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
-    data.pyplot_sanitize_show(drawing_title, savefig_prefix='Particle ID Approach: ')
+    data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Particle ID Approach: ')
 
 if args.run_mimic_pid:
     data.mimic_pid()
@@ -270,20 +260,11 @@ if args.run_univariate_bayes:
 
     c = data.add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
-    plt.figure()
-    plt.imshow(epsilonPIDs, cmap='viridis', vmin=0., vmax=1.)
-    for (j, i), label in np.ndenumerate(epsilonPIDs):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-label))
-    plt.grid(b=False, axis='both')
-    plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
-    plt.ylabel('True Particle')
-    plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
     if exclusive_cut:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
     else:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
-    data.pyplot_sanitize_show(drawing_title, savefig_prefix='Univariate Bayesian Approach: ')
+    data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Univariate Bayesian Approach: ')
 
     data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest)
     data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ParticleFrame.variable_formats[hold], particles_of_interest=particles_of_interest)
