@@ -514,7 +514,7 @@ class ParticleFrame(dict):
         else:
             plt.close()
 
-    def plot_stats_by_particle(self, stat, particles_of_interest=None):
+    def plot_stats_by_particle(self, stat, particles_of_interest=None, **kwargs):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
 
         for p in particles_of_interest:
@@ -528,7 +528,7 @@ class ParticleFrame(dict):
             plt.ylabel('Particle Rates')
             plt.ylim(-0.05, 1.05)
             plt.legend()
-            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), savefig_prefix='Statistics: ')
+            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), **kwargs)
 
     def plot_epsilonPIDs(self, epsilonPIDs_approach, **kwargs):
         plt.figure()
