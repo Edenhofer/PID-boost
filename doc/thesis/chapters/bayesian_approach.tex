@@ -1,6 +1,9 @@
 \chapter{Bayesian approach}
 \label{chap:bayesian_approach}
 
+\section{Simple Bayesian approach}
+\label{sec:simple_bayes}
+
 The goal of a Bayesian approach is to weight the particles' probability by their abundance in the sample. This process increases the likelihood of a particle being identified as belonging to a group with a higher abundance and decreases the likelihood of being identified as belonging to a group with a lower abundance. The approach depends on the detector yielding decay-agnostic results. Hence regardless of prior probabilities the detector shall output the likelihood of measuring the received signal given a specific particle hypothesis. Furthermore the approach assumes a bias towards one or a few particles in the sample since otherwise the a priori probabilities would be flat and therefore boil down to the same result.
 Thankfully both of those hypothesis are given in the real world: The detector can be assumed to behaves independently of the relative particle abundance and the measured data usually shows a clear predominance of one or a few particles.
 This is not surprising in itself as the branching fractions are not equally distributed and dictated by the laws of physics one particle species might be produced more frequently.
@@ -32,3 +35,8 @@ The described effect can be seen for every stable particle with an ID and is not
 \end{figure}
 
 The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However in general the Bayesian approach is less prone to confusing particle with one another as seen in figure~\ref{fig:diff_heatmap_via_pid_via_flat_bayes}.
+
+\section{Univariate Bayesian approach}
+\label{sec:univariate_bayes}
+
+The univariate Bayesian approach adds an dependency to one detector variable to the previous simple Bayesian approach. Hence instead of having a probability which depends on only on the particle abundance and the signal, the univariate approach additionally varies the probability depending on e.g. the transverse momentum. The most sensible variables are among others are said transverse momentum $p_t$ and the angle between the track of the particle and the beampipe $\Theta$.
