@@ -167,11 +167,20 @@ if args.run_mimic_pid:
 
 if args.run_bayes:
     mc_best = args.mc_best
+    cut = args.cut
+    exclusive_cut = args.exclusive_cut
     bar_particles = args.bar_particles
     particles_of_interest = args.particles_of_interest
 
     c = data.bayes(mc_best=mc_best)
     data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Bayesian Approach: ')
+    c = data.add_isMax_column(c) if exclusive_cut else c
+    epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
+    if exclusive_cut:
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
+    else:
+        drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
+    data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Bayesian Approach: ')
     if mc_best:
         data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via simple Bayes', particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='Bayesian Approach: ')
     else:
