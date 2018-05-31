@@ -1,6 +1,7 @@
-\documentclass[german,12pt,twoside,a4paper]{report}
+\documentclass[english,12pt,twoside,a4paper]{report}
     \usepackage{graphicx,caption,subcaption,float}
-	\usepackage[english]{babel,varioref}		% language
+    \usepackage[ngerman,english]{babel,varioref}		% language
+    \usepackage[ddmmyyyy]{datetime}
     \usepackage[utf8]{inputenc}
     \usepackage[T1]{fontenc}
     \usepackage{pslatex}
@@ -39,17 +40,17 @@
     \parindent0em                        % Einr"uckung der ersten Zeile eines Absatzes
     \newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}
 
-    \title{Titel hier einfügen}
+    \title{Optimization of Particle Identification}
+    \author{\href{mailto:gordian.edenhofer@gmail.com}{Gordian Edenhofer}}
+    \date{29. June 2018}
 
-    \author{\href{mailto:deineemailadresse@physik.uni-muenchen.de}{Name einfügen}}
-    \date{\today}
-
-    %\includeonly{titelblatt}
 \begin{document}
+
+\selectlanguage{english}
 
 \pagenumbering{Roman}
 %\maketitle
-\include{cover}
+\include{cover_german}
 \clearpage
 \include{blank}
 \clearpage
