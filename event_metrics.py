@@ -181,10 +181,8 @@ if args.run_bayes:
     else:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
     data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Bayesian Approach: ')
-    if mc_best:
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via simple Bayes', particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='Bayesian Approach: ')
-    else:
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' via flat Bayes', particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='Bayesian Approach: ')
+    suf = ' via simple Bayes' if mc_best else ' via flat Bayes'
+    data.plot_neyman_pearson(cutting_columns=c, title_suffix=suf, particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='Bayesian Approach: ')
 
 if args.diff_methods:
     methods = args.diff_methods
