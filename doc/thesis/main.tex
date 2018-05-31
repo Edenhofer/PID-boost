@@ -1,5 +1,4 @@
 \documentclass[english,12pt,twoside,a4paper]{report}
-    \usepackage{graphicx,caption,subcaption,float}
     \usepackage[ngerman,english]{babel,varioref}		% language
     \usepackage[ddmmyyyy]{datetime}
     \usepackage[utf8]{inputenc}
@@ -13,6 +12,14 @@
     \usepackage{longtable}
     \usepackage{rotating}
     \usepackage[section]{placeins}
+
+    \usepackage{caption}		% Customize caption aesthetics
+    \usepackage{subcaption}
+
+	\usepackage{graphicx}		% required to insert images
+    \usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
     %\usepackage[osf,sc]{mathpazo}  % Palatino als Schriftart
     %\usepackage{charter}
     \newcommand{\U}[1]{\underline{#1}}
@@ -66,7 +73,7 @@
 \cleardoublepage
 
 \pagenumbering{arabic}
-\include{kap1}
+\include{chapters/bayesian_approach}
 
 \begin{appendix}
     \include{app1}
