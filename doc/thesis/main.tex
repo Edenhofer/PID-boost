@@ -1,0 +1,82 @@
+\documentclass[german,12pt,twoside,a4paper]{report}
+    \usepackage{graphicx,caption,subcaption,float}
+	\usepackage[english]{babel,varioref}		% language
+    \usepackage[utf8]{inputenc}
+    \usepackage[T1]{fontenc}
+    \usepackage{pslatex}
+    \usepackage{amsmath}
+    \usepackage{multirow}
+    \usepackage{microtype}
+    \usepackage{ellipsis}
+    \usepackage{textcomp}
+    \usepackage{longtable}
+    \usepackage{rotating}
+    \usepackage[section]{placeins}
+    %\usepackage[osf,sc]{mathpazo}  % Palatino als Schriftart
+    %\usepackage{charter}
+    \newcommand{\U}[1]{\underline{#1}}
+    \newcommand{\grad}{\text{grad }}
+    \newcommand{\dive}{\text{div }}
+    \newcommand{\rot}{\text{rot }}
+    \newcommand{\B}[1]{\textbf{#1}}
+    \makeatletter
+    \makeatother
+
+    %\usepackage{geometry,mflogo,xspace,texnames,path,booktabs,bm}
+
+    \usepackage[bookmarks]{hyperref}
+    \usepackage{thumbpdf}
+
+    \pagestyle{headings}                 % Seitenstil
+    \oddsidemargin0.8cm                  % linker Rand fuer ungerade Seiten bei \twoside
+    \evensidemargin0.2cm                 % linker Rand fuer gerade Seiten (nur bei \twoside)
+    \topmargin0.5cm                      % oberer Rand bis zur Oberseite Kopfzeile
+    \textheight21cm                      % Texth"ohe auf einer Seite
+    \textwidth15cm                       % Textbreite auf einer Seite
+    \renewcommand{\topfraction}{0.75}    % Anteil der Gleitk"asten am Seitenanfang
+    \renewcommand{\bottomfraction}{0.75} % Anteil der Gleitk"asten am Seitenende
+    \parskip1ex  plus1ex minus0.5ex      % Abstand zwischen Abs"atzen
+    \parindent0em                        % Einr"uckung der ersten Zeile eines Absatzes
+    \newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}
+
+    \title{Titel hier einfügen}
+
+    \author{\href{mailto:deineemailadresse@physik.uni-muenchen.de}{Name einfügen}}
+    \date{\today}
+
+    %\includeonly{titelblatt}
+\begin{document}
+
+\pagenumbering{Roman}
+%\maketitle
+\include{cover}
+\clearpage
+\include{blank}
+\clearpage
+\include{cover}
+\clearpage
+\include{blank}
+%\clearpage
+%\include{abstract}
+\clearpage
+
+\tableofcontents
+
+\cleardoublepage
+
+\pagenumbering{arabic}
+\include{kap1}
+
+\begin{appendix}
+    \include{app1}
+    \include{literature}
+\end{appendix}
+\pagestyle{empty}
+\cleardoublepage
+\include{disclaimer}
+\cleardoublepage
+\include{acknowledgements}
+
+\end{document}
+
+
