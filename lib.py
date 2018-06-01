@@ -582,6 +582,7 @@ class ParticleFrame(dict):
             plt.figure()
             plt.errorbar(interval_centers, abundance_ratio, xerr=x_err, yerr=y_err, capsize=0., elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.15)
             plt.xlabel('%s Likelihood Ratio'%(current_format))
+            plt.xlim(-0.05, 1.05)
             plt.ylabel('Relative Abundance')
             plt.ylim(-0.05, 1.05)
             self.pyplot_sanitize_show('Relative %s Abundance in Likelihood Ratio Bins%s'%(current_format, title_suffix), **kwargs)
