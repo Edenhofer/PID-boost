@@ -215,7 +215,7 @@ if args.run_pidProbability_motivation:
         cbar.set_alpha(1.)
         cbar.draw_all()
 
-        data.pyplot_sanitize_show(current_format + ' pidPropability multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings), savefig_prefix='General Purpose Statistics: ', suptitle=True)
+        data.pyplot_sanitize_show(current_format + ' pidPropability multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings), savefig_prefix='General Purpose Statistics: ', suptitle=True, format='png')
 
 if args.run_mimic_pid:
     data.mimic_pid()
@@ -488,7 +488,7 @@ if args.run_multivariate_bayes_motivation:
     cbar.set_ticklabels([ParticleFrame.particle_formats[lib.pdg_to_name_faulty(v)] for v in np.unique(particle_data[selection]['mcPDG'].values)])
     cbar.draw_all()
 
-    data.pyplot_sanitize_show('Multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings), savefig_prefix='Multivariate Bayesian Approach: ', suptitle=True)
+    data.pyplot_sanitize_show('Multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings), savefig_prefix='Multivariate Bayesian Approach: ', suptitle=True, format='png')
 
 
 plt.show()
