@@ -23,7 +23,7 @@ The main inspiration for the actual program code heavily relies on the [b2-start
   * ~~Utilize automatically selected ROOT variables as input, e.g. depending on their contribution to a PCA~~
   * Use a multitude of variables and let the network decide
   * Visually compare the approaches
-  * Sample the data in a way which makes all particle tracks equally likely
+  * ~~Sample the data in a way which makes all particles equally likely~~
   * Pre-train neural network on e.g. data sets containing all particles in the same abundance
   * Tweak pre-trained model for decay specific particle abundances
 * Plot efficiencies over background-ratio for PID, Bayes, etc. and plot a dot for the NN
