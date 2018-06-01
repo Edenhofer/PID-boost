@@ -143,6 +143,7 @@ if args.run_pid:
 if args.run_pidProbability:
     cut = args.cut
     nbins = args.nbins
+    holdings = args.holdings
     exclusive_cut = args.exclusive_cut
     bar_particles = args.bar_particles
 
@@ -160,6 +161,10 @@ if args.run_pidProbability:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
     data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='pidProbability Approach: ')
 
+    for hold, binning_method in itertools.product(holdings, ['qcut', 'cut']):
+        c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in ParticleFrame.particles}
+        # Ignore the wish of the user and never plot those visuals for bar_particles as this would create a lot of figures
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(detector.upper()), particles_of_interest=particles_of_interest, bar_particles=False, binning_method=binning_method, hold=hold, savefig_prefix='General Purpose Statistics: ')
     # NOTE: In contrast to the other methods we differentiate by detector for the `pidProbability` variable
     for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
