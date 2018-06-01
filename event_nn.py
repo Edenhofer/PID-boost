@@ -15,7 +15,7 @@ import tensorflow as tf
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras.layers import Activation, Dense, Dropout, MaxPooling1D
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.utils import to_categorical
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -60,6 +60,8 @@ group_util.add_argument('-i', '--input', dest='input_directory', action='store',
                     help='Directory in which the program shall search for ROOT files for each particle')
 group_util.add_argument('--input-pickle', dest='input_pickle', action='store', default=None,
                     help='Pickle file path containing a ParticleFrame object which shall be read in instead of ROOT files; Takes precedence when specified')
+group_util.add_argument('--input-module', dest='input_module', action='store', default=None,
+                    help='Path to a module file to use instead of a self-constructed one')
 group_util.add_argument('--log-dir', dest='log_directory', action='store', default=None,
                     help='Directory where TensorFlow is supposed to log to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
@@ -96,6 +98,7 @@ K.set_session(session)
 # Evaluate the input-output arguments
 input_directory = args.input_directory
 input_pickle = args.input_pickle
+input_module = args.input_module
 interactive = args.interactive
 log_directory = args.log_directory
 output_directory = args.output_directory
@@ -170,22 +173,26 @@ y_test = augmented_matrix.loc[test_selection][truth_color_column].values
 x_validation = design_matrix.loc[validation_selection].values
 y_validation = augmented_matrix.loc[validation_selection][truth_color_column].values
 
-# Layer selection
-model = Sequential()
-model.add(Dense(len(labels) * 2, input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
-model.add(Dropout(0.2))
-model.add(Dense(len(labels) * 3, activation='relu', use_bias=True))
-model.add(Dropout(0.2))
-model.add(Dense(len(labels) * 2, activation='relu', use_bias=True))
-model.add(Dense(int(len(labels) * 1.5), activation='relu', use_bias=True))
-model.add(Dense(len(labels), activation='softmax'))
-
-# Compilation for a multi-class classification problem
-model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
-
 # Convert labels to categorical one-hot encoding
 y_test_hot = to_categorical(y_test, num_classes=len(labels))
 y_validation_hot = to_categorical(y_validation, num_classes=len(labels))
+
+# Layer selection
+if input_module:
+    print('Loading input module from "%s"'%(input_module))
+    model = load_model(input_module)
+else:
+    model = Sequential()
+    model.add(Dense(len(labels) * 2, input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
+    model.add(Dropout(0.2))
+    model.add(Dense(len(labels) * 3, activation='relu', use_bias=True))
+    model.add(Dropout(0.2))
+    model.add(Dense(len(labels) * 2, activation='relu', use_bias=True))
+    model.add(Dense(int(len(labels) * 1.5), activation='relu', use_bias=True))
+    model.add(Dense(len(labels), activation='softmax'))
+
+    # Compilation for a multi-class classification problem
+    model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Set a sensibles default suffix for filenames
 config = model.get_config()
