@@ -9,31 +9,37 @@ In the following explanatory paragraphs I will assume that we are about to ident
 
 The most important classification functions are:
 \begin{itemize}
-    \item \textbf{T}rue \textbf{P}ositive \textbf{R}ate (\textbf{TPR}): \textit{Rate of accepted elements which are correct}
+    \item \textbf{T}rue \textbf{P}ositive \textbf{R}ate (\textbf{TPR}): \textit{Proportion of accepted elements which are correct of all positives}
 
     \nobreak
     Hence the ratio of identified kaons which actually were kaons in proportion to the number of kaons in the data.
 
-    \item \textbf{T}rue \textbf{N}egative \textbf{R}ate (\textbf{TNR}): \textit{Rate of rejected elements which are incorrect}
+    \item \textbf{T}rue \textbf{N}egative \textbf{R}ate or Specificity (\textbf{TNR}): \textit{Proportion of rejected elements which are incorrect of all negatives}
 
     \nobreak
     In our example this would translate to the ratio of non-kaon particles being identified as being non-kaons in proportion to the number of all non-kaon particles.
 
-    \item \textbf{F}alse \textbf{P}ositive \textbf{R}ate (\textbf{FPR}): \textit{Rate of accepted elements which are incorrect}
+    \item \textbf{F}alse \textbf{P}ositive \textbf{R}ate (\textbf{FPR}): \textit{Proportion of accepted elements which are incorrect of all negatives}
 
     \nobreak
     This would translate to the fraction of non-kaon particles identified as kaons over the number of all non-kaons.
 
-    \item \textbf{F}alse \textbf{N}egative \textbf{R}ate (\textbf{FNR}): \textit{Rate of rejected elements which are correct}
+    \item \textbf{F}alse \textbf{N}egative \textbf{R}ate (\textbf{FNR}): \textit{Proportion of rejected elements which are correct of all positives}
 
     \nobreak
     Using our kaon sample once more; this would represent the fraction of kaons classified as being non-kaons over the number of all non-kaons.
+
+    \item \textbf{P}ositive \textbf{P}redicted \textbf{V}alue (\textbf{PPV}): \textit{Proportion of accepted elements which are correct of all accepted}
+
+    \nobreak
+    Using our kaon sample one last time; this would represent the fraction of kaons classified as being as kaons over the number of all tracks classified kaons but not necessarily being one.
+
 \end{itemize}
 
-In abstract but more general terms; the above description can be summarized as seen in table~\ref{tab:classification_guidelines}.
+In abstract terms; the two prefixes used above may be summarized as seen in table~\ref{tab:classification_guidelines}.
 
 \vspace{2em}
-\begin{table}
+\begin{table}[ht]
     \centering
     \begin{tabular}{l|ll}
         Veracity & True = correct & False = incorrect \\
