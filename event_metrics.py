@@ -5,6 +5,7 @@ from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to importing argparse
 
 import argparse
+import itertools
 import pickle
 
 import matplotlib.pyplot as plt
@@ -31,6 +32,8 @@ group_action.add_argument('--pid', dest='run_pid', action='store_true', default=
                     help='Print out and visualize some statistics and the epsilonPID-matrix for the default particle ID cut')
 group_action.add_argument('--pidProbability', dest='run_pidProbability', action='store_true', default=False,
                     help='Print out and visualize some statistics and the epsilonPID-matrix for the pidProbability cut')
+group_action.add_argument('--pidProbability-motivation', dest='run_pidProbability_motivation', action='store_true', default=False,
+                    help='Visualize the goodness of detector components in different ranges')
 group_action.add_argument('--mimic-pid', dest='run_mimic_pid', action='store_true', default=False,
                     help='Mimic the calculation of the particle IDs using likelihoods')
 group_action.add_argument('--bayes', dest='run_bayes', action='store_true', default=False,
@@ -161,6 +164,53 @@ if args.run_pidProbability:
     for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
         data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='General Purpose Statistics: ')
+
+if args.run_pidProbability_motivation:
+    whis = args.whis
+    nbins = args.nbins
+    particles_of_interest = args.particles_of_interest
+    holdings = args.holdings
+
+    detectors = ['all']
+
+    for p, d in itertools.product(particles_of_interest, detectors):
+        particle_data = data[p]
+        color_column = 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc'
+        current_format = data.particle_base_formats[p]
+
+        selection = np.ones(particle_data.shape[0], dtype=bool)
+        if whis:
+            for hold in holdings:
+                q75, q25 = np.percentile(particle_data[hold], [75, 25])
+                iqr = q75 - q25
+                lower_bound = q25 - (iqr * whis)
+                upper_bound = q75 + (iqr * whis)
+                selection = selection & (particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)
+
+        fig = plt.figure(figsize=(6, 6))
+        grid = plt.GridSpec(4, 4, hspace=0.2, wspace=0.2)
+
+        main_ax = plt.subplot(grid[:-1, 1:])
+        plt.scatter(particle_data[selection][holdings[0]], particle_data[selection][holdings[1]], c=particle_data[selection][color_column], cmap='viridis', s=5., alpha=.1)
+        plt.setp(main_ax.get_xticklabels(), visible=False)
+        plt.setp(main_ax.get_yticklabels(), visible=False)
+
+        plt.subplot(grid[-1, 1:], sharex=main_ax)
+        plt.hist(particle_data[selection][holdings[0]], nbins, histtype='step', orientation='vertical')
+        plt.gca().invert_yaxis()
+        plt.xlabel(ParticleFrame.variable_formats[holdings[0]] + ' (' + ParticleFrame.variable_units[holdings[0]] + ')')
+        plt.subplot(grid[:-1, 0], sharey=main_ax)
+        plt.hist(particle_data[selection][holdings[1]], nbins, histtype='step', orientation='horizontal')
+        plt.gca().invert_xaxis()
+        plt.ylabel(ParticleFrame.variable_formats[holdings[1]] + ' (' + ParticleFrame.variable_units[holdings[1]] + ')')
+
+        fig.subplots_adjust(right=0.85)
+        cbar_ax = fig.add_axes([0.88, 0.20, 0.05, 0.6])
+        cbar = plt.colorbar(cax=cbar_ax)
+        cbar.set_alpha(1.)
+        cbar.draw_all()
+
+        data.pyplot_sanitize_show(current_format + ' pidPropability multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings), savefig_prefix='General Purpose Statistics: ', suptitle=True)
 
 if args.run_mimic_pid:
     data.mimic_pid()
