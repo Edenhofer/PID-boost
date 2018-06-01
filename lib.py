@@ -574,7 +574,7 @@ class ParticleFrame(dict):
                 selection = (categories == i)
                 if len(category_intervals) > 2:
                     plt.subplot(1, len(category_intervals)-1, i+1)
-                    plt.title('(%.2f < %s < %.2f)'%(category_intervals[i], self.variable_formats[hold], category_intervals[i+1]))
+                    plt.title('(%.2f < %s < %.2f)'%(category_intervals[i], self.variable_formats[hold], category_intervals[i+1]), fontsize=10)
                 plt.xlabel(r'$\mathcal{LR}($%s$)$'%(current_format))
 
                 if i == 0:
