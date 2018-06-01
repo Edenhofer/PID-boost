@@ -63,3 +63,30 @@ Multiple methods can therefore be compared by assessing how steep each methods T
     \caption{Sample ROC curve for a binary classification problem with each outcome being equally likely.}
     \label{fig:sample_roc_curve}
 \end{figure}
+
+\section{Identification efficiencies}
+\label{sec:efficiency}
+
+In particle physics the identification efficiency is defined as the proportion of correctly classified particles relative to all the available particles belonging to that class. Hence it directly represents the PPV. Both terms will be used as synonyms throughout the thesis.
+
+For an exclusive particle classification the $\epsilon_{PID}$-matrix is the confusion matrix normed by row. Each cell in a row represents the probability of a particle of that row's class being identified as the particle of that column's class. On the diagonal of that matrix it contains the identification efficiencies for a particle species.
+The definition generalizes to non normed matrices, e.g. resulting from non-exclusive. Although reading the matrix is less intuitive as a particle might belong to multiple classes and makes comparing them very ambitious.
+
+The values of the matrix are given by the fraction of particles $i$ classified as $j$ over the true abundance of particle $i$. As formula its values are
+
+\begin{equation}
+    \epsilon_{i j} = \frac{N_{i \text{ classified as } j}}{A_{i \text{ true}}}.
+\end{equation}
+
+For our six particle species with ID the matrix has the following shape:
+
+\begin{equation}
+    \begin{pmatrix}
+        \epsilon_{K K} & \epsilon_{K \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{K d} \\
+        \epsilon_{\pi K} & \epsilon_{\pi \pi} & \epsilon_{\pi e} & \epsilon_{\pi \mu} & \epsilon_{\pi p} & \epsilon_{\pi d} \\
+        \epsilon_{e K} & \epsilon_{e \pi} & \epsilon_{e e} & \epsilon_{e \mu} & \epsilon_{e p} & \epsilon_{e d} \\
+        \epsilon_{\mu K} & \epsilon_{\mu \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{\mu d} \\
+        \epsilon_{p K} & \epsilon_{p \pi} & \epsilon_{p e} & \epsilon_{p \mu} & \epsilon_{p p} & \epsilon_{p d} \\
+        \epsilon_{d K} & \epsilon_{d \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{d d} \\
+    \end{pmatrix}.
+\end{equation}
