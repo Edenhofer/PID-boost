@@ -261,40 +261,48 @@ if args.diff_methods:
     epsilonPIDs_approaches = []
     stats_approaches = []
     title_suffixes = []
+    savefig_suffix = ''
     for m in methods:
         current_ncuts = ncuts
 
         if m == 'pid':
             c = ParticleFrame.particleIDs
-            title_suffixes += [' via PID']
+            t = ' via PID'
         elif m == 'flat_bayes':
             c = data.bayes()
-            title_suffixes += [' via flat Bayes']
+            t = ' via flat Bayes'
         elif m == 'pidProbability':
             # Consistency check for flat_bayes, as both should yield the same results (mathematically)
             c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in ParticleFrame.particles}
-            title_suffixes += [' via pidProbability']
+            t = ' via pidProbability'
         elif m == 'simple_bayes':
             c = data.bayes(mc_best=True)
-            title_suffixes += [' via simple Bayes']
+            t = ' via simple Bayes'
         elif m == 'univariate_bayes':
             c = data.multivariate_bayes(holdings=[hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
-            title_suffixes += [' via univariate Bayes']
+            t = ' via univariate Bayes'
         elif m in ['univariate_bayes_by_' + v for v in ParticleFrame.variable_formats.keys()]:
             explicit_hold = m.replace('univariate_bayes_by_', '')
             c = data.multivariate_bayes(holdings=[explicit_hold], whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
-            title_suffixes += [' by ' + ParticleFrame.variable_formats[explicit_hold]]
+            t = ' by ' + ParticleFrame.variable_formats[explicit_hold]
         elif m == 'multivariate_bayes':
             c = data.multivariate_bayes(holdings=holdings, whis=whis, norm=norm, mc_best=mc_best, niterations=niterations, nbins=nbins)[0]
-            title_suffixes += [' by ' + ' & '.join([ParticleFrame.variable_formats[h] for h in holdings])]
+            t = ' by ' + ' & '.join([ParticleFrame.variable_formats[h] for h in holdings])
         elif m == 'nn':
             # In sharp contrast to all the previous approaches this one assumes the columns are already present and will not generate them beforehand!
             c = {k: 'nn_' + v for k, v in ParticleFrame.particleIDs.items()}
             current_ncuts = 1
-            title_suffixes += [' via NN']
+            t = ' via NN'
         else:
             raise ValueError('received unknown method "%s"'%(m))
 
+        if m in data.descriptions:
+            s = ' ' + data.descriptions[m]
+        else:
+            s = t
+
+        title_suffixes += [t]
+        savefig_suffix = savefig_suffix + ',' + s
         c_choice = data.add_isMax_column(c) if exclusive_cut else c
         epsilonPIDs_approaches += [data.epsilonPID_matrix(cutting_columns=c_choice, cut=cut)]
         stats_approaches += [data.stats(cutting_columns=c, ncuts=current_ncuts)]
@@ -303,8 +311,8 @@ if args.diff_methods:
         title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
     else:
         title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
-    data.plot_diff_epsilonPIDs(epsilonPIDs_approaches=epsilonPIDs_approaches, title_suffixes=title_suffixes, title_epsilonPIDs=title_epsilonPIDs)
-    data.plot_diff_stats(stats_approaches=stats_approaches, title_suffixes=title_suffixes, particles_of_interest=particles_of_interest)
+    data.plot_diff_epsilonPIDs(epsilonPIDs_approaches=epsilonPIDs_approaches, title_suffixes=title_suffixes, title_epsilonPIDs=title_epsilonPIDs, savefig_prefix='Diff Heatmap: ', savefig_suffix=savefig_suffix)
+    data.plot_diff_stats(stats_approaches=stats_approaches, title_suffixes=title_suffixes, particles_of_interest=particles_of_interest, savefig_prefix='Diff Statistics: ', savefig_suffix=savefig_suffix)
 
 if args.run_univariate_bayes:
     cut = args.cut

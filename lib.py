@@ -635,7 +635,7 @@ class ParticleFrame(dict):
         fig.subplots_adjust(right=0.85)
         cbar_ax = fig.add_axes([0.88, 0.20, 0.05, 0.6])
         plt.colorbar(cax=cbar_ax)
-        self.pyplot_sanitize_show(title_epsilonPIDs, savefig_prefix='Diff Heatmap: ', savefig_suffix=','.join(str(suffix) for suffix in title_suffixes), suptitle=True, **kwargs)
+        self.pyplot_sanitize_show(title_epsilonPIDs, suptitle=True, **kwargs)
 
     def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=['tpr', 'ppv'], x_lim=(-0.05, 1.05), y_lim=(-0.05, 1.05), particles_of_interest=None, ninterpolations=100, **kwargs):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
@@ -687,4 +687,4 @@ class ParticleFrame(dict):
             plt.ylabel('Rate Ratios')
             plt.legend()
 
-            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), savefig_prefix='Diff Statistics: ', savefig_suffix=','.join(str(suffix) for suffix in title_suffixes), suptitle=True, **kwargs)
+            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), suptitle=True, **kwargs)
