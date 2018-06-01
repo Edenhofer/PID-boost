@@ -1,0 +1,243 @@
+\documentclass{beamer}
+	\usepackage[utf8]{inputenc}		% required for umlauts
+	\usepackage[english]{babel}		% language
+	%\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage{libertine}			% enable this on Windows to allow for microtype
+	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
+
+	\usepackage{mathtools}		% required for formulas
+
+	\usepackage{caption}		% Customize caption aesthetics
+	\usepackage{tcolorbox}		% fancy colored boxes
+	\usepackage{xcolor}			% Highlighting
+	\usepackage{soul}
+
+	\usepackage{graphicx}		% required to insert images
+	\usepackage{subcaption}		% enable sub-figure
+	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
+	\usepackage[tracking=true]{microtype} % required to change character spacing
+
+	\usepackage[style=numeric,backend=biber]{biblatex}
+	\usepackage{hyperref}		% insert clickable references
+
+	\usepackage{datetime}		% flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+	\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+
+	\usepackage{geometry}
+	\usepackage{scrextend}		% allow arbitrary indentation
+
+	\usepackage{color}
+
+	\setbeamercolor{title}{fg=orange}
+	\setbeamertemplate{title}{
+		\color{orange}
+		\textbf{\inserttitle}
+	}
+	\setbeamercolor{tableofcontents}{fg=orange}
+	\setbeamercolor{section in toc}{fg=black}
+	\setbeamercolor{subsection in toc}{fg=black}
+	\setbeamertemplate{frametitle}{
+		%\vspace{0.5em}
+		\color{orange}
+		\begin{center}
+			\textbf{\insertframetitle} \\
+			{\small \insertframesubtitle}
+		\end{center}
+	}
+	\setbeamertemplate{itemize item}{\color{black}$\bullet$}
+	\setbeamertemplate{itemize subitem}{\color{black}$\circ$}
+	\setbeamercolor{block title}{fg=black}
+	\captionsetup{font=scriptsize,labelfont={bf,scriptsize}}
+	\captionsetup[sub]{font=scriptsize,labelfont={bf,scriptsize}}
+
+	\title{Bachelor Thesis on `Optimization~of~Particle~Identification'}
+	\subtitle{Preliminary Studies}
+	\author[Edenhofer]{Gordian Edenhofer}
+	\institute[LMU]{
+		Working Group of Prof.~Kuhr, Faculty of Physics \\
+		University of Munich
+	}
+	\date{Physics Performance Meeting, 29. Mai 2018}
+	\subject{Particle Physics}
+
+
+\begin{document}
+
+\section{Neyman Pearson}
+\subsection{Anomalies}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p+ Abundance in Likelihood Ratio Bins for ALL detector}}}
+		\caption{Relative $p^+$ Abundance in Likelihood Ratio Bins for the `ALL' detector.}
+	\end{figure}
+\end{frame}
+
+\subsection{Anomalies by detector}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p+ Abundance in Likelihood Ratio Bins for SVD detector}}}
+			\caption{`SVD'}
+		\end{subfigure}
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p+ Abundance in Likelihood Ratio Bins for CDC detector}}}
+			\caption{`CDC'}
+		\end{subfigure}
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p+ Abundance in Likelihood Ratio Bins for TOP detector}}}
+			\caption{`TOP'}
+		\end{subfigure}
+
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p+ Abundance in Likelihood Ratio Bins for ARICH detector}}}
+			\caption{`ARICH'}
+		\end{subfigure}
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p+ Abundance in Likelihood Ratio Bins for ECL detector}}}
+			\caption{`ECL'}
+		\end{subfigure}
+		\begin{subfigure}{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p+ Abundance in Likelihood Ratio Bins for KLM detector}}}
+			\caption{`KLM'}
+		\end{subfigure}
+
+		\caption{Relative $p^+$ Abundance in Likelihood Ratio Bins for various detectors.}
+	\end{figure}
+\end{frame}
+
+\subsection{Anomalies by charge}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\begin{subfigure}{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p+ Abundance in Likelihood Ratio Bins for ALL detector}}}
+			\caption{$p^+$}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative barp- Abundance in Likelihood Ratio Bins for ALL detector}}}
+			\caption{$\bar{p}^-$}
+		\end{subfigure}
+
+		\caption{Relative abundance in likelihood ratio bins for various detectors.}
+	\end{figure}
+\end{frame}
+
+\subsection{Anomalies in bins}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for ALL detector for equal width pt bins}}}
+		\caption{Relative $p$ Abundance in Likelihood Ratio Bins for the `ALL' detector using \textit{equal~width} $p_t$ bins.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for ALL detector for equal size pt bins}}}
+		\caption{Relative $p$ Abundance in Likelihood Ratio Bins for the `ALL' detector using \textit{equal~size} $p_t$ bins.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for ALL detector for equal width cos(Theta) bins}}}
+		\caption{Relative $p$ Abundance in Likelihood Ratio Bins for the `ALL' detector using \textit{equal~width} $cos(\Theta)$ bins.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for ALL detector for equal size cos(Theta) bins}}}
+		\caption{Relative $p$ Abundance in Likelihood Ratio Bins for the `ALL' detector using \textit{equal~size} $cos(\Theta)$ bins.}
+	\end{figure}
+\end{frame}
+
+\subsection{pidProbability scatter plot}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: p pidPropability multi-axes Histogram of pt, cosTheta}}}
+		\caption{Multi-axes Histogram for the $p$-pidPropability as scatter plot depending on $p_t$ and $cos(\Theta)$.}
+	\end{figure}
+\end{frame}
+
+\section{Confusion Matrix}
+\subsection{Particle Identification}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Heatmap of epsilonPID Matrix for an exclusive Cut}}}
+		\caption{Right stochastic confusion matrix for an exclusive `pidProbability' cut.}
+	\end{figure}
+\end{frame}
+
+\section{Appendix}
+\subsection{Particle Abundance in MC9 Charged Decay}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
+		\caption{True Particle Abundances in the simulated data.}
+	\end{figure}
+\end{frame}
+
+\subsection{pidProbability scatter plot}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: pi pidPropability multi-axes Histogram of pt, cosTheta}}}
+		\caption{Multi-axes Histogram for the $\pi$-pidPropability as scatter plot depending on $p_t$ and $cos(\Theta)$.}
+	\end{figure}
+\end{frame}
+
+\end{document}
