@@ -364,21 +364,11 @@ if args.run_multivariate_bayes:
 
     c = data.add_isMax_column(cutting_columns) if exclusive_cut else cutting_columns
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
-    plt.figure()
-    plt.imshow(epsilonPIDs, cmap='viridis', vmin=0., vmax=1.)
-    for (j, i), label in np.ndenumerate(epsilonPIDs):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-label))
-    plt.grid(b=False, axis='both')
-    plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
-    plt.ylabel('True Particle')
-    plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
     if exclusive_cut:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
     else:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
-    plt.colorbar()
-    data.pyplot_sanitize_show(drawing_title, 'Multivariate Bayesian Approach: ')
+    data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Multivariate Bayesian Approach: ')
 
     data.plot_stats_by_particle(data.stats(cutting_columns=cutting_columns), particles_of_interest=particles_of_interest, savefig_prefix='Multivariate Bayesian Approach: ')
     data.plot_neyman_pearson(cutting_columns=cutting_columns, title_suffix=' by ' + ' & '.join([ParticleFrame.variable_formats[h] for h in holdings]), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='Multivariate Bayesian Approach: ')
@@ -398,7 +388,7 @@ if args.run_multivariate_bayes_motivation:
     plt.figure()
     plt.imshow(correlation_matrix, cmap='viridis', vmin=-1., vmax=1.)
     for (j, i), label in np.ndenumerate(correlation_matrix):
-        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(1-(label+1)/2))
+        plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(np.piecewise(label, [label < 0, label >= 0], [1, 0])))
     plt.grid(b=False, axis='both')
     plt.xlabel('Predicted Particle')
     plt.xticks(range(len(holdings)), [ParticleFrame.variable_formats[v] for v in holdings])
