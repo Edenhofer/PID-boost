@@ -145,9 +145,8 @@
 	\end{columns}
 \end{frame}
 
-
 \section[Statistics]{Statistics for Particle Analysis}
-\subsection{Bayes' Theorem}
+\subsection{Bayes}
 \begin{frame}
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
@@ -161,12 +160,14 @@
 	The likelihood of a particle may vary depending on its
 	\begin{itemize}
 		\item abundance
-		\item detector yields (angle between particle and beam; transverse momentum)
+		\item angle between particle and beam
+		\item transverse momentum
 		\item point of detection
+		\item \ldots
 	\end{itemize}
 \end{frame}
 
-\subsection{Bayesian Approach}
+\subsection{Bayes}
 \begin{frame}
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
@@ -193,44 +194,6 @@
 		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/Sample Receiver Operating Characteristic (ROC) curve}}}
 		\caption{Sample Receiver Operating Characteristic (ROC) curve.}
 	\end{figure}
-\end{frame}
-
-\section{Particle Identification}
-\subsection{Existing Methods}
-\begin{frame}
-	\frametitle{\insertsection}
-	\framesubtitle{\insertsubsection}
-
-	\begin{columns}
-		\begin{column}{0.47\textwidth}
-			\begin{table}
-				\begin{tabular}{l|l}
-					pionID & $\mathcal{L}_{\pi} / (\mathcolorbox{yellow}{\mathcal{L}_{\pi}} + \mathcal{L}_{K})$ \\
-					kaonID & $\mathcal{L}_{K} / (\mathcal{L}_{K} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
-					protonID & $\mathcal{L}_{p} / (\mathcal{L}_{p} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
-					electronID & $\mathcal{L}_{e} / (\mathcal{L}_{e} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
-					muonID & $\mathcal{L}_{\mu} / (\mathcal{L}_{\mu} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
-					deuteronID & $\mathcal{L}_{d} / (\mathcal{L}_{d} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$
-				\end{tabular}
-				\caption{ParticleID detector variables for selection and further analysis.}
-			\end{table}
-		\end{column}
-		\begin{column}{0.5\textwidth}
-			\begin{table}
-				\begin{tabular}{l|l}
-					pidProbabilityPion & $\mathcal{L}_{\pi} / \mathcal{L}_{all}$ \\
-					pidProbabilityKaon & $\mathcal{L}_{K} / \mathcal{L}_{all}$ \\
-					pidProbabilityProton & $\mathcal{L}_{p} / \mathcal{L}_{all}$ \\
-					pidProbabilityElectron & $\mathcal{L}_{e} / \mathcal{L}_{all}$ \\
-					pidProbabilityMuon & $\mathcal{L}_{\mu} / \mathcal{L}_{all}$ \\
-					pidProbabilityDeuteron & $\mathcal{L}_{d} / \mathcal{L}_{all}$ \\
-					\hline
-					\multicolumn{2}{c}{$\mathcal{L}_{all} = \sum \limits_{x \in {\pi, K, p, e, \mu, d}} \mathcal{L}_{x}$}
-				\end{tabular}
-				\caption{Likelihood-Ratios for particle selection and further analysis.}
-			\end{table}
-		\end{column}
-	\end{columns}
 \end{frame}
 
 \section{Identification Rate Comparisons}
@@ -341,6 +304,43 @@
 			Identification & Positive = accepted & Negative = rejected
 		\end{tabular}
 	}
+\end{frame}
+
+\subsection{Existing Methods}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{columns}
+		\begin{column}{0.47\textwidth}
+			\begin{table}
+				\begin{tabular}{l|l}
+					pionID & $\mathcal{L}_{\pi} / (\mathcolorbox{yellow}{\mathcal{L}_{\pi}} + \mathcal{L}_{K})$ \\
+					kaonID & $\mathcal{L}_{K} / (\mathcal{L}_{K} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
+					protonID & $\mathcal{L}_{p} / (\mathcal{L}_{p} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
+					electronID & $\mathcal{L}_{e} / (\mathcal{L}_{e} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
+					muonID & $\mathcal{L}_{\mu} / (\mathcal{L}_{\mu} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$ \\
+					deuteronID & $\mathcal{L}_{d} / (\mathcal{L}_{d} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$
+				\end{tabular}
+				\caption{ParticleID detector variables for selection and further analysis.}
+			\end{table}
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{table}
+				\begin{tabular}{l|l}
+					pidProbabilityPion & $\mathcal{L}_{\pi} / \mathcal{L}_{all}$ \\
+					pidProbabilityKaon & $\mathcal{L}_{K} / \mathcal{L}_{all}$ \\
+					pidProbabilityProton & $\mathcal{L}_{p} / \mathcal{L}_{all}$ \\
+					pidProbabilityElectron & $\mathcal{L}_{e} / \mathcal{L}_{all}$ \\
+					pidProbabilityMuon & $\mathcal{L}_{\mu} / \mathcal{L}_{all}$ \\
+					pidProbabilityDeuteron & $\mathcal{L}_{d} / \mathcal{L}_{all}$ \\
+					\hline
+					\multicolumn{2}{c}{$\mathcal{L}_{all} = \sum \limits_{x \in {\pi, K, p, e, \mu, d}} \mathcal{L}_{x}$}
+				\end{tabular}
+				\caption{Likelihood-Ratios for particle selection and further analysis.}
+			\end{table}
+		\end{column}
+	\end{columns}
 \end{frame}
 
 \end{document}
