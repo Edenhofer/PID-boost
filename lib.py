@@ -569,7 +569,10 @@ class ParticleFrame(dict):
                 category_intervals = [None, None]
                 title_appendix = ''
 
-            plt.figure()
+            if len(category_intervals) > 2:
+                plt.figure(figsize=(10, 5))
+            else:
+                plt.figure()
             for i in range(len(category_intervals) - 1):
                 selection = (categories == i)
                 if len(category_intervals) > 2:
