@@ -57,6 +57,7 @@
 	\subtitle{The Analysis Software behind Particle Discoveries}
 	\author[Edenhofer]{Gordian Edenhofer}
 	\institute[LMU]{
+	Working Group of Prof.~Dr.~Kuhr \\
 	Faculty of Physics \\
 	University of Munich
 	}
@@ -125,13 +126,13 @@
 		\begin{column}{.6\textwidth}
 			\vspace{1.5em}
 			\begin{itemize}
-				\item PXD: PiXel Detector
-				\item SVD: Silicon Vertex Detector
-				\item CDC: Central Drift Chamber
-				\item TOP: Time Of Propagation counter
-				\item ARICH: Aerogel RICH counter
-				\item ECL: Electromagnetic CaLorimeter
-				\item KLM: $K^0_L$/$\mu$ detector
+				\item \textbf{P}i\textbf{X}el \textbf{D}etector
+				\item \textbf{S}ilicon \textbf{V}ertex \textbf{D}etector
+				\item \textbf{C}entral \textbf{D}rift \textbf{C}hamber
+				\item \textbf{T}ime \textbf{O}f \textbf{P}ropagation counter
+				\item \textbf{A}erogel \textbf{RICH} counter
+				\item \textbf{E}lectromagnetic \textbf{C}a\textbf{L}orimeter
+				\item $\boldsymbol{K}^0_{\boldsymbol{L}}$/$\boldsymbol{\mu}$ detector
 			\end{itemize}
 		\end{column}
 		\begin{column}{.4\textwidth}
@@ -216,7 +217,7 @@
 	\frametitle{\insertsection}
 	\framesubtitle{\insertsubsection}
 
-	Measurement of `goodness' of a selection via \\
+	Goodness of a selection via \\
 	True Positive Rate / False Positive Rate
 
 	\begin{figure}
@@ -308,7 +309,7 @@
 	\begin{figure}
 		\centering
 		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, by pt & cos(Theta)}}}
-		\caption{Heatmaps of $\epsilon_{PID}$-matrices for an exclusive Cut via PID and Bayes by $p_t$ \& $\cos(\Theta)$ showing the particle identification and confusion rates.}
+		\caption{Heatmaps of row-wised normed confusion matrix for an exclusive Cut via PID and Bayes by $p_t$ \& $\cos(\Theta)$ showing the particle identification and confusion rates.}
 	\end{figure}
 \end{frame}
 
@@ -319,16 +320,18 @@
 
 	\textbf{Current work:}\\
 	\begin{itemize}
-		\item Overall noticeable improvements
-		\item Slight losses for certain False Positive Rates
-		\item Slight down-turns for certain False Positive Rates
+		\item Noticeable improvements using multivariate Bayesian approach
+		\begin{itemize}
+			\item Slight losses for certain False Positive Rates
+			\item Slight down-turns for certain False Positive Rates
+		\end{itemize}
+		\item Increased flexibility due to honoring decay-specific abundances
 	\end{itemize}
 
 	\vspace{2em}
-	\textbf{Outlook:}\\
+	\textbf{Work in Progress \textit{(feel free to ask me about it)}:}\\
 	\begin{itemize}
-		\item Flexible dependencies of Bayesian probabilities
-		\item Machine Learning Algorithms
+		\item Machine Learning
 	\end{itemize}
 \end{frame}
 
