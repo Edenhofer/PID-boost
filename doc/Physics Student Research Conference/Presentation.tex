@@ -180,38 +180,6 @@
 	Probability dependant on a multitude of detector variable, e.g. $P(\pi|p_t, \Theta)$
 \end{frame}
 
-\subsection{Terminology}
-\begin{frame}
-	\frametitle{\insertsection}
-	\framesubtitle{\insertsubsection}
-
-	\begin{columns}
-		\begin{column}{0.47\textwidth}
-			\begin{block}{\textbf{T}rue \textbf{P}ositive \textbf{R}ate (TPR)}
-				Elements which are correctly identified as being correct
-			\end{block}
-			\begin{block}{\textbf{T}rue \textbf{N}egative \textbf{R}ate (TNR)}
-				Elements which are correctly identified as being incorrect
-			\end{block}
-		\end{column}
-		\begin{column}{0.5\textwidth}
-			\begin{block}{\textbf{F}alse \textbf{P}ositive \textbf{R}ate (FPR)}
-				Elements which are incorrectly identified as being correct
-			\end{block}
-			\begin{block}{\textbf{F}alse \textbf{N}egative \textbf{R}ate (FNR)}
-				Elements which are incorrectly identified as being incorrect
-			\end{block}
-		\end{column}
-	\end{columns}
-	\vspace{2em}
-	\mathcolorbox{yellow}{
-		\begin{tabular}{l|ll}
-			Veracity & True = correct & False = incorrect \\
-			Identification & Positive = accepted & Negative = rejected
-		\end{tabular}
-	}
-\end{frame}
-
 \subsection{Receiving Operating Characteristic}
 \begin{frame}
 	\frametitle{\insertsection}
@@ -340,6 +308,39 @@
 	\frametitle{\insertsection}
 
 	\printbibliography
+\end{frame}
+
+\section{Appendix}
+\subsection{Terminology}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{columns}
+		\begin{column}{0.47\textwidth}
+			\begin{block}{\textbf{T}rue \textbf{P}ositive \textbf{R}ate (TPR)}
+				Elements which are correctly identified as being correct
+			\end{block}
+			\begin{block}{\textbf{T}rue \textbf{N}egative \textbf{R}ate (TNR)}
+				Elements which are correctly identified as being incorrect
+			\end{block}
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\begin{block}{\textbf{F}alse \textbf{P}ositive \textbf{R}ate (FPR)}
+				Elements which are incorrectly identified as being correct
+			\end{block}
+			\begin{block}{\textbf{F}alse \textbf{N}egative \textbf{R}ate (FNR)}
+				Elements which are incorrectly identified as being incorrect
+			\end{block}
+		\end{column}
+	\end{columns}
+	\vspace{2em}
+	\mathcolorbox{yellow}{
+		\begin{tabular}{l|ll}
+			Veracity & True = correct & False = incorrect \\
+			Identification & Positive = accepted & Negative = rejected
+		\end{tabular}
+	}
 \end{frame}
 
 \end{document}
