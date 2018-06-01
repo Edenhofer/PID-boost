@@ -48,6 +48,18 @@
 			{\small \insertframesubtitle}
 		\end{center}
 	}
+	\setbeamertemplate{footline}[text line]{
+  		\parbox{\linewidth}{
+			  \color{gray}
+			  \vspace*{-1em}
+			  PSRC 2018
+			  \hfill
+			  Gordian (\href{mailto:gordian.edenhofer@gmail.com}{gordian.edenhofer@gmail.com})
+			  \hfill
+			  \insertpagenumber
+		}
+	}
+	\setbeamertemplate{navigation symbols}{}
 	\setbeamertemplate{itemize item}{\color{black}$\bullet$}
 	\setbeamertemplate{itemize subitem}{\color{black}$\circ$}
 	\setbeamercolor{block title}{fg=black}
@@ -55,7 +67,7 @@
 
 	\title{Optimization of Particle Identification}
 	\subtitle{The Analysis Software behind Particle Discoveries}
-	\author[Edenhofer]{Gordian Edenhofer}
+	\author[Edenhofer]{\href{mailto:gordian.edenhofer@gmail.com}{Gordian Edenhofer}}
 	\institute[LMU]{
 	Working Group of Prof.~Dr.~Kuhr \\
 	Faculty of Physics \\
@@ -67,7 +79,7 @@
 
 \begin{document}
 
-\begin{frame}
+\begin{frame}[plain]
 	\titlepage
 \end{frame}
 
@@ -244,27 +256,42 @@
 	\end{figure}
 \end{frame}
 
-\subsection{Conclusion}
-\begin{frame}
-	\frametitle{\insertsection}
-	\framesubtitle{\insertsubsection}
+{
+	\setbeamertemplate{footline}[text line]{
+  		\parbox{\linewidth}{
+			  \color{black}
+			  \vspace*{-5em}
+			  PSRC 2018
+			  \hfill
+			  Gordian (\href{mailto:gordian.edenhofer@gmail.com}{gordian.edenhofer@gmail.com})
+			  \hfill
+			  \color{gray}
+			  \insertpagenumber
+		}
+	}
 
-	\textbf{Current work:}\\
-	\begin{itemize}
-		\item Noticeable improvements using multivariate Bayesian approach
+	\subsection{Conclusion}
+	\begin{frame}
+		\frametitle{\insertsection}
+		\framesubtitle{\insertsubsection}
+
+		\textbf{Current work:}\\
 		\begin{itemize}
-			\item Slight losses for certain False Positive Rates
-			\item Slight down-turns for certain False Positive Rates
+			\item Noticeable improvements using multivariate Bayesian approach
+			\begin{itemize}
+				\item Slight losses for certain False Positive Rates
+				\item Slight down-turns for certain False Positive Rates
+			\end{itemize}
+			\item Increased flexibility due to honoring decay-specific abundances
 		\end{itemize}
-		\item Increased flexibility due to honoring decay-specific abundances
-	\end{itemize}
 
-	\vspace{2em}
-	\textbf{Work in Progress \textit{(feel free to ask me about it)}:}\\
-	\begin{itemize}
-		\item Machine Learning
-	\end{itemize}
-\end{frame}
+		\vspace{2em}
+		\textbf{Work in Progress \textit{(feel free to ask me about it)}:}\\
+		\begin{itemize}
+			\item Machine Learning
+		\end{itemize}
+	\end{frame}
+}
 
 \section*{Bibliography}
 \begin{frame}
