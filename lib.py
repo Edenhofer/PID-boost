@@ -543,7 +543,7 @@ class ParticleFrame(dict):
         plt.colorbar()
         self.pyplot_sanitize_show(**kwargs)
 
-    def plot_neyman_pearson(self, nbins=10, cutting_columns=None, title_suffix='', particles_of_interest=None, bar_particles=False, **kwargs):
+    def plot_neyman_pearson(self, nbins=10, cutting_columns=None, title_suffix='', particles_of_interest=None, bar_particles=False, binning_method=None, hold='pt', n_hold_cuts=3, **kwargs):
         cutting_columns = self.particleIDs if cutting_columns is None else cutting_columns
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
 
@@ -558,34 +558,58 @@ class ParticleFrame(dict):
             else:
                 current_format = self.particle_base_formats[p]
 
-            likelihood_ratio_bins, intervals = pd.cut(particle_data_charged[cutting_columns[p]], nbins, labels=range(nbins), retbins=True)
-            abundance_ratio = np.zeros(nbins)
-            y_err = np.zeros(nbins)
-            for i in range(nbins):
-                particle_data_bin = particle_data_charged[likelihood_ratio_bins == i]
-                if query == 'charge > 0':
-                    numerator = particle_data_bin[particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)].shape[0]
-                elif query == 'charge < 0':
-                    numerator = particle_data_bin[particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p)].shape[0]
-                else:
-                    numerator = particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0]
-
-                denominator = np.array([particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p_2)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p_2))].shape[0] for p_2 in self.particles]).sum()
-
-                abundance_ratio[i] = numerator / denominator
-                y_err[i] = np.sqrt(abundance_ratio[i] * (1 - abundance_ratio[i]) / denominator)
-
-            interval_centers = np.array([np.mean(intervals[i:i+2]) for i in range(len(intervals)-1)])
-            # Indicate the width of the bins via x errorbars
-            x_err = np.array([intervals[i] - intervals[i-1] for i in range(1, len(intervals))]) / 2.
+            if binning_method == 'qcut':
+                categories, category_intervals = pd.qcut(particle_data_charged[hold], q=n_hold_cuts, labels=range(n_hold_cuts), retbins=True)
+                title_appendix = r' for equal size %s bins'%(self.variable_formats[hold])
+            elif binning_method == 'cut':
+                categories, category_intervals = pd.cut(particle_data_charged[hold], bins=n_hold_cuts, labels=range(n_hold_cuts), retbins=True)
+                title_appendix = r' for equal width %s bins'%(self.variable_formats[hold])
+            else:
+                categories = np.zeros(particle_data_charged.shape[0])
+                category_intervals = [None, None]
+                title_appendix = ''
 
             plt.figure()
-            plt.errorbar(interval_centers, abundance_ratio, xerr=x_err, yerr=y_err, capsize=0., elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.15)
-            plt.xlabel('%s Likelihood Ratio'%(current_format))
-            plt.xlim(-0.05, 1.05)
-            plt.ylabel('Relative Abundance')
-            plt.ylim(-0.05, 1.05)
-            self.pyplot_sanitize_show('Relative %s Abundance in Likelihood Ratio Bins%s'%(current_format, title_suffix), **kwargs)
+            for i in range(len(category_intervals) - 1):
+                selection = (categories == i)
+                if len(category_intervals) > 2:
+                    plt.subplot(1, len(category_intervals)-1, i+1)
+                    plt.title('(%.2f < %s < %.2f)'%(category_intervals[i], self.variable_formats[hold], category_intervals[i+1]))
+                plt.xlabel(r'$\mathcal{LR}($%s$)$'%(current_format))
+
+                if i == 0:
+                    plt.ylabel('Relative Abundance')
+                else:
+                    plt.setp(plt.gca().get_yticklabels(), visible=False)
+                plt.xlabel(r'$\mathcal{LR}($%s$)$'%(current_format))
+
+                likelihood_ratio_bins, intervals = pd.cut(particle_data_charged[selection][cutting_columns[p]], nbins, labels=range(nbins), retbins=True)
+                abundance_ratio = np.zeros(nbins)
+                y_err = np.zeros(nbins)
+                for i in range(nbins):
+                    particle_data_bin = particle_data_charged[selection][likelihood_ratio_bins == i]
+                    if query == 'charge > 0':
+                        numerator = particle_data_bin[particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)].shape[0]
+                    elif query == 'charge < 0':
+                        numerator = particle_data_bin[particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p)].shape[0]
+                    else:
+                        numerator = particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0]
+
+                    denominator = np.array([particle_data_bin[(particle_data_bin['mcPDG'] == pdg_from_name_faulty(p_2)) | (particle_data_bin['mcPDG'] == -1 * pdg_from_name_faulty(p_2))].shape[0] for p_2 in self.particles]).sum()
+
+                    abundance_ratio[i] = numerator / denominator
+                    y_err[i] = np.sqrt(abundance_ratio[i] * (1 - abundance_ratio[i]) / denominator)
+
+                interval_centers = np.array([np.mean(intervals[i:i+2]) for i in range(len(intervals)-1)])
+                # Indicate the width of the bins via x errorbars
+                x_err = np.array([intervals[i] - intervals[i-1] for i in range(1, len(intervals))]) / 2.
+
+                plt.ylim(-0.05, 1.05)
+                plt.xlim(-0.05, 1.05)
+                plt.errorbar(interval_centers, abundance_ratio, xerr=x_err, yerr=y_err, capsize=0., elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.1)
+
+            suptitle = True if len(category_intervals) > 2 else False
+            self.pyplot_sanitize_show('Relative %s Abundance in Likelihood Ratio Bins%s%s'%(current_format, title_suffix, title_appendix), suptitle=suptitle, **kwargs)
 
     def plot_diff_epsilonPIDs(self, epsilonPIDs_approaches=[], title_suffixes=[], title_epsilonPIDs=''):
         if len(epsilonPIDs_approaches) >= 0 and len(epsilonPIDs_approaches) != len(title_suffixes):
