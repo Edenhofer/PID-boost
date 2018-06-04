@@ -201,6 +201,29 @@
 	\end{columns}
 \end{frame}
 
+\subsection{Idea}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{columns}[T]
+		\begin{column}{.49\textwidth}
+			\textbf{Current approach:} \\
+			\begin{itemize}
+				\item Take ratio of particle likelihood over pion likelihood, e.g. $electronID = \mathcal{L}_{e} / (\mathcal{L}_{e} +\mathcolorbox{yellow}{\mathcal{L}_{\pi}})$
+				\item Perform selection on ID, e.g. $electronID > 0.2$
+			\end{itemize}
+		\end{column}
+		\begin{column}{.49\textwidth}
+			\textbf{Investigated alternative:} \\
+			\begin{itemize}
+				\item Multivariate dependencies, e.g. $electronID(p_t, \Theta) = \frac{\mathcal{L}_{e} \cdot C_{e}(p_t, \Theta)}{\sum \limits_{x \in {K, e, \dots}} \mathcal{L}_{x} \cdot  C_{x}(p_t, \Theta)}$
+				\item Adaptable priors $C_{x}(a, b)$ incorporating the abundance and further detector variables like $p_t$ and $\Theta$
+			\end{itemize}
+		\end{column}
+	\end{columns}
+\end{frame}
+
 \subsection{ROC \& PPV}
 \begin{frame}
 	\frametitle{\insertsection}
