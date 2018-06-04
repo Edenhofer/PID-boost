@@ -303,7 +303,7 @@ if args.diff_methods:
             s = t
 
         title_suffixes += [t]
-        savefig_suffix = savefig_suffix + ',' + s
+        savefig_suffix = s if savefig_suffix == '' else ','.join([savefig_suffix, s])
         c_choice = data.add_isMax_column(c) if exclusive_cut else c
         epsilonPIDs_approaches += [data.epsilonPID_matrix(cutting_columns=c_choice, cut=cut)]
         stats_approaches += [data.stats(cutting_columns=c, ncuts=current_ncuts)]
