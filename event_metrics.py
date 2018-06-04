@@ -177,35 +177,36 @@ if args.run_pidProbability_motivation:
     holdings = args.holdings
 
     detectors = ['all']
+    threshold = 0.05
 
     for p, d in itertools.product(particles_of_interest, detectors):
-        particle_data = data[p]
         color_column = 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc'
+        particle_data_above_threshold = data[p].query(color_column + ' > ' + str(threshold))
         current_format = data.particle_base_formats[p]
 
-        selection = np.ones(particle_data.shape[0], dtype=bool)
+        selection = np.ones(particle_data_above_threshold.shape[0], dtype=bool)
         if whis:
             for hold in holdings:
-                q75, q25 = np.percentile(particle_data[hold], [75, 25])
+                q75, q25 = np.percentile(particle_data_above_threshold[hold], [75, 25])
                 iqr = q75 - q25
                 lower_bound = q25 - (iqr * whis)
                 upper_bound = q75 + (iqr * whis)
-                selection = selection & (particle_data[hold] > lower_bound) & (particle_data[hold] < upper_bound)
+                selection = selection & (particle_data_above_threshold[hold] > lower_bound) & (particle_data_above_threshold[hold] < upper_bound)
 
         fig = plt.figure(figsize=(6, 6))
         grid = plt.GridSpec(4, 4, hspace=0.2, wspace=0.2)
 
         main_ax = plt.subplot(grid[:-1, 1:])
-        plt.scatter(particle_data[selection][holdings[0]], particle_data[selection][holdings[1]], c=particle_data[selection][color_column], cmap='viridis', s=5., alpha=.1)
+        plt.scatter(particle_data_above_threshold[selection][holdings[0]], particle_data_above_threshold[selection][holdings[1]], c=particle_data_above_threshold[selection][color_column], cmap='viridis', s=5., alpha=.1)
         plt.setp(main_ax.get_xticklabels(), visible=False)
         plt.setp(main_ax.get_yticklabels(), visible=False)
 
         plt.subplot(grid[-1, 1:], sharex=main_ax)
-        plt.hist(particle_data[selection][holdings[0]], nbins, histtype='step', orientation='vertical')
+        plt.hist(particle_data_above_threshold[selection][holdings[0]], nbins, histtype='step', orientation='vertical')
         plt.gca().invert_yaxis()
         plt.xlabel(ParticleFrame.variable_formats[holdings[0]] + ' (' + ParticleFrame.variable_units[holdings[0]] + ')')
         plt.subplot(grid[:-1, 0], sharey=main_ax)
-        plt.hist(particle_data[selection][holdings[1]], nbins, histtype='step', orientation='horizontal')
+        plt.hist(particle_data_above_threshold[selection][holdings[1]], nbins, histtype='step', orientation='horizontal')
         plt.gca().invert_xaxis()
         plt.ylabel(ParticleFrame.variable_formats[holdings[1]] + ' (' + ParticleFrame.variable_units[holdings[1]] + ')')
 
@@ -215,7 +216,7 @@ if args.run_pidProbability_motivation:
         cbar.set_alpha(1.)
         cbar.draw_all()
 
-        data.pyplot_sanitize_show(current_format + ' pidPropability multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings), savefig_prefix='General Purpose Statistics: ', suptitle=True, format='png')
+        data.pyplot_sanitize_show(current_format + ' pidPropability multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings) + ' above ' + str(threshold) + ' Threshold', savefig_prefix='General Purpose Statistics: ', suptitle=True, format='png')
 
 if args.run_mimic_pid:
     data.mimic_pid()
