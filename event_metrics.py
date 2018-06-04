@@ -118,7 +118,7 @@ if args.run_stats:
         true_abundance = true_abundance[sorted_range][::-1]
         unique_particles = unique_particles[sorted_range][::-1]
 
-        fig = plt.figure()
+        plt.figure()
         plt.grid(b=False, axis='x')
         plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
         plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles])
