@@ -27,4 +27,6 @@ The main inspiration for the actual program code heavily relies on the [b2-start
   * ~~Pre-train neural network on e.g. data sets containing all particles in the same abundance~~
   * Tweak pre-trained model for decay specific particle abundances
 * Plot efficiencies over background-ratio for PID, Bayes, etc. and plot a dot for the NN
+* Visualize the difference in assumed particle abundances for various approaches
+* Efficiency and contamination over transverse momentum plot
 * Output efficiency tables for various approaches, including e.g. the Area Under Curve for PPV and ROC
