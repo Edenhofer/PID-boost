@@ -19,5 +19,9 @@ __*_temp.tex
 # Ignore final PDF files
 *.pdf
 
+# Skip generated pictures
+res/*/*.png
+res/*/*.jpg
+
 # Ignore GIMP image files
 *.xcf
