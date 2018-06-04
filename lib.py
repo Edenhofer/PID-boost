@@ -688,3 +688,26 @@ class ParticleFrame(dict):
             plt.legend()
 
             self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), suptitle=True, **kwargs)
+
+    def plot_diff_abundance(self, cutting_columns_approaches=[], title_suffixes=[], particles_of_interest=None, norm='K+', cut=0.5, **kwargs):
+        particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
+
+        particle_data = self[norm]
+
+        plt.figure()
+        plt.grid(b=False, axis='x')
+
+        true_abundance = np.array([particle_data[(particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0] for p in particles_of_interest])
+        sorted_range = np.argsort(true_abundance)
+        sorted_particles = np.array(particles_of_interest)[sorted_range][::-1]
+        plt.errorbar(range(len(sorted_particles)), true_abundance[sorted_range][::-1], xerr=0.5, fmt='o', label='truth')
+
+        for i, cutting_columns in enumerate(cutting_columns_approaches):
+            # Abundances might vary for different datasets due to some preliminary mass hypothesis being applied on reconstruction
+            abundance = np.array([particle_data[particle_data[cutting_columns[p]] > cut].shape[0] for p in particles_of_interest])
+
+            plt.errorbar(range(len(sorted_particles)), abundance[sorted_range][::-1], xerr=0.5, fmt='o', label=title_suffixes[i].lstrip())
+
+        plt.legend()
+        plt.xticks(range(len(sorted_particles)), [self.particle_base_formats[p] for p in sorted_particles])
+        self.pyplot_sanitize_show('Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[norm]), **kwargs)
