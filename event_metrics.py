@@ -261,6 +261,7 @@ if args.diff_methods:
 
     epsilonPIDs_approaches = []
     stats_approaches = []
+    cutting_columns_approaches = []
     title_suffixes = []
     savefig_suffix = ''
     for m in methods:
@@ -305,6 +306,7 @@ if args.diff_methods:
         title_suffixes += [t]
         savefig_suffix = s if savefig_suffix == '' else ','.join([savefig_suffix, s])
         c_choice = data.add_isMax_column(c) if exclusive_cut else c
+        cutting_columns_approaches += [c_choice]
         epsilonPIDs_approaches += [data.epsilonPID_matrix(cutting_columns=c_choice, cut=cut)]
         stats_approaches += [data.stats(cutting_columns=c, ncuts=current_ncuts)]
 
@@ -314,6 +316,7 @@ if args.diff_methods:
         title_epsilonPIDs = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
     data.plot_diff_epsilonPIDs(epsilonPIDs_approaches=epsilonPIDs_approaches, title_suffixes=title_suffixes, title_epsilonPIDs=title_epsilonPIDs, savefig_prefix='Diff Heatmap: ', savefig_suffix=savefig_suffix)
     data.plot_diff_stats(stats_approaches=stats_approaches, title_suffixes=title_suffixes, particles_of_interest=particles_of_interest, savefig_prefix='Diff Statistics: ', savefig_suffix=savefig_suffix)
+    data.plot_diff_abundance(cutting_columns_approaches=cutting_columns_approaches, title_suffixes=title_suffixes, particles_of_interest=particles_of_interest, savefig_prefix='Diff Abundances: ', savefig_suffix=savefig_suffix)
 
 if args.run_univariate_bayes:
     cut = args.cut
