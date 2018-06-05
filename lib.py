@@ -118,7 +118,7 @@ class ParticleFrame(dict):
     # Bear in mind that if all likelihoods are calculated correctly this should never improve the result
     detector_weights = {d: 1. for d in detectors + pseudo_detectors}
     # Queries for variables for selecting physically sensible results
-    physical_boundaries = {'0.05 < pt < 5.29', 'z0 < 5', 'd0 < 2', 'mcPDG != 0'}
+    physical_boundaries = {'0.05 < pt < 5.29', 'abs(z0) < 5', 'abs(d0) < 2', 'mcPDG != 0'}
 
     def __init__(self, pickle_path=None, input_directory=None, output_directory=None, interactive=None, descriptions=None):
         """Initialize and empty ParticleFrame.
