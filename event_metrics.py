@@ -30,8 +30,8 @@ group_action.add_argument('--stats', dest='run_stats', action='store_true', defa
                     help='Visualize some general purpose statistics of the dataset')
 group_action.add_argument('--pid', dest='run_pid', action='store_true', default=False,
                     help='Print out and visualize some statistics and the epsilonPID-matrix for the default particle ID cut')
-group_action.add_argument('--pidProbability', dest='run_pidProbability', action='store_true', default=False,
-                    help='Print out and visualize some statistics and the epsilonPID-matrix for the pidProbability cut')
+group_action.add_argument('--pidProbability', dest='run_pidProbability', nargs='?', action='store', choices=['plain', 'vertex'], default=None, const='plain',
+                    help='Print out and visualize some statistics and the epsilonPID-matrix for the pidProbability cut; Optionally slice the data to fulfill certain vertex requirements')
 group_action.add_argument('--pidProbability-motivation', dest='run_pidProbability_motivation', action='store_true', default=False,
                     help='Visualize the goodness of detector components in different ranges')
 group_action.add_argument('--mimic-pid', dest='run_mimic_pid', action='store_true', default=False,
@@ -141,6 +141,10 @@ if args.run_pid:
     data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='Particle ID Approach: ')
 
 if args.run_pidProbability:
+    # This call is special in the sense that it is the currently the best way to identify particle, hence it got some special attention and does some more stuff
+    slicing_method = args.run_pidProbability
+    norm = args.norm
+
     cut = args.cut
     nbins = args.nbins
     holdings = args.holdings
@@ -151,24 +155,44 @@ if args.run_pidProbability:
 
     detectors_of_interest = ['all', 'cdc']
 
+    if slicing_method == 'vertex':
+        print('Description of raw %s-Data:\n'%(norm), data[norm][['d0', 'z0', 'mcDX', 'mcDY', 'mcDZ']].describe())
+
+        plt.figure()
+        for i in ['mcDX', 'mcDY', 'mcDZ']:
+            plt.hist(data[norm][(data[norm]['mcPDG'] == lib.pdg_from_name_faulty(norm)) | (data[norm]['mcPDG'] == -1 * lib.pdg_from_name_faulty(norm))][i], histtype='step', fill=False, label=i)
+        plt.legend()
+        data.pyplot_sanitize_show('Decay Vertex of matched MC %s'%(ParticleFrame.particle_base_formats[norm]), savefig_prefix='General Purpose Statistics: ')
+
+        special_slice = ParticleFrame(output_directory=output_directory, interactive=interactive)
+        special_slice.data = data.data.copy()
+        for particle_data in special_slice.data.values():
+            # The unit of mcDX, mcDY and mcDZ is not the same as the one of d0 and z0
+            particle_data.query('(mcDX**2 + mcDY**2 + mcDZ**2) < 120000', inplace=True)
+        print('Description of sliced %s-Data:\n'%(norm), special_slice[norm][['d0', 'z0', 'mcDX', 'mcDY', 'mcDZ']].describe())
+        savefig_prefix='pidProbability Approach (tight Vertex): '
+    else:
+        special_slice = data
+        savefig_prefix='pidProbability Approach: '
+
     c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detectors_of_interest[0] + '__bc' for p in ParticleFrame.particles}
-    data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='pidProbability Approach: ')
-    c = data.add_isMax_column(c) if exclusive_cut else c
-    epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
+    special_slice.plot_stats_by_particle(special_slice.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix=savefig_prefix)
+    c = special_slice.add_isMax_column(c) if exclusive_cut else c
+    epsilonPIDs = special_slice.epsilonPID_matrix(cutting_columns=c, cut=cut)
     if exclusive_cut:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for an exclusive Cut'
     else:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
-    data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='pidProbability Approach: ')
+    special_slice.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix=savefig_prefix)
 
     for d, hold, binning_method in itertools.product(detectors_of_interest, holdings, ['qcut', 'cut']):
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
         # Ignore the wish of the user and never plot those visuals for bar_particles as this would create a lot of figures
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=False, binning_method=binning_method, hold=hold, savefig_prefix='pidProbability Approach: ')
+        special_slice.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=False, binning_method=binning_method, hold=hold, savefig_prefix=savefig_prefix)
     # NOTE: In contrast to the other methods we differentiate by detector for the `pidProbability` variable
     for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='pidProbability Approach: ')
+        special_slice.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix=savefig_prefix)
 
 if args.run_pidProbability_motivation:
     whis = args.whis
