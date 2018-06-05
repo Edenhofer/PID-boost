@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from keras import backend as K
+from keras import optimizers
 from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras.layers import Activation, Dense, Dropout, MaxPooling1D
 from keras.models import Sequential, load_model
@@ -44,6 +45,8 @@ group_opt.add_argument('--batch-size', dest='batch_size', action='store', type=i
                     help='Size of each batch')
 group_opt.add_argument('--epochs', dest='epochs', action='store', type=int, default=10,
                     help='Number of iterations to train the model (epochs)')
+group_opt.add_argument('--learning-rate', dest='learning_rate', action='store', type=float, default=None,
+                    help='Learning rate to use for training the model')
 group_opt.add_argument('--ncomponents', dest='n_components', action='store', type=int, default=12,
                     help='Number of components to keep after performing a PCA on the data')
 group_opt.add_argument('--sampling-method', dest='sampling_method', action='store', choices=['fair', 'biased'], default='fair',
@@ -120,6 +123,7 @@ nn_color_column = 'nn_mcPDG'
 detector = 'all' # Bad hardcoding stuff which should actually be configurable
 # Evaluate sub-options
 epochs = args.epochs
+learning_rate = args.learning_rate
 batch_size = args.batch_size
 training_fraction = args.training_fraction
 n_components = args.n_components
@@ -192,12 +196,16 @@ else:
     model.add(Dense(int(len(labels) * 1.5), activation='relu', use_bias=True))
     model.add(Dense(len(labels), activation='softmax'))
 
+    if learning_rate == None:
+        optimizer = optimizers.rmsprop()
+    else:
+        optimizer = optimizers.rmsprop(lr=learning_rate)
     # Compilation for a multi-class classification problem
-    model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Set a sensibles default suffix for filenames
 config = model.get_config()
-savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_nEpochs' + str(epochs)
+savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs)
 
 # Visualize and save the training
 keras_callbacks = []
@@ -262,7 +270,7 @@ if history_path != '/dev/null':
 # Save module if requested
 if module_path != '/dev/null':
     if module_path == None:
-        module_path = os.path.join(output_directory, 'model_' + run + '_nLayers' + str(len(config)) + '.h5')
+        module_path = os.path.join(output_directory, 'model_' + run + '_nLayers' + str(len(config)) + '_LearningRate' + str(learning_rate) + '.h5')
     if not os.path.exists(os.path.dirname(module_path)):
         print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(module_path), module_path), file=sys.stderr)
         os.makedirs(os.path.dirname(module_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
