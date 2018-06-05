@@ -698,16 +698,18 @@ class ParticleFrame(dict):
         plt.grid(b=False, axis='x')
 
         true_abundance = np.array([particle_data[(particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))].shape[0] for p in particles_of_interest])
-        sorted_range = np.argsort(true_abundance)
-        sorted_particles = np.array(particles_of_interest)[sorted_range][::-1]
-        plt.errorbar(range(len(sorted_particles)), true_abundance[sorted_range][::-1], xerr=0.5, fmt='o', label='truth')
+        sorted_range = np.argsort(true_abundance)[::-1]
+        plt.errorbar(range(len(particles_of_interest)), true_abundance[sorted_range], xerr=0.5, marker='None', linestyle='None', label='truth')
 
         for i, cutting_columns in enumerate(cutting_columns_approaches):
             # Abundances might vary for different datasets due to some preliminary mass hypothesis being applied on reconstruction
+            abundance_correct = np.array([particle_data[((particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] > cut)].shape[0] for p in particles_of_interest])
             abundance = np.array([particle_data[particle_data[cutting_columns[p]] > cut].shape[0] for p in particles_of_interest])
 
-            plt.errorbar(range(len(sorted_particles)), abundance[sorted_range][::-1], xerr=0.5, fmt='o', label=title_suffixes[i].lstrip())
+            drawing = plt.errorbar(range(len(particles_of_interest)), abundance_correct[sorted_range], xerr=0.5, elinewidth=0.8, marker='None', linestyle='None')
+            plt.errorbar(range(len(particles_of_interest)), abundance[sorted_range], xerr=0.5, marker='None', linestyle='None', color=drawing[0].get_color(), label=title_suffixes[i].lstrip() + ' (absolute, true)')
 
         plt.legend()
-        plt.xticks(range(len(sorted_particles)), [self.particle_base_formats[p] for p in sorted_particles])
+        sorted_particles = np.array(particles_of_interest)[sorted_range]
+        plt.xticks(range(len(particles_of_interest)), [self.particle_base_formats[p] for p in sorted_particles])
         self.pyplot_sanitize_show('Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[norm]), **kwargs)
