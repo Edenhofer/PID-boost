@@ -30,7 +30,7 @@ group_action.add_argument('--stats', dest='run_stats', action='store_true', defa
                     help='Visualize some general purpose statistics of the dataset')
 group_action.add_argument('--pid', dest='run_pid', action='store_true', default=False,
                     help='Print out and visualize some statistics and the epsilonPID-matrix for the default particle ID cut')
-group_action.add_argument('--pidProbability', dest='run_pidProbability', nargs='?', action='store', choices=['plain', 'vertex'], default=None, const='plain',
+group_action.add_argument('--pidProbability', dest='run_pidProbability', nargs='?', action='store', choices=['plain', 'vertex', 'primary'], default=None, const='plain',
                     help='Print out and visualize some statistics and the epsilonPID-matrix for the pidProbability cut; Optionally slice the data to fulfill certain vertex requirements')
 group_action.add_argument('--pidProbability-motivation', dest='run_pidProbability_motivation', action='store_true', default=False,
                     help='Visualize the goodness of detector components in different ranges')
@@ -171,6 +171,12 @@ if args.run_pidProbability:
             particle_data.query('(mcDX**2 + mcDY**2 + mcDZ**2) < 120000', inplace=True)
         print('Description of sliced %s-Data:\n'%(norm), special_slice[norm][['d0', 'z0', 'mcDX', 'mcDY', 'mcDZ']].describe())
         savefig_prefix='pidProbability Approach (tight Vertex): '
+    if slicing_method == 'primary':
+        special_slice = ParticleFrame(output_directory=output_directory, interactive=interactive)
+        special_slice.data = data.data.copy()
+        for particle_data in special_slice.data.values():
+            particle_data.query('isPrimarySignal == 1', inplace=True)
+        savefig_prefix='pidProbability Approach (primary Signal): '
     else:
         special_slice = data
         savefig_prefix='pidProbability Approach: '
