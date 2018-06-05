@@ -149,9 +149,9 @@ if args.run_pidProbability:
 
     particles_of_interest = args.particles_of_interest
 
-    detector = 'all'
+    detectors_of_interest = ['all', 'cdc']
 
-    c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in ParticleFrame.particles}
+    c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detectors_of_interest[0] + '__bc' for p in ParticleFrame.particles}
     data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Particle ID Approach: ')
     c = data.add_isMax_column(c) if exclusive_cut else c
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
@@ -161,10 +161,10 @@ if args.run_pidProbability:
         drawing_title = r'Heatmap of $\epsilon_{PID}$ Matrix for a Cut at $%.2f$'%(cut)
     data.plot_epsilonPIDs(epsilonPIDs, title=drawing_title, savefig_prefix='pidProbability Approach: ')
 
-    for hold, binning_method in itertools.product(holdings, ['qcut', 'cut']):
-        c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in ParticleFrame.particles}
+    for d, hold, binning_method in itertools.product(detectors_of_interest, holdings, ['qcut', 'cut']):
+        c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
         # Ignore the wish of the user and never plot those visuals for bar_particles as this would create a lot of figures
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(detector.upper()), particles_of_interest=particles_of_interest, bar_particles=False, binning_method=binning_method, hold=hold, savefig_prefix='General Purpose Statistics: ')
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=False, binning_method=binning_method, hold=hold, savefig_prefix='General Purpose Statistics: ')
     # NOTE: In contrast to the other methods we differentiate by detector for the `pidProbability` variable
     for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
