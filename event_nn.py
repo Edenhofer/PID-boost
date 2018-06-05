@@ -203,20 +203,7 @@ else:
     if learning_rate != None:
         optimizer_options = {'lr': learning_rate}
 
-    if optimizer_method == 'sgd':
-        optimizer = optimizers.sgd(**optimizer_options)
-    if optimizer_method == 'rmsprop':
-        optimizer = optimizers.rmsprop(**optimizer_options)
-    if optimizer_method == 'adagrad':
-        optimizer = optimizers.adagrad(**optimizer_options)
-    if optimizer_method == 'adadelta':
-        optimizer = optimizers.adadelta(**optimizer_options)
-    if optimizer_method == 'adam':
-        optimizer = optimizers.adam(**optimizer_options)
-    if optimizer_method == 'adamax':
-        optimizer = optimizers.adamax(**optimizer_options)
-    if optimizer_method == 'nadam':
-        optimizer = optimizers.nadam(**optimizer_options)
+    optimizer = getattr(optimizers, optimizer_method)(**optimizer_options)
 
     # Compilation for a multi-class classification problem
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
