@@ -113,6 +113,7 @@ if input_pickle:
 else:
     data = ParticleFrame(input_directory=input_directory, output_directory=output_directory, interactive=interactive)
 
+spoiling_columns = {'genMotherID', 'genMotherP', 'genMotherPDG', 'genParticleID', 'isExtendedSignal', 'isPrimarySignal', 'isSignal', 'isSignalAcceptMissingNeutrino', 'mcDX', 'mcDY', 'mcDZ', 'mcDecayTime', 'mcE', 'mcErrors', 'mcFSR', 'mcISR', 'mcInitial', 'mcMatchWeight', 'mcP', 'mcPDG', 'mcPX', 'mcPY', 'mcPZ', 'mcPhotos', 'mcRecoilMass', 'mcVirtual', 'nMCMatches'}
 truth_color_column = 'mcPDG_color'
 sampling_weight_column = 'sampling_weight'
 nn_color_column = 'nn_mcPDG'
@@ -158,7 +159,7 @@ if run == 'pidProbability':
             design_columns += ['pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc']
     design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 elif run == 'pca':
-    design_columns = list(set(augmented_matrix.keys()) - {'isSignal', 'mcPDG', 'mcErrors'})
+    design_columns = list(set(augmented_matrix.keys()) - spoiling_columns)
     design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 
     scaler = StandardScaler()
