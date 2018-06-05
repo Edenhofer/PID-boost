@@ -160,7 +160,7 @@ if args.run_pidProbability:
 
         plt.figure()
         for i in ['mcDX', 'mcDY', 'mcDZ']:
-            plt.hist(data[norm][(data[norm]['mcPDG'] == lib.pdg_from_name_faulty(norm)) | (data[norm]['mcPDG'] == -1 * lib.pdg_from_name_faulty(norm))][i], histtype='step', fill=False, label=i)
+            plt.hist(data[norm][(data[norm]['mcPDG'] == lib.pdg_from_name_faulty(norm)) | (data[norm]['mcPDG'] == -1 * lib.pdg_from_name_faulty(norm))][i], histtype='step', label=i)
         plt.legend()
         data.pyplot_sanitize_show('Decay Vertex of matched MC %s'%(ParticleFrame.particle_base_formats[norm]), savefig_prefix='General Purpose Statistics: ')
 
