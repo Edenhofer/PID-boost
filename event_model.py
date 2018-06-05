@@ -47,13 +47,23 @@ history_path = args.history_path
 # Initialize an empty ParticleFrame and load the pickle_file
 data = ParticleFrame(output_directory=output_directory, interactive=interactive)
 history = pickle.load(open(history_path, 'rb'))
-savefile_suffix = history['savefile_suffix']
+savefile_suffix = ' ' + history['savefile_suffix']
 
-for key, title, ylabel in [('val_loss', 'Validation Loss', 'Loss'), ('val_acc', 'Validation Accuracy', 'Accuracy'), ('loss', 'Training Loss', 'Loss'), ('acc', 'Training Accuracy', 'Accuracy')]:
-    plt.figure()
-    plt.plot(history['epoch'], history['history'][key], color='orange')
-    plt.xlabel('Epoch')
-    plt.ylabel(ylabel)
-    data.pyplot_sanitize_show(title, savefig_prefix='Neural Network Model: ', savefig_suffix=savefile_suffix)
+plt.figure()
+for key, label in [('val_loss', 'Validation'), ('loss', 'Training')]:
+    plt.plot(history['epoch'], history['history'][key], label=label)
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+data.pyplot_sanitize_show('Loss', savefig_prefix='Neural Network Model: ', savefig_suffix=savefile_suffix)
+
+plt.figure()
+for key, label in [('val_acc', 'Validation'), ('acc', 'Training')]:
+    plt.plot(history['epoch'], history['history'][key], label=label)
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.ylim(-0.05, 1.05)
+plt.legend()
+data.pyplot_sanitize_show('Accuracy', savefig_prefix='Neural Network Model: ', savefig_suffix=savefile_suffix)
 
 plt.show()
