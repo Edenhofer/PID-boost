@@ -11,7 +11,7 @@ particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron']
 detectors = ['svd', 'cdc', 'top', 'arich', 'ecl', 'klm', 'all', 'default']
 
 # Default list of variables which should be exported to the root file
-root_vars = ['isSignal', 'mcErrors', 'mcPDG', 'mcDX', 'mcDY', 'mcDZ']
+root_vars = ['isSignal', 'mcErrors', 'mcPDG', 'mcDX', 'mcDY', 'mcDZ', 'isPrimarySignal']
 root_vars += ['p', 'pErr', 'phi', 'phiErr', 'pt', 'ptErr', 'cosTheta', 'cosThetaErr', 'Theta', 'ThetaErr', 'charge']
 root_vars += ['d0', 'd0Err', 'z0', 'z0Err', 'firstPXDLayer', 'firstSVDLayer', 'nCDCHits', 'nPXDHits', 'nSVDHits', 'nVXDHits', 'omega', 'omegaErr', 'pValue', 'phi0', 'phi0Err', 'tanlambda', 'tanlambdaErr']
 root_vars += ['kaonID', 'pionID','electronID',  'muonID', 'protonID', 'deuteronID']
