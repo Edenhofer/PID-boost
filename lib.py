@@ -570,7 +570,7 @@ class ParticleFrame(dict):
                 title_appendix = ''
 
             if len(category_intervals) > 2:
-                plt.figure(figsize=(10, 5))
+                plt.figure(figsize=(10, 3))
             else:
                 plt.figure()
             for i in range(len(category_intervals) - 1):
