@@ -152,7 +152,7 @@ if args.run_pidProbability:
     detectors_of_interest = ['all', 'cdc']
 
     c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detectors_of_interest[0] + '__bc' for p in ParticleFrame.particles}
-    data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='Particle ID Approach: ')
+    data.plot_stats_by_particle(data.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix='pidProbability Approach: ')
     c = data.add_isMax_column(c) if exclusive_cut else c
     epsilonPIDs = data.epsilonPID_matrix(cutting_columns=c, cut=cut)
     if exclusive_cut:
@@ -164,11 +164,11 @@ if args.run_pidProbability:
     for d, hold, binning_method in itertools.product(detectors_of_interest, holdings, ['qcut', 'cut']):
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
         # Ignore the wish of the user and never plot those visuals for bar_particles as this would create a lot of figures
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=False, binning_method=binning_method, hold=hold, savefig_prefix='General Purpose Statistics: ')
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=False, binning_method=binning_method, hold=hold, savefig_prefix='pidProbability Approach: ')
     # NOTE: In contrast to the other methods we differentiate by detector for the `pidProbability` variable
     for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
         c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc' for p in ParticleFrame.particles}
-        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='General Purpose Statistics: ')
+        data.plot_neyman_pearson(cutting_columns=c, title_suffix=' for %s detector'%(d.upper()), particles_of_interest=particles_of_interest, bar_particles=bar_particles, savefig_prefix='pidProbability Approach: ')
 
 if args.run_pidProbability_motivation:
     whis = args.whis
@@ -216,7 +216,7 @@ if args.run_pidProbability_motivation:
         cbar.set_alpha(1.)
         cbar.draw_all()
 
-        data.pyplot_sanitize_show(current_format + ' pidPropability multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings) + ' above ' + str(threshold) + ' Threshold', savefig_prefix='General Purpose Statistics: ', suptitle=True, format='png')
+        data.pyplot_sanitize_show(current_format + ' pidPropability multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings) + ' above ' + str(threshold) + ' Threshold', savefig_prefix='pidProbability Approach: ', suptitle=True, format='png')
 
 if args.run_mimic_pid:
     data.mimic_pid()
