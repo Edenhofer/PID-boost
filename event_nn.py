@@ -49,6 +49,8 @@ group_opt.add_argument('--learning-rate', dest='learning_rate', action='store', 
                     help='Learning rate to use for training the model')
 group_opt.add_argument('--ncomponents', dest='n_components', action='store', type=int, default=12,
                     help='Number of components to keep after performing a PCA on the data')
+group_opt.add_argument('--optimizer', dest='optimizer_method', action='store', choices=['sgd', 'rmsprop', 'adagrad', 'adadelta', 'adam', 'adamax', 'nadam'], default='rmsprop',
+                    help='Name of the optimizer to use for training the model')
 group_opt.add_argument('--sampling-method', dest='sampling_method', action='store', choices=['fair', 'biased'], default='fair',
                     help='Specification of which sampling method should be applied')
 group_opt.add_argument('--training-fraction', dest='training_fraction', action='store', type=float, default=0.8,
@@ -122,6 +124,7 @@ sampling_weight_column = 'sampling_weight'
 nn_color_column = 'nn_mcPDG'
 detector = 'all' # Bad hardcoding stuff which should actually be configurable
 # Evaluate sub-options
+optimizer_method = args.optimizer_method
 epochs = args.epochs
 learning_rate = args.learning_rate
 batch_size = args.batch_size
@@ -196,16 +199,31 @@ else:
     model.add(Dense(int(len(labels) * 1.5), activation='relu', use_bias=True))
     model.add(Dense(len(labels), activation='softmax'))
 
-    if learning_rate == None:
-        optimizer = optimizers.rmsprop()
-    else:
-        optimizer = optimizers.rmsprop(lr=learning_rate)
+    optimizer_options = {}
+    if learning_rate != None:
+        optimizer_options = {'lr': learning_rate}
+
+    if optimizer_method == 'sgd':
+        optimizer = optimizers.sgd(**optimizer_options)
+    if optimizer_method == 'rmsprop':
+        optimizer = optimizers.rmsprop(**optimizer_options)
+    if optimizer_method == 'adagrad':
+        optimizer = optimizers.adagrad(**optimizer_options)
+    if optimizer_method == 'adadelta':
+        optimizer = optimizers.adadelta(**optimizer_options)
+    if optimizer_method == 'adam':
+        optimizer = optimizers.adam(**optimizer_options)
+    if optimizer_method == 'adamax':
+        optimizer = optimizers.adamax(**optimizer_options)
+    if optimizer_method == 'nadam':
+        optimizer = optimizers.nadam(**optimizer_options)
+
     # Compilation for a multi-class classification problem
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Set a sensibles default suffix for filenames
 config = model.get_config()
-savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs)
+savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs)
 
 # Visualize and save the training
 keras_callbacks = []
@@ -270,7 +288,7 @@ if history_path != '/dev/null':
 # Save module if requested
 if module_path != '/dev/null':
     if module_path == None:
-        module_path = os.path.join(output_directory, 'model_' + run + '_nLayers' + str(len(config)) + '_LearningRate' + str(learning_rate) + '.h5')
+        module_path = os.path.join(output_directory, 'model_' + run + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '.h5')
     if not os.path.exists(os.path.dirname(module_path)):
         print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(module_path), module_path), file=sys.stderr)
         os.makedirs(os.path.dirname(module_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
