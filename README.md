@@ -2,7 +2,7 @@
 
 ## Inspiration
 
-The main inspiration for the actual program code heavily relies on the [b2-starterkit](https://stash.desy.de/scm/~ritter/b2-starterkit.git) tutorial.
+The main inspiration for the thesis heavily relies on the research performed at the ALICE Collaboration ([Particle identification in ALICE: a Bayesian approach](https://arxiv.org/abs/1602.01392), [Bayesian Approach for Combined Particle Identification in Alice Experiment at LHC](http://cds.cern.ch/record/865616/files/p423.pdf)).
 
 ## Roadmap
 
