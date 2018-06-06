@@ -170,16 +170,19 @@
 
 	\begin{alertblock}{Bayes' Theorem}
 		\centering
-		$\mathcolorbox{yellow}{P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}}$
+		\setlength\abovedisplayskip{-1em}
+		\begin{equation*}
+			\displaystyle P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}
+			\qquad
+			\text{e.g.} \quad \displaystyle P(\pi|Signal) = \frac{P(Signal|\pi) \cdot \mathcolorbox{yellow}{P(\pi)}}{P(Signal)}
+		\end{equation*}
 	\end{alertblock}
-	\vspace{1em}
 
 	The likelihood of a particle may vary depending on its
 	\begin{itemize}
 		\item abundance
 		\item angle between particle and beam
 		\item transverse momentum
-		\item point of detection
 		\item \ldots
 	\end{itemize}
 \end{frame}
