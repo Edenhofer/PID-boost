@@ -662,7 +662,7 @@ class ParticleFrame(dict):
             else:
                 plt.xlabel(x_axis[1])
                 plt.xlim(x_lim)
-            plt.ylabel('Particle Rates')
+            plt.ylabel('Particle Rate')
             plt.ylim(y_lim)
             plt.legend()
 
@@ -691,7 +691,7 @@ class ParticleFrame(dict):
                 plt.grid(b=True, axis='both')
                 plt.xlabel(x_axis[1])
                 plt.xlim(x_lim)
-                plt.ylabel('Rate Ratios')
+                plt.ylabel('Rate Ratio')
                 plt.legend()
 
                 title = '%s Identification'%(self.particle_base_formats[p])
