@@ -1,8 +1,8 @@
-# Playground repository for boosted Particle Identification
+# Playground repository for boosted particle identification
 
 ## Inspiration
 
-The main inspiration for the thesis heavily relies on the research performed at the ALICE Collaboration ([Particle identification in ALICE: a Bayesian approach](https://arxiv.org/abs/1602.01392), [Bayesian Approach for Combined Particle Identification in Alice Experiment at LHC](http://cds.cern.ch/record/865616/files/p423.pdf)).
+The main inspiration for the thesis heavily relies on the research performed at the ALICE Collaboration ([Particle identification in ALICE: a Bayesian approach](https://arxiv.org/abs/1602.01392), [Bayesian Approach for Combined Particle Identification in Alice Experiment at LHC](https://cds.cern.ch/record/865616/files/p423.pdf)).
 
 ## Roadmap
 
