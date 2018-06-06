@@ -675,7 +675,7 @@ class ParticleFrame(dict):
                 x = np.linspace(x_min, x_max, ninterpolations)
 
                 for i, y_axis in enumerate(y_multi_axis):
-                    linestyle = None if i == 1 else ':'
+                    linestyle = None if i == 0 else ':'
                     interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_axis][sorted_approach_range])
                     interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_axis][sorted_base_range])
                     plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_axis.upper(), title_suffixes[n], title_suffixes[0]), linestyle=linestyle, color=next(colors))
