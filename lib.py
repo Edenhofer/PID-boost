@@ -637,7 +637,7 @@ class ParticleFrame(dict):
         plt.colorbar(cax=cbar_ax)
         self.pyplot_sanitize_show(title_epsilonPIDs, suptitle=True, **kwargs)
 
-    def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=['tpr', 'ppv'], x_lim=(-0.05, 1.05), y_lim=(-0.05, 1.05), particles_of_interest=None, ratios=True, ninterpolations=100, **kwargs):
+    def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=[('tpr', 'TPR'), ('ppv', 'PPV')], x_lim=(-0.05, 1.05), y_lim=(-0.05, 1.05), particles_of_interest=None, ratios=True, ninterpolations=100, **kwargs):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
 
         if len(stats_approaches) >= 0 and len(stats_approaches) != len(title_suffixes):
@@ -653,18 +653,22 @@ class ParticleFrame(dict):
                 main_ax = plt.subplot(grid[:2, 0])
             for n, approach in enumerate(stats_approaches):
                 markers = ('o', '^') if len(approach[p][x_axis[0]]) == 1 else (None, None)
-                drawing = plt.plot(approach[p][x_axis[0]], approach[p][y_multi_axis[0]], marker=markers[0], label=y_multi_axis[0].upper() + title_suffixes[n], color=next(colors))
+                drawing = plt.plot(approach[p][x_axis[0]], approach[p][y_multi_axis[0][0]], marker=markers[0], label=y_multi_axis[0][1] + title_suffixes[n], color=next(colors))
                 for y_axis in y_multi_axis[1:]:
-                    plt.plot(approach[p][x_axis[0]], approach[p][y_axis], marker=markers[1], label=y_axis.upper() + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
+                    plt.plot(approach[p][x_axis[0]], approach[p][y_axis[0]], marker=markers[1], label=y_axis[1] + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
 
             if ratios:
                 plt.setp(main_ax.get_xticklabels(), visible=False)
             else:
                 plt.xlabel(x_axis[1])
                 plt.xlim(x_lim)
-            plt.ylabel('Particle Rate')
+            if len(y_multi_axis) == 1:
+                plt.ylabel(y_multi_axis[0][1])
+            else:
+                plt.ylabel('Particle Rate')
+            if len(stats_approaches) > 1:
+                plt.legend()
             plt.ylim(y_lim)
-            plt.legend()
 
             if ratios:
                 plt.subplot(grid[2, 0], sharex=main_ax)
@@ -683,9 +687,9 @@ class ParticleFrame(dict):
 
                     for i, y_axis in enumerate(y_multi_axis):
                         linestyle = None if i == 0 else ':'
-                        interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_axis][sorted_approach_range])
-                        interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_axis][sorted_base_range])
-                        plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_axis.upper(), title_suffixes[n], title_suffixes[0]), linestyle=linestyle, color=next(colors))
+                        interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_axis[0]][sorted_approach_range])
+                        interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_axis[0]][sorted_base_range])
+                        plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_axis[1], title_suffixes[n], title_suffixes[0]), linestyle=linestyle, color=next(colors))
 
                 plt.axhline(y=1., color='dimgrey', linestyle='--')
                 plt.grid(b=True, axis='both')
