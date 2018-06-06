@@ -706,8 +706,8 @@ class ParticleFrame(dict):
             abundance_correct = np.array([particle_data[((particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p))) & (particle_data[cutting_columns[p]] > cut)].shape[0] for p in particles_of_interest])
             abundance = np.array([particle_data[particle_data[cutting_columns[p]] > cut].shape[0] for p in particles_of_interest])
 
-            drawing = plt.errorbar(range(len(particles_of_interest)), abundance_correct[sorted_range], xerr=0.5, elinewidth=0.8, marker='None', linestyle='None')
-            plt.errorbar(range(len(particles_of_interest)), abundance[sorted_range], xerr=0.5, marker='None', linestyle='None', color=drawing[0].get_color(), label=title_suffixes[i].lstrip() + ' (absolute, true)')
+            drawing = plt.errorbar(range(len(particles_of_interest)), abundance_correct[sorted_range], xerr=0.5, elinewidth=1, marker='None', linestyle='None', alpha=0.7)
+            plt.errorbar(range(len(particles_of_interest)), abundance[sorted_range], xerr=0.5, marker='None', linestyle='None', alpha=0.8, color=drawing[0].get_color(), label=title_suffixes[i].lstrip() + ' (absolute, true)')
 
         plt.legend()
         sorted_particles = np.array(particles_of_interest)[sorted_range]
