@@ -637,7 +637,7 @@ class ParticleFrame(dict):
         plt.colorbar(cax=cbar_ax)
         self.pyplot_sanitize_show(title_epsilonPIDs, suptitle=True, **kwargs)
 
-    def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=['tpr', 'ppv'], x_lim=(-0.05, 1.05), y_lim=(-0.05, 1.05), particles_of_interest=None, ninterpolations=100, **kwargs):
+    def plot_diff_stats(self, stats_approaches=[], title_suffixes=[], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=['tpr', 'ppv'], x_lim=(-0.05, 1.05), y_lim=(-0.05, 1.05), particles_of_interest=None, ratios=True, ninterpolations=100, **kwargs):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
 
         if len(stats_approaches) >= 0 and len(stats_approaches) != len(title_suffixes):
@@ -645,49 +645,60 @@ class ParticleFrame(dict):
 
         for p in particles_of_interest:
             plt.figure()
-            grid = plt.GridSpec(3, 1, hspace=0.1)
+            if ratios:
+                grid = plt.GridSpec(3, 1, hspace=0.1)
             colors = iter(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])
 
-            main_ax = plt.subplot(grid[:2, 0])
+            if ratios:
+                main_ax = plt.subplot(grid[:2, 0])
             for n, approach in enumerate(stats_approaches):
                 markers = ('o', '^') if len(approach[p][x_axis[0]]) == 1 else (None, None)
                 drawing = plt.plot(approach[p][x_axis[0]], approach[p][y_multi_axis[0]], marker=markers[0], label=y_multi_axis[0].upper() + title_suffixes[n], color=next(colors))
                 for y_axis in y_multi_axis[1:]:
                     plt.plot(approach[p][x_axis[0]], approach[p][y_axis], marker=markers[1], label=y_axis.upper() + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
 
-            plt.setp(main_ax.get_xticklabels(), visible=False)
+            if ratios:
+                plt.setp(main_ax.get_xticklabels(), visible=False)
+            else:
+                plt.xlabel(x_axis[1])
+                plt.xlim(x_lim)
             plt.ylabel('Particle Rates')
             plt.ylim(y_lim)
             plt.legend()
 
-            plt.subplot(grid[2, 0], sharex=main_ax)
-            base_approach = stats_approaches[0]
-            # Numpy expects values sorted by x
-            sorted_base_range = np.argsort(base_approach[p][x_axis[0]])
-            for n, approach in enumerate(stats_approaches[1:], 1):
-                # Skip interpolation if the approach contains only one point
-                if len(approach[p][x_axis[0]]) == 1:
-                    continue
+            if ratios:
+                plt.subplot(grid[2, 0], sharex=main_ax)
+                base_approach = stats_approaches[0]
+                # Numpy expects values sorted by x
+                sorted_base_range = np.argsort(base_approach[p][x_axis[0]])
+                for n, approach in enumerate(stats_approaches[1:], 1):
+                    # Skip interpolation if the approach contains only one point
+                    if len(approach[p][x_axis[0]]) == 1:
+                        continue
 
-                sorted_approach_range = np.argsort(approach[p][x_axis[0]])
-                x_min = max(base_approach[p][x_axis[0]][sorted_base_range][1], approach[p][x_axis[0]][sorted_approach_range][1]) # Skip the first FPR value (probably zero)
-                x_max = min(base_approach[p][x_axis[0]][sorted_base_range][-1], approach[p][x_axis[0]][sorted_approach_range][-1])
-                x = np.linspace(x_min, x_max, ninterpolations)
+                    sorted_approach_range = np.argsort(approach[p][x_axis[0]])
+                    x_min = max(base_approach[p][x_axis[0]][sorted_base_range][1], approach[p][x_axis[0]][sorted_approach_range][1]) # Skip the first FPR value (probably zero)
+                    x_max = min(base_approach[p][x_axis[0]][sorted_base_range][-1], approach[p][x_axis[0]][sorted_approach_range][-1])
+                    x = np.linspace(x_min, x_max, ninterpolations)
 
-                for i, y_axis in enumerate(y_multi_axis):
-                    linestyle = None if i == 0 else ':'
-                    interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_axis][sorted_approach_range])
-                    interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_axis][sorted_base_range])
-                    plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_axis.upper(), title_suffixes[n], title_suffixes[0]), linestyle=linestyle, color=next(colors))
+                    for i, y_axis in enumerate(y_multi_axis):
+                        linestyle = None if i == 0 else ':'
+                        interpolated_rate = np.interp(x, approach[p][x_axis[0]][sorted_approach_range], approach[p][y_axis][sorted_approach_range])
+                        interpolated_rate_base = np.interp(x, base_approach[p][x_axis[0]][sorted_base_range], base_approach[p][y_axis][sorted_base_range])
+                        plt.plot(x, interpolated_rate / interpolated_rate_base, label='%s%s /%s'%(y_axis.upper(), title_suffixes[n], title_suffixes[0]), linestyle=linestyle, color=next(colors))
 
-            plt.axhline(y=1., color='dimgrey', linestyle='--')
-            plt.grid(b=True, axis='both')
-            plt.xlabel(x_axis[1])
-            plt.xlim(x_lim)
-            plt.ylabel('Rate Ratios')
-            plt.legend()
+                plt.axhline(y=1., color='dimgrey', linestyle='--')
+                plt.grid(b=True, axis='both')
+                plt.xlabel(x_axis[1])
+                plt.xlim(x_lim)
+                plt.ylabel('Rate Ratios')
+                plt.legend()
 
-            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), suptitle=True, **kwargs)
+                title = '%s Identification'%(self.particle_base_formats[p])
+            else:
+                title = '%s Identification (without Ratios)'%(self.particle_base_formats[p])
+
+            self.pyplot_sanitize_show(title, suptitle=True, **kwargs)
 
     def plot_diff_abundance(self, cutting_columns_approaches=[], title_suffixes=[], particles_of_interest=None, norm='K+', cut=0.5, **kwargs):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
