@@ -169,27 +169,26 @@
 	\framesubtitle{\insertsubsection}
 
 	\begin{columns}
-		\begin{column}{.22\textwidth}
+		\begin{column}{.6\textwidth}
 			\begin{figure}
 				\centering
-				\includegraphics[width=\textwidth,height=0.36\textheight,keepaspectratio]{{{../res/Belle 2 event display for sample decay (front) [no background]}}}
+				\includegraphics[width=\textwidth,height=0.2\textheight,keepaspectratio]{{{../res/Belle 2 event display for sample decay (front) [no background]}}}
 				\caption{Belle \uppercase\expandafter{\romannumeral 2} event display.}
 			\end{figure}
-		\end{column}
-		\begin{column}{.37\textwidth}
-			\begin{figure}
-				\centering
-				\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/dE dx for CDC detector by particles}}}
-				\caption{$dE/dx$ for the SVD with colors representing different particle species. Taken from~\cite{Pulvermacher:SuperKEKBDetectorComponents}.}
-			\end{figure}
-		\end{column}
-		\begin{column}{.41\textwidth}
+			\vspace{-1.5em}
 			\begin{itemize}
 				\item Event is recorded as it happens
 				\item Detector measurements are evaluated, e.g. $dE/dx$ for SVD
 				\item Measurements are compared to the expected values
 				\item Particle likelihood are returned
 			\end{itemize}
+		\end{column}
+		\begin{column}{.4\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{{{../res/dE dx for CDC detector by particles}}}
+				\caption{$dE/dx$ for the SVD with colors representing different particle species. Taken from~\cite{Pulvermacher:SuperKEKBDetectorComponents}.}
+			\end{figure}
 		\end{column}
 	\end{columns}
 \end{frame}
