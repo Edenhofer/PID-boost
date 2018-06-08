@@ -166,10 +166,11 @@ n_duplicated = test_selection.duplicated()
 print('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair particle treatment)'%(sum(n_duplicated), sum(n_duplicated)/test_selection.shape[0]*100))
 
 # Assemble the input matrix on which to train the model
+design_columns = list(set(augmented_matrix.keys()) - spoiling_columns)
+design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 run = args.run
 if run == 'all':
-    design_columns = list(set(augmented_matrix.keys()) - spoiling_columns)
-    design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
+   pass
 elif run == 'pidProbability':
     design_columns = []
     for p in ParticleFrame.particles:
@@ -177,9 +178,6 @@ elif run == 'pidProbability':
             design_columns += ['pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc']
     design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 elif run == 'pca':
-    design_columns = list(set(augmented_matrix.keys()) - spoiling_columns)
-    design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
-
     if input_pca:
         print('Loading input PCA module from "%s"'%(input_pca))
         pca, scaler = pickle.load(open(input_pca, 'rb'))
