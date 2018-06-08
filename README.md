@@ -21,7 +21,7 @@ The main inspiration for the thesis heavily relies on the research performed at 
 * ~~Add a simple Machine Learning approach using the likelihoods as input and the prediction as output~~
 * Design a functional Neural Network classifying particles
   * ~~Utilize automatically selected ROOT variables as input, e.g. depending on their contribution to a PCA~~
-  * Use a multitude of variables and let the network decide
+  * ~~Use a multitude of variables and let the network decide~~
   * ~~Visually compare the approaches~~
   * ~~Sample the data in a way which makes all particles equally likely~~
   * ~~Pre-train neural network on e.g. data sets containing all particles in the same abundance~~
