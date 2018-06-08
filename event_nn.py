@@ -37,6 +37,8 @@ group_action = parser.add_mutually_exclusive_group(required=True)
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
 group_backend = parser.add_argument_group('backend options', 'Parameters for configuring the backend used for modelling and training')
+group_action.add_argument('--all', dest='run', action='store_const', default=None, const='all',
+                    help='Run the model using all available features of the data')
 group_action.add_argument('--pca', dest='run', action='store_const', default=None, const='pca',
                     help='Run the model on the principal components of the data')
 group_action.add_argument('--pidProbability', dest='run', action='store_const', default=None, const='pidProbability',
@@ -165,7 +167,10 @@ print('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair 
 
 # Assemble the input matrix on which to train the model
 run = args.run
-if run == 'pidProbability':
+if run == 'all':
+    design_columns = list(set(augmented_matrix.keys()) - spoiling_columns)
+    design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
+elif run == 'pidProbability':
     design_columns = []
     for p in ParticleFrame.particles:
         for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
