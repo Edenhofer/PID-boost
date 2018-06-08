@@ -168,6 +168,8 @@ print('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair 
 
 # Assemble the input matrix on which to train the model
 design_columns = list(set(augmented_matrix.keys()) - spoiling_columns)
+# We need deterministic results here, which unfortunately we do not get by default; Hence sort it by force
+design_columns.sort()
 design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 run = args.run
 if run == 'all':
