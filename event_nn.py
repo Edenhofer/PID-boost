@@ -171,10 +171,10 @@ elif run == 'pca':
 
     scaler = StandardScaler()
     scaler.fit(design_matrix.loc[test_selection])
-    scaler.transform(design_matrix)
+    design_matrix = pd.DataFrame(scaler.transform(design_matrix), index=design_matrix.index)
     pca = PCA(n_components=n_components)
     pca.fit(design_matrix.loc[test_selection])
-    pca.transform(design_matrix)
+    design_matrix = pd.DataFrame(pca.transform(design_matrix), index=design_matrix.index)
     print('Selected principal components explain %.4f of the variance in the data'%(pca.explained_variance_ratio_.sum()))
 x_test = design_matrix.loc[test_selection].values
 y_test = augmented_matrix.loc[test_selection][truth_color_column].values
