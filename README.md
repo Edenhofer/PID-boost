@@ -25,7 +25,7 @@ The main inspiration for the thesis heavily relies on the research performed at 
   * ~~Visually compare the approaches~~
   * ~~Sample the data in a way which makes all particles equally likely~~
   * ~~Pre-train neural network on e.g. data sets containing all particles in the same abundance~~
-  * Tweak pre-trained model for decay specific particle abundances
+  * ~~Tweak pre-trained model for decay specific particle abundances~~
 * ~~Plot efficiencies over background-ratio for PID, Bayes, etc.~~
 * ~~Visualize the difference in assumed particle abundances for various approaches~~
 * ~~Abundance comparisons differentiating by correctly and faulty reconstructed ones, e.g. in a stacked histogram~~
