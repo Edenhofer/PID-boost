@@ -238,7 +238,10 @@ else:
 
 # Set a sensibles default suffix for filenames
 config = model.get_config()
-savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
+if run == 'pca':
+    savefile_suffix = run + '_ncomponents' + str(n_components) + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
+else:
+    savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
 
 # Visualize and save the training
 keras_callbacks = []
