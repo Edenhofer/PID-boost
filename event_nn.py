@@ -153,6 +153,7 @@ for v in list(np.unique(np.abs(augmented_matrix['mcPDG'].values))):
     except ValueError:
         augmented_matrix.at[(augmented_matrix['mcPDG'] == v) | (augmented_matrix['mcPDG'] == -1 * v), truth_color_column] = labels.index(0)
 augmented_matrix[truth_color_column] = augmented_matrix[truth_color_column].astype(int)
+spoiling_columns.add(truth_color_column)
 
 if sampling_method == 'fair':
     augmented_matrix[sampling_weight_column] = 1. / augmented_matrix.groupby(truth_color_column)[truth_color_column].transform('count')
