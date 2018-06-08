@@ -57,6 +57,8 @@ group_opt.add_argument('--training-fraction', dest='training_fraction', action='
                     help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
 group_util.add_argument('--module-file', dest='module_path', action='store', default=None,
                     help='Path including the filename where the model should be saved to; Skip saving if given \'/dev/null\'')
+group_util.add_argument('--pca-file', dest='pca_path', action='store', default=None,
+                    help='Path including the filename where the PCA model should be saved to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('--checkpoint-file', dest='checkpoint_path', action='store', default=None,
                     help='Path including the filename where to periodically save the best performing module to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('--history-file', dest='history_path', action='store', default=None,
@@ -67,6 +69,8 @@ group_util.add_argument('--input-pickle', dest='input_pickle', action='store', d
                     help='Pickle file path containing a ParticleFrame object which shall be read in instead of ROOT files; Takes precedence when specified')
 group_util.add_argument('--input-module', dest='input_module', action='store', default=None,
                     help='Path to a module file to use instead of a self-constructed one')
+group_util.add_argument('--input-pca', dest='input_pca', action='store', default=None,
+                    help='Path to a PCA module file to use instead of a self-constructed one')
 group_util.add_argument('--log-dir', dest='log_directory', action='store', default=None,
                     help='Directory where TensorFlow is supposed to log to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
@@ -104,12 +108,14 @@ K.set_session(session)
 input_directory = args.input_directory
 input_pickle = args.input_pickle
 input_module = args.input_module
+input_pca = args.input_pca
 interactive = args.interactive
 log_directory = args.log_directory
 output_directory = args.output_directory
 output_pickle = args.output_pickle
 history_path = args.history_path
 module_path = args.module_path
+pca_path = args.pca_path
 checkpoint_path = args.checkpoint_path
 
 # Read in all the particle's information into a dictionary of pandas-frames
@@ -169,13 +175,30 @@ elif run == 'pca':
     design_columns = list(set(augmented_matrix.keys()) - spoiling_columns)
     design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
 
-    scaler = StandardScaler()
-    scaler.fit(design_matrix.loc[test_selection])
-    design_matrix = pd.DataFrame(scaler.transform(design_matrix), index=design_matrix.index)
-    pca = PCA(n_components=n_components)
-    pca.fit(design_matrix.loc[test_selection])
-    design_matrix = pd.DataFrame(pca.transform(design_matrix), index=design_matrix.index)
-    print('Selected principal components explain %.4f of the variance in the data'%(pca.explained_variance_ratio_.sum()))
+    if input_pca:
+        print('Loading input PCA module from "%s"'%(input_pca))
+        pca, scaler = pickle.load(open(input_pca, 'rb'))
+        n_components = pca.n_components_
+        design_matrix = pd.DataFrame(scaler.transform(design_matrix), index=design_matrix.index)
+        design_matrix = pd.DataFrame(pca.transform(design_matrix), index=design_matrix.index)
+    else:
+        print('Performing a PCA using %d components on the scaled data'%(n_components))
+        scaler = StandardScaler()
+        scaler.fit(design_matrix.loc[test_selection])
+        design_matrix = pd.DataFrame(scaler.transform(design_matrix), index=design_matrix.index)
+        pca = PCA(n_components=n_components)
+        pca.fit(design_matrix.loc[test_selection])
+        design_matrix = pd.DataFrame(pca.transform(design_matrix), index=design_matrix.index)
+        print('Selected principal components explain %.4f of the variance in the data'%(pca.explained_variance_ratio_.sum()))
+
+        if pca_path != '/dev/null':
+            if pca_path == None:
+                pca_path = os.path.join(output_directory, run + '_ncomponents' + str(n_components) + '.pkl')
+            if not os.path.exists(os.path.dirname(pca_path)):
+                print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(pca_path), pca_path), file=sys.stderr)
+                os.makedirs(os.path.dirname(pca_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+            pickle.dump((pca, scaler), open(pca_path, 'wb'), pickle.HIGHEST_PROTOCOL)
+
 x_test = design_matrix.loc[test_selection].values
 y_test = augmented_matrix.loc[test_selection][truth_color_column].values
 x_validation = design_matrix.loc[validation_selection].values
