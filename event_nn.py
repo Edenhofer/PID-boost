@@ -37,6 +37,8 @@ group_action = parser.add_mutually_exclusive_group(required=True)
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
 group_backend = parser.add_argument_group('backend options', 'Parameters for configuring the backend used for modelling and training')
+group_action.add_argument('--apply', dest='run', action='store_const', default=None, const='apply',
+                    help='Apply the model given via input arguments instead of fitting new ones')
 group_action.add_argument('--all', dest='run', action='store_const', default=None, const='all',
                     help='Run the model using all available features of the data')
 group_action.add_argument('--pca', dest='run', action='store_const', default=None, const='pca',
@@ -155,25 +157,43 @@ for v in list(np.unique(np.abs(augmented_matrix['mcPDG'].values))):
 augmented_matrix[truth_color_column] = augmented_matrix[truth_color_column].astype(int)
 spoiling_columns.add(truth_color_column)
 
-if sampling_method == 'fair':
-    augmented_matrix[sampling_weight_column] = 1. / augmented_matrix.groupby(truth_color_column)[truth_color_column].transform('count')
-elif sampling_method == 'biased':
-    augmented_matrix[sampling_weight_column] = 1.
-# Allow sampling rows multiple times to not limit the sample size too much by the particles with a lower abundance
-test_selection = augmented_matrix.sample(frac=training_fraction, weights=sampling_weight_column, replace=True).index
-# Use everything not utilized for testing as validation data
-validation_selection = augmented_matrix.drop(test_selection).index
-n_duplicated = test_selection.duplicated()
-print('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair particle treatment)'%(sum(n_duplicated), sum(n_duplicated)/test_selection.shape[0]*100))
+
+run = args.run
+
+if run == 'apply':
+    augmented_matrix[sampling_weight_column] = np.nan
+    test_selection = []
+    validation_selection = augmented_matrix.index
+    print('Classified all data as validation sample')
+else:
+    if sampling_method == 'fair':
+        augmented_matrix[sampling_weight_column] = 1. / augmented_matrix.groupby(truth_color_column)[truth_color_column].transform('count')
+    elif sampling_method == 'biased':
+        augmented_matrix[sampling_weight_column] = 1.
+    # Allow sampling rows multiple times to not limit the sample size too much by the particles with a lower abundance
+    test_selection = augmented_matrix.sample(frac=training_fraction, weights=sampling_weight_column, replace=True).index
+    # Use everything not utilized for testing as validation data
+    validation_selection = augmented_matrix.drop(test_selection).index
+    n_duplicated = test_selection.duplicated()
+    print('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair particle treatment)'%(sum(n_duplicated), sum(n_duplicated)/test_selection.shape[0]*100))
+
 
 # Assemble the input matrix on which to train the model
 design_columns = list(set(augmented_matrix.keys()) - spoiling_columns)
 # We need deterministic results here, which unfortunately we do not get by default; Hence sort it by force
 design_columns.sort()
 design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
-run = args.run
-if run == 'all':
-   pass
+if run == 'apply':
+    if input_pca:
+        print('Loading input PCA module from "%s"'%(input_pca))
+        pca, scaler = pickle.load(open(input_pca, 'rb'))
+        n_components = pca.n_components_
+        design_matrix = pd.DataFrame(scaler.transform(design_matrix), index=design_matrix.index)
+        design_matrix = pd.DataFrame(pca.transform(design_matrix), index=design_matrix.index)
+    # The model is loaded later, however at least check that one is specified
+    assert input_module, 'Missing a model'
+elif run == 'all':
+    pass
 elif run == 'pidProbability':
     design_columns = []
     for p in ParticleFrame.particles:
@@ -239,30 +259,34 @@ else:
 
 # Set a sensibles default suffix for filenames
 config = model.get_config()
-if run == 'pca':
+if (run == 'pca') or ((run == 'apply') and input_pca):
     savefile_suffix = run + '_ncomponents' + str(n_components) + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
 else:
     savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
 
-# Visualize and save the training
-keras_callbacks = []
-if log_directory != '/dev/null':
-    if log_directory == None:
-        log_directory = os.path.join(output_directory, 'logs')
-    if not os.path.exists(log_directory):
-        print('Creating desired log directory "%s"'%(log_directory), file=sys.stderr)
-        os.makedirs(log_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
-    keras_callbacks += [TensorBoard(log_dir=log_directory, histogram_freq=1, batch_size=batch_size)]
-if checkpoint_path != '/dev/null':
-    if checkpoint_path == None:
-        checkpoint_path = os.path.join(output_directory, 'model_checkpoint_' + savefile_suffix + '.h5')
-    if not os.path.exists(os.path.dirname(checkpoint_path)):
-        print('Creating desired parent directory "%s" for the checkpoint file "%s"'%(os.path.dirname(checkpoint_path), checkpoint_path), file=sys.stderr)
-        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
-    keras_callbacks += [ModelCheckpoint(checkpoint_path, monitor='val_acc', save_best_only=True, save_weights_only=False, period=1)]
 
-# Train the model
-history = model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, validation_data=(x_validation, y_validation_hot), shuffle=True, callbacks=keras_callbacks)
+if run == 'apply':
+    history = None
+else:
+    # Visualize and save the training
+    keras_callbacks = []
+    if log_directory != '/dev/null':
+        if log_directory == None:
+            log_directory = os.path.join(output_directory, 'logs')
+        if not os.path.exists(log_directory):
+            print('Creating desired log directory "%s"'%(log_directory), file=sys.stderr)
+            os.makedirs(log_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+        keras_callbacks += [TensorBoard(log_dir=log_directory, histogram_freq=1, batch_size=batch_size)]
+    if checkpoint_path != '/dev/null':
+        if checkpoint_path == None:
+            checkpoint_path = os.path.join(output_directory, 'model_checkpoint_' + savefile_suffix + '.h5')
+        if not os.path.exists(os.path.dirname(checkpoint_path)):
+            print('Creating desired parent directory "%s" for the checkpoint file "%s"'%(os.path.dirname(checkpoint_path), checkpoint_path), file=sys.stderr)
+            os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
+        keras_callbacks += [ModelCheckpoint(checkpoint_path, monitor='val_acc', save_best_only=True, save_weights_only=False, period=1)]
+
+    # Train the model
+    history = model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, validation_data=(x_validation, y_validation_hot), shuffle=True, callbacks=keras_callbacks)
 
 score = model.evaluate(x_validation, y_validation_hot, batch_size=batch_size)
 print('\nModel validation using independent data - loss: %.6f - acc: %.6f'%(score[0], score[1]))
@@ -295,7 +319,7 @@ if output_pickle != '/dev/null':
     data.descriptions['nn'] = savefile_suffix.replace('_', ' ')
     data.save(pickle_path=output_pickle)
 # Save model-fitting history if requested
-if history_path != '/dev/null':
+if (history_path != '/dev/null') and history is not None:
     if history_path == None:
         history_path = os.path.join(output_directory, 'history_' + savefile_suffix + '.pkl')
     if not os.path.exists(os.path.dirname(history_path)):
