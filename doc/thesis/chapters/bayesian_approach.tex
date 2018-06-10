@@ -11,9 +11,10 @@ This is not surprising in itself as the branching fractions are not equally dist
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
-    \caption{True particle abundance in the charged MC9 simulated data. \textit{NaN} stands for an invalid translation from the particles' PDG code to an actual particle.}
+    \caption{True particle abundance in the charged MC9 simulated data. \textit{NaN} stands for an invalid translation\protect\footnotemark from the particles' PDG code to an actual particle.}
     \label{fig:true_particle_abundance}
 \end{figure}
+\footnotetext{The error occurs due to the PDG code in the ROOT file being saved as \lstinline|float32| but some particle's code exceed the memory limit of $32$-bits. Notably, this effects the deuteron as well as its anti-particles.}
 
 The absolute particle abundance of a sample taken from the Monte Carlo simulation of the charged decay of the $B$-mesons can be seen in figure~\ref{fig:true_particle_abundance}. In this example the bias towards pions and kaons can be clearly observed.
 
