@@ -37,7 +37,9 @@
     \usepackage{geometry}
 	\usepackage{scrextend}		% Arbitrary indentation
 
-	\usepackage{color}
+    \usepackage{color}
+
+	\addbibresource{../literature.bib}
 
     \makeatletter
     \makeatother
@@ -87,7 +89,7 @@
 
 \begin{appendix}
     \include{app1}
-    \include{literature}
+    \printbibliography
 \end{appendix}
 \pagestyle{empty}
 \cleardoublepage
