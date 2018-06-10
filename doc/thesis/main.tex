@@ -1,12 +1,10 @@
 \documentclass[english,12pt,twoside,a4paper]{report}
-    \usepackage[ngerman,english]{babel,varioref}		% language
-    \usepackage[ddmmyyyy]{datetime}
+    \usepackage[ngerman,english]{babel,varioref}		% Language specification
     \usepackage[utf8]{inputenc}
-    \usepackage[T1]{fontenc}
+    \usepackage[T1]{fontenc}    % Required to output umlauts in a PDF
     \usepackage{pslatex}
     \usepackage{amsmath}
     \usepackage{multirow}
-    \usepackage{microtype}
     \usepackage{ellipsis}
     \usepackage{textcomp}
     \usepackage{longtable}
@@ -16,26 +14,33 @@
     \usepackage{caption}		% Customize caption aesthetics
     \usepackage{subcaption}
 
+	\usepackage{xcolor}			% Highlighting
+	\usepackage{tcolorbox}		% Fancy colored boxes
+    \usepackage{soul}
+
+    \usepackage[tracking=true]{microtype} % required to change character spacing
+
     \usepackage{listings}       % insert programming code
+	\usepackage{graphicx}		% Required to insert images
+	\usepackage[space]{grffile} % Insert images baring a filename which contains spaces
+	\usepackage{float}			% Forcefully set the location of an object
 
-	\usepackage{graphicx}		% required to insert images
-    \usepackage[space]{grffile} % insert images baring a filename which contains spaces
-	\usepackage{float}			% allow to forcefully set the location of an object
+	\usepackage[style=numeric,backend=biber]{biblatex}
+	\usepackage[bookmarks]{hyperref}	% Clickable references
 
-    %\usepackage[osf,sc]{mathpazo}  % Palatino als Schriftart
-    %\usepackage{charter}
-    \newcommand{\U}[1]{\underline{#1}}
-    \newcommand{\grad}{\text{grad }}
-    \newcommand{\dive}{\text{div }}
-    \newcommand{\rot}{\text{rot }}
-    \newcommand{\B}[1]{\textbf{#1}}
+    %\usepackage[ddmmyyyy]{datetime}
+	\usepackage{datetime}		% Flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+	\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+
+    \usepackage{geometry}
+	\usepackage{scrextend}		% Arbitrary indentation
+
+	\usepackage{color}
+
     \makeatletter
     \makeatother
-
-    %\usepackage{geometry,mflogo,xspace,texnames,path,booktabs,bm}
-
-    \usepackage[bookmarks]{hyperref}
-    \usepackage{thumbpdf}
 
     \pagestyle{headings}                 % Seitenstil
     \oddsidemargin0.8cm                  % linker Rand fuer ungerade Seiten bei \twoside
