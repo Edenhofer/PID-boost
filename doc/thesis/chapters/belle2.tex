@@ -7,5 +7,52 @@
 \section{Detector system}
 \label{sec:detector_system}
 
+\subsection{Overview}
+\label{subsec:detector_system_overview}
+
+If not specifically stated otherwise the charge conjugate of a particle shall be assumed to be included if a particle is mentioned.
+
+The Belle~\RN{2} detector system is a composition of multiple detectors, each measuring a subset of properties of particle's track.
+The inner three detectors --- \textbf{P}i\textbf{X}el \textbf{D}etector (PXD), \textbf{S}ilicon \textbf{V}ertex \textbf{D}etector (SVD) and \textbf{C}entral \textbf{D}rift \textbf{C}hamber (CDC) --- record the position of particles. Hence they are also called tracking detectors. They are located in a homogeneous magnetic field of $1.5~\mathrm{T}$.
+The innermost detector is the PXD. Together with the SVD, located right after it, they are used to reconstruct decay vertices and identify tracks belonging to particles with a low-momentum.
+The CDC measures the momentum and charge of particles via their curvature in the magnetic field.
+Next the \textbf{T}ime \textbf{O}f \textbf{P}ropagation counter (TOP) (`Barrel PID' in figure~\ref{fig:belle2_detector_design_white_paper}) and the \textbf{A}erogel \textbf{RICH} counter (ARICH) (`Endcap PID' in figure~\ref{fig:belle2_detector_design_white_paper}) are used to identify charged particles via their emission of Cherenkov radiation in the detector. However there is no such installation for the backwards-facing endcap of the detector.
+The \textbf{E}lectromagnetic \textbf{C}a\textbf{L}orimeter (ECL) identifies photons and electron.
+The outermost detector called $\boldsymbol{K}^0_{\boldsymbol{L}}$/$\boldsymbol{\mu}$ (KLM) is used to identify kaons and muons.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/Belle 2 detector design white paper (truncated)}}}
+    \caption{Side view of the upper half of the Belle~\RN{2} detector. The bottom half (not shown in the picture) would correspond to the mirror image alongside the beampipe. Adapted from~\cite{Abe:2010gxa}.}
+    \label{fig:belle2_detector_design_white_paper}
+\end{figure}
+
+\subsection{Silicon detectors}
+\label{subsec:detector_system_silicon_detectors}
+
+The PXD and SVD consist of tiny doped silicon chips which yield the location of electron-holes created by particles passing through it. The PXD detector uses small pixels while the SVD detector uses strips of detector materials. Therefore the PXD detector is able to further differentiate multiple simultaneous tracks while the SVD allows for a faster readout and is less prone to noise.
+
+\subsection{Central drift chamber}
+\label{subsec:detector_system_tracking_detectors}
+
+The CDC, which surrounds the PXD and SVD, consists of a collection of charged wires and detection wires located in a gas filled volume. The detection wires are used to measure the drop in voltage produced by electromagnetic showers created by particles passing through the gas. The wires are close to being parallel to the beampipe but have a slight twist. This allows the detector to not only have an excellence estimation of the transverse distance to the beam pipe but also provides information about the longitudinal position.
+
+\subsection{Barrel and endcap PID}
+\label{subsec:detector_system_barrel_and_endcap_pid}
+
+In the TOP and ARICH detector the Cherenkov effect is used to measure the momentum and velocity of particles. Charged particles which travel faster than the speed of light in the medium --- Quartz in case of the TOP detector and aerogel for the ARICH detector --- produce light due to their uneven polarization of the medium. By measuring the time of propagation and the angle of the emitted light (Cherenkov angle) an estimation of the velocity as well as the momentum can be calculated.
+
+\subsection{Electromagnetic calorimeter}
+\label{subsec:detector_system_electromagnetic_calorimeter}
+
+The main purpose of the ECL detector is to measure the position and energy of photons and electrons. Both particle species excite the medium and create electromagnetic showers. The light from the de-excitation can subsequently be measured.
+
+\subsection{$\boldsymbol{K}^0_{\boldsymbol{L}}$/$\boldsymbol{\mu}$ detector}
+\label{subsec:detector_system_k0lmu}
+
+Last but not least the KLM detector measures the penetration ability of particles in order to differentiate between muons and kaons. When flying through the detector the particles passes through plates serving as electrodes separated by a layers of gas in between them. Created ionized particles are accelerated in this field and subsequently produce a spark picked up by the detector via measuring the voltage.
+
 \section{Particle identification}
 \label{sec:particle_identification}
+
+Identifying particles reliably and autonomously is one of the main requirement.
