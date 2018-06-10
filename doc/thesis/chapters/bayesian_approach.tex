@@ -4,9 +4,9 @@
 \section{Simple Bayesian approach}
 \label{sec:simple_bayes}
 
-The goal of a Bayesian approach is to weight the particles' probability by their abundance in the sample. This process increases the likelihood of a particle being identified as belonging to a group with a higher abundance and decreases the likelihood of being identified as belonging to a group with a lower abundance. The approach depends on the detector yielding decay-agnostic results. Hence regardless of prior probabilities the detector shall output the likelihood of measuring the received signal given a specific particle hypothesis. Furthermore the approach assumes a bias towards one or a few particles in the sample since otherwise the a priori probabilities would be flat and therefore boil down to the same result.
-Thankfully both of those hypothesis are given in the real world: The detector can be assumed to behaves independently of the relative particle abundance and the measured data usually shows a clear predominance of one or a few particles.
-This is not surprising in itself as the branching fractions are not equally distributed and dictated by the laws of physics one particle species might be produced more frequently.
+The goal of a Bayesian approach is to weight the particles' probability by their abundance in the sample. This process increases the likelihood of a particle being identified as belonging to a group with a higher abundance and decreases the likelihood of being identified as belonging to a group with a lower abundance. The approach depends on the detector yielding decay-agnostic results. Hence the detector shall be assumed to always output the likelihood of measuring the received signal given a specific particle hypothesis regardless of prior probabilities. Furthermore the approach assumes a bias towards one or a few particles in the sample since otherwise the a priori probabilities would be flat and therefore boil down to the same result.
+Thankfully both of those hypothesis are given in the real world: The detector can be assumed to behaves independently of the relative particle abundance and the measured data usually shows a clear predominance of one or a few particle species.
+This is not surprising in itself as the branching fractions are not equally distributed. Dictated by the laws of physics one particle species might be produced more frequently.
 
 \begin{figure}[ht]
     \centering
