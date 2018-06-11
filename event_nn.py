@@ -59,6 +59,8 @@ group_opt.add_argument('--sampling-method', dest='sampling_method', action='stor
                     help='Specification of which sampling method should be applied')
 group_opt.add_argument('--training-fraction', dest='training_fraction', action='store', type=float, default=0.8,
                     help='Fraction of the whole data which shall be used for training; Non-training data is used for validation')
+group_util.add_argument('--add-dropout', dest='add_dropout', action='store_true', default=False,
+                    help='Add an additional dropout layer to the network to decrease overfitting')
 group_util.add_argument('--module-file', dest='module_path', action='store', default=None,
                     help='Path including the filename where the model should be saved to; Skip saving if given \'/dev/null\'')
 group_util.add_argument('--pca-file', dest='pca_path', action='store', default=None,
@@ -141,6 +143,7 @@ batch_size = args.batch_size
 training_fraction = args.training_fraction
 n_components = args.n_components
 sampling_method = args.sampling_method
+add_dropout = args.add_dropout
 
 # Concatenate the whole data into one huge multi-indexable DataFrame
 # Take special care about extracting the final result, since this is a copy
@@ -243,8 +246,10 @@ else:
     model.add(Dense(len(labels) * 2, input_shape=(x_test.shape[1],), activation='relu', use_bias=True))
     model.add(Dropout(0.2))
     model.add(Dense(len(labels) * 3, activation='relu', use_bias=True))
-    model.add(Dropout(0.2))
+    if add_dropout:
+        model.add(Dropout(0.2))
     model.add(Dense(len(labels) * 2, activation='relu', use_bias=True))
+    model.add(Dropout(0.2))
     model.add(Dense(int(len(labels) * 1.5), activation='relu', use_bias=True))
     model.add(Dense(len(labels), activation='softmax'))
 
