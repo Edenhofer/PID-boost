@@ -1,5 +1,6 @@
 \documentclass[english,12pt,twoside,a4paper]{report}
-    \usepackage[ngerman,english]{babel,varioref}		% Language specification
+    \usepackage[ngerman,english]{babel}		% Language specification
+    \usepackage{varioref}       % Better references but possibly unstable
     \usepackage[utf8]{inputenc}
     \usepackage[T1]{fontenc}    % Required to output umlauts in a PDF
     \usepackage{pslatex}
@@ -28,8 +29,7 @@
 	\usepackage[style=numeric,backend=biber]{biblatex}
 	\usepackage[bookmarks]{hyperref}	% Clickable references
 
-    %\usepackage[ddmmyyyy]{datetime}
-	\usepackage{datetime}		% Flexible date specification
+	\usepackage[nodayofweek]{datetime}		% Flexible date specification
 	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
 	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
 	\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
