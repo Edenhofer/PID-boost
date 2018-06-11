@@ -62,7 +62,6 @@ for key, label in [('val_acc', 'Validation'), ('acc', 'Training')]:
     plt.plot(history['epoch'], history['history'][key], label=label)
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
-plt.ylim(-0.05, 1.05)
 plt.legend()
 data.pyplot_sanitize_show('Accuracy', savefig_prefix='Neural Network Model: ', savefig_suffix=savefile_suffix)
 
