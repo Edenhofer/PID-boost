@@ -171,16 +171,16 @@ if args.run_pidProbability:
             # The unit of mcDX, mcDY and mcDZ is not the same as the one of d0 and z0
             particle_data.query('(mcDX**2 + mcDY**2 + mcDZ**2) < 120000', inplace=True)
         print('Description of sliced %s-Data:\n'%(norm), special_slice[norm][['d0', 'z0', 'mcDX', 'mcDY', 'mcDZ']].describe())
-        savefig_prefix='pidProbability Approach (tight Vertex): '
-    if slicing_method == 'primary':
+        savefig_prefix = 'pidProbability Approach (tight Vertex): '
+    elif slicing_method == 'primary':
         special_slice = ParticleFrame(output_directory=output_directory, interactive=interactive)
         special_slice.data = data.data.copy()
         for particle_data in special_slice.data.values():
             particle_data.query('isPrimarySignal == 1', inplace=True)
-        savefig_prefix='pidProbability Approach (primary Signal): '
+        savefig_prefix = 'pidProbability Approach (primary Signal): '
     else:
         special_slice = data
-        savefig_prefix='pidProbability Approach: '
+        savefig_prefix = 'pidProbability Approach: '
 
     c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detectors_of_interest[0] + '__bc' for p in ParticleFrame.particles}
     special_slice.plot_stats_by_particle(special_slice.stats(cutting_columns=c), particles_of_interest=particles_of_interest, savefig_prefix=savefig_prefix)
