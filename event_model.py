@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# PYTHON_ARGCOMPLETE_OK
+# Replace spaces by underscores to enable argcomplete "PYTHON ARGCOMPLETE OK"
 
 from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to importing argparse
