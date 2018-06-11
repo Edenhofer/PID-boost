@@ -727,4 +727,5 @@ class ParticleFrame(dict):
         plt.legend()
         sorted_particles = np.array(particles_of_interest)[sorted_range]
         plt.xticks(range(len(particles_of_interest)), [self.particle_base_formats[p] for p in sorted_particles])
+        plt.ylabel('Abundance')
         self.pyplot_sanitize_show('Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[norm]), **kwargs)
