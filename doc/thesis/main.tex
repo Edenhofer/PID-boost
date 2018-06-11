@@ -20,7 +20,7 @@
 
     \usepackage[tracking=true]{microtype} % required to change character spacing
 
-    \usepackage{listings}       % insert programming code
+    \usepackage{listings}       % Insert programming code
 	\usepackage{graphicx}		% Required to insert images
 	\usepackage[space]{grffile} % Insert images baring a filename which contains spaces
 	\usepackage{float}			% Forcefully set the location of an object
@@ -44,16 +44,16 @@
     \makeatletter
     \makeatother
 
-    \pagestyle{headings}                 % Seitenstil
-    \oddsidemargin0.8cm                  % linker Rand fuer ungerade Seiten bei \twoside
-    \evensidemargin0.2cm                 % linker Rand fuer gerade Seiten (nur bei \twoside)
-    \topmargin0.5cm                      % oberer Rand bis zur Oberseite Kopfzeile
-    \textheight21cm                      % Texth"ohe auf einer Seite
-    \textwidth15cm                       % Textbreite auf einer Seite
-    \renewcommand{\topfraction}{0.75}    % Anteil der Gleitk"asten am Seitenanfang
-    \renewcommand{\bottomfraction}{0.75} % Anteil der Gleitk"asten am Seitenende
-    \parskip1ex  plus1ex minus0.5ex      % Abstand zwischen Abs"atzen
-    \parindent0em                        % Einr"uckung der ersten Zeile eines Absatzes
+    \pagestyle{headings}
+    \oddsidemargin0.8cm                  % Left spacing for pages with an uneven number only relevant for \twoside
+    \evensidemargin0.2cm                 % eft spacing for pages with an even number only relevant for \twoside
+    \topmargin0.5cm                      % Top spacing
+    \textheight21cm                      % Height of the text on a page
+    \textwidth15cm                       % Width of the text on a page
+    \renewcommand{\topfraction}{0.75}    % Fraction of flowing boxes at the beginning of a page
+    \renewcommand{\bottomfraction}{0.75} % Fraction of flowing boxes at the end of a page
+    \parskip1ex  plus1ex minus0.5ex      % Spacing between paragraphs
+    \parindent0em                        % Indentation of the first line of a paragraph
     \newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}
 
     \title{Optimization of Particle Identification}
