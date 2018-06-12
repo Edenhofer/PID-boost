@@ -18,6 +18,7 @@ __*_temp.tex
 
 # Ignore final PDF files
 *.pdf
+!res/*.pdf
 
 # Skip generated pictures
 res/*/*.png
