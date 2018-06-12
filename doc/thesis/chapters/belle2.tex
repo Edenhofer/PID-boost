@@ -81,4 +81,26 @@ The radiation due to this effect is mainly measured at the ECL.
 \subsection{Particle identification}
 \label{subsec:particle_identification}
 
-One of the most essential measurement for classifying particles below $1 \mathrm{~GeV/c}$ is the $\mathrm{d}E/\mathrm{d}x$-measurement from the silicon detectors and the CDC.
+At Belle~\RN{2} the detector system differentiates between six long living particle species: $\{K, \pi, e, \mu, p, deuteron\}$.
+
+For momentums below $1 \mathrm{~GeV/c}$ the $\mathrm{d}E/\mathrm{d}x$-measurement from the silicon detectors and the CDC are the most useful. Figure~\ref{fig:de_dx_for_SVD} showcases this for one of the tracking detectors. Distinct patterns may be observed for various particle species below $1 \mathrm{~GeV/c}$ in the figure. The fact that the mean is truncated simply denotes the fact that in order to reduce outliers the lowest $5\%$ and highest $25\%$ of each track were not used in the estimation.
+New tracks can now be assigned a likelihood of belonging to a particle species by putting forward a hypothesis for each such species.
+
+ARICH, TOP and CDC furthermore extend the identification and are able to differentiate between $\{K, \pi, p, deuteron\}$ quite nicely but also contribute to $\{e, \mu\}$. They as well provide likelihoods for each signal given a particle hypothesis.
+
+Further out the ECL detector provides good separation of electrons to other charged particles above $1 \mathrm{~GeV/c}$. It is able to do so via the measured $E/p$ shower using different particle hypothesis for estimating the goodness of their fit. An exemplary $E/p$ curve is show in figure~\ref{fig:e_p_for_ECL}. It emphasizes the differences seen for electrons to other particle species but also shows that no clear separation of pions and muons is possible.
+
+The KLM detector provides good separation between muons and non-muons and yield such separation in the form of different likelihoods as well.
+
+\begin{figure}[ht]
+    \centering
+    \subcaptionbox{Truncated $\mathrm{d}E/\mathrm{d}x$ means as a function of momentum in the SVD with the color encoding the number of hits. Taken from~\cite{Belle2Collaboration:B2TiP}.\label{fig:de_dx_for_SVD}}{
+        \includegraphics[width=0.43\textwidth,height=\textheight,keepaspectratio]{{{../res/dE dx for SVD detector by particles}}}
+    }
+    \hspace{2em}
+    \subcaptionbox{$E/p$ distribution for different particle species. Taken from~\cite{Belle2Collaboration:B2TiP}.\label{fig:e_p_for_ECL}}{
+        \includegraphics[width=0.43\textwidth,height=\textheight,keepaspectratio]{{{../res/E p for ECL detector by particles}}}
+    }
+    \caption{Separation between different of particle species for various signals.}
+\end{figure}
+
