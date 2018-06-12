@@ -5,7 +5,7 @@
 \label{sec:experimental}
 
 The Belle~\RN{2} experiment is performed at the SuperKEKB accelerator located in Tsukuba, Ibaraki Prefecture, Japan. It is designed to study the B meson and the violation of the CP symmetry.
-At the experiment asymmetric electron, positron beams are collided with a center of mass energy of $\sqrt{S} = 10.58 \mathrm{~GeV}$, just right to create the $\Upsilon (4S)$ meson. The two beams, one at $4 \mathrm{~GEV}$, the other at $7 \mathrm{~GEV}$ are focussed to a cross section of $~10 \mathrm{\mu m} \times 60 \mathrm{nm}$. The additional boost in one direction is used to get a time measurement of the B-lifetime.
+At the experiment asymmetric electron-, positron-beams are collided with a center of mass energy of $\sqrt{S} = 10.58 \mathrm{~GeV}$, just right to create the $\Upsilon (4S)$ meson. The two beams, positrons at $4 \mathrm{~GEV}$, electrons at $7 \mathrm{~GEV}$ are focussed to a cross section of $~10 \mathrm{\mu m} \times 60 \mathrm{nm}$. The additional boost in one direction is used to get a time measurement of the B-lifetime. %TODO
 
 In comparison to the predecessor experiment Belle the integrated luminosity will be $50$ times higher at $50~{ab}^{-1}$ and the instantaneous luminosity has been increased $40$-fold to $8 \cdot 10^{35} \mathrm{cm}^{-2} \mathrm{s}^{-1}$.
 
@@ -57,7 +57,28 @@ The main purpose of the ECL detector is to measure the position and energy of ph
 
 Last but not least the KLM detector measures the penetration ability of particles in order to differentiate between muons and kaons. When flying through the detector the particles passes through plates serving as electrodes separated by a layers of gas in between them. Created ionized particles are accelerated in this field and subsequently produce a spark picked up by the detector via measuring the voltage.
 
-\section{Particle identification}
-\label{sec:particle_identification}
+\section{Interaction with matter}
+\label{sec:interaction_with_matter}
 
-Identifying particles reliably and autonomously is one of the main requirement.
+\subsection{Charged particle interaction}
+\label{subsec:interaction_with_matter}
+
+Particles with a non-zero charge mainly interact with the medium electromagnetically. An interaction occurs either by scattering in the electric field of the atom, polarization of the medium, ionization, excitation or scattering at the atom itself. Positrons and electrons additionally have the ability to annihilate.
+
+The polarization of the medium causes Cherenkov radiation to be emitted. At velocities below the speed of light in the medium ($v < c/n$) nothing of interest may be observed. However at $v > c/n$ the Cherenkov effect must be taken into account. The effect occurs due to the information about the charge of the traversing particle not or reaching the medium in front of it soon enough. Hence medium behind the particle being already already aligned with the electric field while the medium in front not being it. This results in an electromagnetic wave. The angle between the normal vector of the wave and the track of the particle is given by
+\begin{equation*}
+    \cos(\Theta_{c}) = \frac{1}{v/c \cdot n} = \frac{1}{\beta \cdot n}
+    \mathrm{.}
+\end{equation*}
+It is the effect on which the TOP and ARICH detectors build upon.
+
+Particles with a low-energy traveling through a medium interact predominantly with atomic electrons. The average energy loss of a particle is described by the Bethe-Bloch formula. For velocities of up to about $90\%$ of the speed of light it is given by $<\mathrm{d}E/\mathrm{d}x> \propto 1/{\beta^2}$ and for $\beta \gamma \approx 4$ it is minimal. As such it describes the momentum dependency of the average energy loss. For different particle species it gets shifted horizontally. However the actual $mathrm{d}E/\mathrm{d}x$ distribution is modelled by the Landau distribution. Note that the assumptions needed for this ansatz are not met for electrons as both particles of the interaction belong to the same group and their mass is too similar.
+A $\mathrm{d}E/\mathrm{d}x$-measurement is performed at the silicon detectors and the CDC.
+
+For high-energy particles the loss in energy by interacting with the electromagnetic field of the nucleus is the dominant part. Energy is radiated away via so called Bremsstrahlung. The left over energy decreases exponentially with the distance traversed and is inversely proportional to the square root of the mass. Therefore it is most important for particles with a low mass, e.g. electrons.
+The radiation due to this effect is mainly measured at the ECL.
+
+\subsection{Particle identification}
+\label{subsec:particle_identification}
+
+One of the most essential measurement for classifying particles below $1 \mathrm{~GeV/c}$ is the $\mathrm{d}E/\mathrm{d}x$-measurement from the silicon detectors and the CDC.
