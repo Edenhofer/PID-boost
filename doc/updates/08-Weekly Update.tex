@@ -1,0 +1,268 @@
+\documentclass[aspectratio=169]{beamer}
+	\usepackage[utf8]{inputenc}		% required for umlauts
+	\usepackage[english]{babel}		% language
+	%\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage{libertine}			% enable this on Windows to allow for microtype
+	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
+
+	\usepackage{mathtools}		% required for formulas
+
+	\usepackage{caption}		% Customize caption aesthetics
+	\usepackage{tcolorbox}		% fancy colored boxes
+	\usepackage{xcolor}			% Highlighting
+	\usepackage{soul}
+
+	\usepackage{graphicx}		% required to insert images
+	\usepackage{subcaption}		% enable sub-figure
+	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
+	\usepackage[tracking=true]{microtype} % required to change character spacing
+
+	\usepackage[style=numeric,backend=biber]{biblatex}
+	\usepackage{hyperref}		% insert clickable references
+
+	\usepackage{datetime}		% flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+	\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+
+	\usepackage{geometry}
+	\usepackage{scrextend}		% allow arbitrary indentation
+
+	\usepackage{color}
+
+	\setbeamercolor{title}{fg=orange}
+	\setbeamertemplate{title}{
+		\color{orange}
+		\textbf{\inserttitle}
+	}
+	\setbeamercolor{tableofcontents}{fg=orange}
+	\setbeamercolor{section in toc}{fg=black}
+	\setbeamercolor{subsection in toc}{fg=black}
+	\setbeamertemplate{frametitle}{
+		%\vspace{0.5em}
+		\color{orange}
+		\begin{center}
+			\textbf{\insertframetitle} \\
+			{\small \insertframesubtitle}
+		\end{center}
+	}
+	\setbeamertemplate{footline}[text line]{
+		\parbox{\linewidth}{
+			\color{gray}
+			\vspace*{-1em}
+			PSRC 2018
+			\hfill
+			Gordian (\href{mailto:gordian.edenhofer@gmail.com}{gordian.edenhofer@gmail.com})
+			\hfill
+			\insertpagenumber
+		}
+	}
+	\setbeamertemplate{navigation symbols}{}
+	\setbeamertemplate{itemize item}{\color{black}$\bullet$}
+	\setbeamertemplate{itemize subitem}{\color{black}$\circ$}
+	\setbeamercolor{block title}{fg=black}
+	\captionsetup{font=scriptsize,labelfont={bf,scriptsize}}
+
+	\title{Seventh Weekly Update on `Optimization~of~Particle~Identification'}
+	\subtitle{Neyman Pearson by detector, pt and cosTheta; Abundance comparisons; Neural Network for different optimizers and various parameters}
+	\author[Edenhofer]{\href{mailto:gordian.edenhofer@gmail.com}{Gordian Edenhofer}}
+	\institute[LMU]{
+		Working Group of Prof.~Dr.~Kuhr \\
+		Faculty of Physics \\
+		Excellence Cluster Universe
+	}
+	\date[BA Thesis 2018]{\today}
+	\subject{Particle Physics}
+
+
+\begin{document}
+\section{Git log}
+\begin{frame}
+	\frametitle{\insertsection}
+
+	\begin{itemize}
+		\item Neyman-Pearson with new CDC model
+		\item Neural network
+		\begin{itemize}
+			\item{By optimizer}
+			\item{By number of principal components}
+		\end{itemize}
+		\item Writing the thesis
+	\end{itemize}
+\end{frame}
+
+\section{Neyman-Pearson}
+\subsection{Anomalies}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\subcaptionbox{Unset}{
+			\includegraphics[width=0.45\textwidth,height=\textheight,keepaspectratio]{{{../res/unset/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector}}}
+		}
+		\subcaptionbox{Set}{
+			\includegraphics[width=0.45\textwidth,height=\textheight,keepaspectratio]{{{../res/set/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector}}}
+		}
+		\caption{Relative $p$ Abundance in Likelihood Ratio Bins for the `CDC' detector for different detector calibrations.}
+	\end{figure}
+\end{frame}
+
+\section{Neural network}
+\subsection{By optimizer}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\subcaptionbox{RMSprop}{
+			\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents70 fair nLayers8 Optimizerrmsprop LearningRateNone nEpochs20 BatchSize256}}}
+		}
+		\subcaptionbox{Adadelta}{
+			\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents70 fair nLayers8 Optimizeradadelta LearningRateNone nEpochs15 BatchSize256}}}
+		}
+		\subcaptionbox{Adamax}{
+			\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents70 fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+		}
+		\caption{Accuracy by optimizer for a PCA feature selection and using fair particle sampling.}
+	\end{figure}
+\end{frame}
+
+\subsection{By number of principal components for Adadelta}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\subcaptionbox{50}{
+			\includegraphics[width=0.45\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents50 fair nLayers8 Optimizeradadelta LearningRateNone nEpochs15 BatchSize256}}}
+		}
+		\subcaptionbox{70}{
+			\includegraphics[width=0.45\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents70 fair nLayers8 Optimizeradadelta LearningRateNone nEpochs15 BatchSize256}}}
+		}
+		\caption{Accuracy of the Adadelta optimizer by number of principal components and using fair particle sampling.}
+	\end{figure}
+\end{frame}
+
+\subsection{Final Identification results}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut by pt & cos(Theta), via NN}}}
+		\caption{Heatmap of the $\epsilon_{PID}$ matrix for an exclusive Cut via multivariate Bayes and via a neural network.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{{{../res/charged 01/Diff Abundances: Particle Abundances in the K+-Data via PID, via NN}}}
+		\caption{Assumed particle abundances via multivariate Bayes and via a neural network.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\subcaptionbox{Kaon}{
+			\includegraphics[width=0.47\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Diff Statistics: K Identification (without Ratios) TPR over PPV by pt & cos(Theta), via NN}}}
+		}
+		\subcaptionbox{Pion}{
+			\includegraphics[width=0.47\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Diff Statistics: pi Identification (without Ratios) TPR over PPV by pt & cos(Theta), via NN}}}
+		}
+		\caption{TPR over PPV for various methods of identifying particles.}
+	\end{figure}
+\end{frame}
+
+\section{Appendix}
+\subsection{Anomalies in bins for generic mixed decay}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\subcaptionbox{Charged}{
+			\includegraphics[width=0.45\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector for equal size pt bins}}}
+		}
+		\subcaptionbox{Mixed}{
+			\includegraphics[width=0.45\textwidth,height=\textheight,keepaspectratio]{{{../res/mixed 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector for equal size pt bins}}}
+		}
+		\caption{Relative $p$ Abundance in Likelihood Ratio Bins for the `ALL' detector using \textit{equal~height} $p_t$ bins.}
+	\end{figure}
+\end{frame}
+
+\subsection{Anomalies by detector}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\subcaptionbox{SVD}{
+			\includegraphics[width=\textwidth,height=0.22\textheight,keepaspectratio]{{{../res/set/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for SVD detector}}}
+		}
+		\subcaptionbox{CDC}{
+			\includegraphics[width=\textwidth,height=0.22\textheight,keepaspectratio]{{{../res/set/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector}}}
+		}
+		\subcaptionbox{TOP}{
+			\includegraphics[width=\textwidth,height=0.22\textheight,keepaspectratio]{{{../res/set/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for TOP detector}}}
+		}
+
+		\subcaptionbox{ARICH}{
+			\includegraphics[width=\textwidth,height=0.22\textheight,keepaspectratio]{{{../res/set/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for ARICH detector}}}
+		}
+		\subcaptionbox{ECL}{
+			\includegraphics[width=\textwidth,height=0.22\textheight,keepaspectratio]{{{../res/set/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for ECL detector}}}
+		}
+		\subcaptionbox{KLM}{
+			\includegraphics[width=\textwidth,height=0.22\textheight,keepaspectratio]{{{../res/set/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for KLM detector}}}
+		}
+		\caption{Relative $p$ abundance in likelihood ratio bins for various detectors.}
+	\end{figure}
+\end{frame}
+
+\subsection{By using `All' approach }
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.55\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all fair nLayers7 Optimizerrmsprop LearningRateNone nEpochs15 BatchSize256}}}
+		\caption{Accuracy of the RMSprop optimizer using all features and fair particle sampling (with 7 layers).}
+	\end{figure}
+\end{frame}
+
+\subsection{By number of principal components for Adamax}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\subcaptionbox{50}{
+			\includegraphics[width=0.45\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents50 fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+		}
+		\subcaptionbox{70}{
+			\includegraphics[width=0.45\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents70 fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+		}
+		\caption{Accuracy of the Adamax optimizer by number of principal components and using fair particle sampling.}
+	\end{figure}
+\end{frame}
+
+\end{document}
