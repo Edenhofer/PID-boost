@@ -9,30 +9,30 @@ Thankfully both of those hypothesis are given in the real world: The detector ca
 This is not surprising in itself as the branching fractions are not equally distributed. Dictated by the laws of physics one particle species might be produced more frequently.
 
 \begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
-    \caption{True particle abundance in the charged MC9 simulated data. \textit{NaN} stands for an invalid translation\protect\footnotemark from the particles' PDG code to an actual particle.}
-    \label{fig:true_particle_abundance}
+	\centering
+	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
+	\caption{True particle abundance in the charged MC9 simulated data. \textit{NaN} stands for an invalid translation\protect\footnotemark from the particles' PDG code to an actual particle.}
+	\label{fig:true_particle_abundance}
 \end{figure}
 \footnotetext{The error occurs due to the PDG code in the ROOT file being saved as \lstinline|float32| but some particle's code exceed the memory limit of $32$-bits. Notably, this effects the deuteron as well as its anti-particles.}
 
 The absolute particle abundance of a sample taken from the Monte Carlo simulation of the charged decay of the $B$-mesons can be seen in \autoref{fig:true_particle_abundance}. In this example the bias towards pions and kaons can be clearly observed.
 
 \begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Diff Statistics: K Identification via PID, via flat Bayes}}}
-    \caption{Comparisons of PPV and TPR for the Bayesian and standard PID approach for identifying kaons. The upper graph shows both rates of each approach separately using different colors, while the lower visualizes the ratio between the PPV's respectively the TPR's.}
-    \label{fig:diff_stats_K_identification_via_pid_via_flat_bayes}
+	\centering
+	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Diff Statistics: K Identification via PID, via flat Bayes}}}
+	\caption{Comparisons of PPV and TPR for the Bayesian and standard PID approach for identifying kaons. The upper graph shows both rates of each approach separately using different colors, while the lower visualizes the ratio between the PPV's respectively the TPR's.}
+	\label{fig:diff_stats_K_identification_via_pid_via_flat_bayes}
 \end{figure}
 
 \autoref{fig:diff_stats_K_identification_via_pid_via_flat_bayes} shows a comparison of the standard PID approach to the discussed Bayesian one. Using the Bayesian approach for identifying particles yields a very high positive predicted values even for low false positive rates as the introduced bias in the particle classification can utilize the unbalanced abundances. Furthermore the true positive rate of the Bayesian approach has a much steeper increase in comparison to the PID's one. However it levels of quicker, indicating that it fails to identify a few particles even at a high false positive rate.
 The described effect can be seen for every stable particle with an ID and is not limited to the kaon. However it serves as a good example as it provides sufficient statistics for a throughout analysis.
 
 \begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, via simple Bayes}}}
-    \caption{Comparisons of the row-wised normed confusion matrix for the Bayesian and standard PID approach.}
-    \label{fig:diff_heatmap_via_pid_via_flat_bayes}
+	\centering
+	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, via simple Bayes}}}
+	\caption{Comparisons of the row-wised normed confusion matrix for the Bayesian and standard PID approach.}
+	\label{fig:diff_heatmap_via_pid_via_flat_bayes}
 \end{figure}
 
 The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However in general the Bayesian approach is less prone to confusing particle with one another as seen in \autoref{fig:diff_heatmap_via_pid_via_flat_bayes}.

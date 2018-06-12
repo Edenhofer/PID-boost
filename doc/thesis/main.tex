@@ -1,30 +1,30 @@
 \documentclass[english,12pt,twoside,a4paper]{report}
-    \usepackage[ngerman,english]{babel}		% Language specification
-    \usepackage{varioref}       % Better references but possibly unstable
-    \usepackage[utf8]{inputenc}
-    \usepackage[T1]{fontenc}    % Required to output umlauts in a PDF
-    \usepackage{pslatex}
-    \usepackage{amsmath}
-    \usepackage{multirow}
-    \usepackage{ellipsis}
-    \usepackage{textcomp}
-    \usepackage{longtable}
-    \usepackage{rotating}
-    \usepackage[section]{placeins}
+	\usepackage[ngerman,english]{babel}		% Language specification
+	\usepackage{varioref}		% Better references but possibly unstable
+	\usepackage[utf8]{inputenc}
+	\usepackage[T1]{fontenc}		% Required to output umlauts in a PDF
+	\usepackage{pslatex}
+	\usepackage{amsmath}
+	\usepackage{multirow}
+	\usepackage{ellipsis}
+	\usepackage{textcomp}
+	\usepackage{longtable}
+	\usepackage{rotating}
+	\usepackage[section]{placeins}
 
-    \usepackage{caption}		% Customize caption aesthetics
-    \usepackage{subcaption}
+	\usepackage{caption}		% Customize caption aesthetics
+	\usepackage{subcaption}
 
-	\usepackage{xcolor}			% Highlighting
+	\usepackage{xcolor}		% Highlighting
 	\usepackage{tcolorbox}		% Fancy colored boxes
-    \usepackage{soul}
+	\usepackage{soul}
 
-    \usepackage[tracking=true]{microtype} % required to change character spacing
+	\usepackage[tracking=true]{microtype} % required to change character spacing
 
-    \usepackage{listings}       % Insert programming code
+	\usepackage{listings}		% Insert programming code
 	\usepackage{graphicx}		% Required to insert images
-	\usepackage[space]{grffile} % Insert images baring a filename which contains spaces
-	\usepackage{float}			% Forcefully set the location of an object
+	\usepackage[space]{grffile}		% Insert images baring a filename which contains spaces
+	\usepackage{float}		% Forcefully set the location of an object
 
 	\usepackage[style=numeric,backend=biber]{biblatex}
 	\usepackage[bookmarks]{hyperref}	% Clickable references
@@ -34,31 +34,31 @@
 	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
 	\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
 
-    \usepackage{geometry}
+	\usepackage{geometry}
 	\usepackage{scrextend}		% Arbitrary indentation
 
-    \usepackage{color}
+	\usepackage{color}
 
 	\addbibresource{../literature.bib}
 
-    \makeatletter
-    \makeatother
+	\makeatletter
+	\makeatother
 
-    \pagestyle{headings}
-    \oddsidemargin0.8cm                  % Left spacing for pages with an uneven number only relevant for \twoside
-    \evensidemargin0.2cm                 % Left spacing for pages with an even number only relevant for \twoside
-    \topmargin0.5cm                      % Top spacing
-    \textheight21cm                      % Height of the text on a page
-    \textwidth15cm                       % Width of the text on a page
-    \renewcommand{\topfraction}{0.75}    % Fraction of flowing boxes at the beginning of a page
-    \renewcommand{\bottomfraction}{0.75} % Fraction of flowing boxes at the end of a page
-    \parskip1ex  plus1ex minus0.5ex      % Spacing between paragraphs
-    \parindent0em                        % Indentation of the first line of a paragraph
-    \newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}
+	\pagestyle{headings}
+	\oddsidemargin0.8cm		% Left spacing for pages with an uneven number only relevant for \twoside
+	\evensidemargin0.2cm		% Left spacing for pages with an even number only relevant for \twoside
+	\topmargin0.5cm		% Top spacing
+	\textheight21cm		% Height of the text on a page
+	\textwidth15cm		% Width of the text on a page
+	\renewcommand{\topfraction}{0.75}		% Fraction of flowing boxes at the beginning of a page
+	\renewcommand{\bottomfraction}{0.75}		% Fraction of flowing boxes at the end of a page
+	\parskip1ex  plus1ex minus0.5ex		% Spacing between paragraphs
+	\parindent0em		% Indentation of the first line of a paragraph
+	\newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}
 
-    \title{Optimization of Particle Identification}
-    \author{\href{mailto:gordian.edenhofer@gmail.com}{Gordian Edenhofer}}
-    \date{29. June 2018}
+	\title{Optimization of Particle Identification}
+	\author{\href{mailto:gordian.edenhofer@gmail.com}{Gordian Edenhofer}}
+	\date{29. June 2018}
 
 \begin{document}
 
@@ -88,8 +88,8 @@
 \include{chapters/bayesian_approach}
 
 \begin{appendix}
-    \include{app1}
-    \printbibliography[heading=bibintoc]
+	\include{app1}
+	\printbibliography[heading=bibintoc]
 \end{appendix}
 \pagestyle{empty}
 \cleardoublepage

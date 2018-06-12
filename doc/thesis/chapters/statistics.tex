@@ -9,43 +9,43 @@ In the following explanatory paragraphs I will assume that we are about to ident
 
 The most important classification functions are:
 \begin{itemize}
-    \item \textbf{T}rue \textbf{P}ositive \textbf{R}ate (\textbf{TPR}): \textit{Proportion of accepted elements which are correct relative to all positives}
+	\item \textbf{T}rue \textbf{P}ositive \textbf{R}ate (\textbf{TPR}): \textit{Proportion of accepted elements which are correct relative to all positives}
 
-    \nobreak
-    Hence the ratio of identified kaons which actually were kaons in proportion to the number of kaons in the data.
+	\nobreak
+	Hence the ratio of identified kaons which actually were kaons in proportion to the number of kaons in the data.
 
-    \item \textbf{T}rue \textbf{N}egative \textbf{R}ate or Specificity (\textbf{TNR}): \textit{Proportion of rejected elements which are incorrect relative to all negatives}
+	\item \textbf{T}rue \textbf{N}egative \textbf{R}ate or Specificity (\textbf{TNR}): \textit{Proportion of rejected elements which are incorrect relative to all negatives}
 
-    \nobreak
-    In our example this would translate to the ratio of non-kaon particles being identified as non-kaons in proportion to the number of all non-kaon particles.
+	\nobreak
+	In our example this would translate to the ratio of non-kaon particles being identified as non-kaons in proportion to the number of all non-kaon particles.
 
-    \item \textbf{F}alse \textbf{P}ositive \textbf{R}ate (\textbf{FPR}): \textit{Proportion of accepted elements which are incorrect relative to all negatives}
+	\item \textbf{F}alse \textbf{P}ositive \textbf{R}ate (\textbf{FPR}): \textit{Proportion of accepted elements which are incorrect relative to all negatives}
 
-    \nobreak
-    This would translate to the fraction of non-kaon particles identified as kaons over the number of all non-kaons.
+	\nobreak
+	This would translate to the fraction of non-kaon particles identified as kaons over the number of all non-kaons.
 
-    \item \textbf{F}alse \textbf{N}egative \textbf{R}ate (\textbf{FNR}): \textit{Proportion of rejected elements which are correct relative to all positives}
+	\item \textbf{F}alse \textbf{N}egative \textbf{R}ate (\textbf{FNR}): \textit{Proportion of rejected elements which are correct relative to all positives}
 
-    \nobreak
-    Using our kaon sample once more; this would represent the fraction of kaons classified as being non-kaons over the number of all non-kaons.
+	\nobreak
+	Using our kaon sample once more; this would represent the fraction of kaons classified as being non-kaons over the number of all non-kaons.
 
-    \item \textbf{P}ositive \textbf{P}redicted \textbf{V}alue (\textbf{PPV}): \textit{Proportion of accepted elements which are correct relative to all accepted}
+	\item \textbf{P}ositive \textbf{P}redicted \textbf{V}alue (\textbf{PPV}): \textit{Proportion of accepted elements which are correct relative to all accepted}
 
-    \nobreak
-    Using our kaon sample one last time; this would represent the fraction of kaons classified as being as kaons over the number of all tracks classified as kaons but not necessarily being one.
+	\nobreak
+	Using our kaon sample one last time; this would represent the fraction of kaons classified as being as kaons over the number of all tracks classified as kaons but not necessarily being one.
 
 \end{itemize}
 
 In abstract terms; the two prefixes used above may be summarized as seen in \autoref{tab:classification_guidelines}. Bear in mind that `negative' and `positive' if used separately denote the presence of the desired feature and therefore does not fit the definition given in the table in this case.
 
 \begin{table}[ht]
-    \centering
-    \begin{tabular}{l|ll}
-        Veracity & True = correct & False = incorrect \\
-        Identification & Positive = accepted & Negative = rejected
-    \end{tabular}
-    \caption{Guidelines for understanding the meaning of a classification function.}
-    \label{tab:classification_guidelines}
+	\centering
+	\begin{tabular}{l|ll}
+		Veracity & True = correct & False = incorrect \\
+		Identification & Positive = accepted & Negative = rejected
+	\end{tabular}
+	\caption{Guidelines for understanding the meaning of a classification function.}
+	\label{tab:classification_guidelines}
 \end{table}
 
 \section{Receiver operating characteristic}
@@ -57,10 +57,10 @@ On a set of data with two equally likely yields a straight diagonal line connect
 Multiple methods can therefore be compared by assessing how steep each methods TPR is rising relative to the FPR. The \autoref{fig:sample_roc_curve} visually underlines the above described relations.
 
 \begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/Sample Receiver Operating Characteristic (ROC) curve}}}
-    \caption{Sample ROC curve for a binary classification problem with each outcome being equally likely.}
-    \label{fig:sample_roc_curve}
+	\centering
+	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/Sample Receiver Operating Characteristic (ROC) curve}}}
+	\caption{Sample ROC curve for a binary classification problem with each outcome being equally likely.}
+	\label{fig:sample_roc_curve}
 \end{figure}
 
 \section{Identification efficiencies}
@@ -74,18 +74,18 @@ The definition generalizes to non normed matrices, e.g. resulting from non-exclu
 The values of the matrix are given by the fraction of particles $i$ classified as $j$ over the true abundance of particle $i$. As formula its values are
 
 \begin{equation}
-    \epsilon_{i j} = \frac{N_{i \text{ classified as } j}}{A_{i \text{ true}}}.
+	\epsilon_{i j} = \frac{N_{i \text{ classified as } j}}{A_{i \text{ true}}}.
 \end{equation}
 
 For our six particle species with ID the matrix has the following shape:
 
 \begin{equation}
-    \begin{pmatrix}
-        \epsilon_{K K} & \epsilon_{K \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{K d} \\
-        \epsilon_{\pi K} & \epsilon_{\pi \pi} & \epsilon_{\pi e} & \epsilon_{\pi \mu} & \epsilon_{\pi p} & \epsilon_{\pi d} \\
-        \epsilon_{e K} & \epsilon_{e \pi} & \epsilon_{e e} & \epsilon_{e \mu} & \epsilon_{e p} & \epsilon_{e d} \\
-        \epsilon_{\mu K} & \epsilon_{\mu \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{\mu d} \\
-        \epsilon_{p K} & \epsilon_{p \pi} & \epsilon_{p e} & \epsilon_{p \mu} & \epsilon_{p p} & \epsilon_{p d} \\
-        \epsilon_{d K} & \epsilon_{d \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{d d} \\
-    \end{pmatrix}.
+	\begin{pmatrix}
+		\epsilon_{K K} & \epsilon_{K \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{K d} \\
+		\epsilon_{\pi K} & \epsilon_{\pi \pi} & \epsilon_{\pi e} & \epsilon_{\pi \mu} & \epsilon_{\pi p} & \epsilon_{\pi d} \\
+		\epsilon_{e K} & \epsilon_{e \pi} & \epsilon_{e e} & \epsilon_{e \mu} & \epsilon_{e p} & \epsilon_{e d} \\
+		\epsilon_{\mu K} & \epsilon_{\mu \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{\mu d} \\
+		\epsilon_{p K} & \epsilon_{p \pi} & \epsilon_{p e} & \epsilon_{p \mu} & \epsilon_{p p} & \epsilon_{p d} \\
+		\epsilon_{d K} & \epsilon_{d \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{d d} \\
+	\end{pmatrix}.
 \end{equation}
