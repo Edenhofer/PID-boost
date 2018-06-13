@@ -90,11 +90,22 @@ For our six particle species with ID the matrix has the following shape:
 	\end{pmatrix}.
 \end{equation}
 
-\section{Likelihood ratio}
-\label{sec:likelihood_ratios}
+\section{Likelihood}
+\label{sec:likelihood}
 
-\subsection{pidProbability variable}
-\label{subsec:likelihood_ratios_pidProbability_variable}
+\subsection{Likelihood ratio}
+\label{subsec:likelihood_ratios}
+
+The ratio of likelihoods is commonly used for comparisons of the goodness of two models. Consider two alternative models, one parameterised by the hypothesis $H_0$, the other by $H_1$. Each yield a likelihood of event $\pmb{x}$ occurring given their hypothesis is true. Their ratio
+\begin{equation*}
+	\frac{\mathcal{L}(\pmb{x}|H_0)}{\mathcal{L}(\pmb{x}|H_1)}
+\end{equation*} denotes how many times more likely the event $\pmb{x}$ is under hypothesis $H_0$ relative to $H_1$.
+
+However the event $\pmb{x}$ must not necessarily take the form a simple one dimensional value. It may very well be a composition of e.g. in our case multiple detectors responses. Nevertheless if we assume all constituents $x_i$ of $\pmb{x}$ are independent of each other, we may simple construct $\mathcal{L}(\pmb{x}|H_0)$ by multiplying the separate likelihoods of each $x_i$ given that $H_0$ is true:
+\begin{equation*}
+	\mathcal{L}(\pmb{x}|H_0) = \prod \limits_{i} \ell_i(x_i|H_0).
+\end{equation*}
+In out case $\mathcal{L}(\pmb{x}|H_0)$ might be seen as the likelihood of measuring a signal given a particle hypothesis is true. It value would be constructed by multiplying the likelihoods of $\ell(x_i|H_0)$ for each detector $i$.
 
 \subsection{Neyman-Pearson}
 \label{subsec:likelihood_ratios_neyman_pearson}
