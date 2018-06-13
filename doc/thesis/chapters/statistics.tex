@@ -114,3 +114,18 @@ When separating two models which have no unknown parameters the Neyman-Pearson l
 
 \section{Neural network}
 \label{sec:neural_network}
+
+A neural network or more precisely an artificial neural network is an algorithm inspired by the central nerve system of biological beings. However instead of electrical signals being passed on from neuron to neuron with complex biological process involved in summing up incoming systems, an artificial neural network passes on numbers with functions representing neurons.
+
+Despite this simplistic design a neural network can get complicated fast. The most simplest approach would be to just stacking multiple layers of neurons (\textit{nodes}) on top of each other and connecting the outputs of the previous layer with those new nodes (feed-forward neural network). However a network can in theory be designed arbitrarily deep and provide a multitude of additional feedback loops (recurrent neural network) and further binning restrictions of node-inputs (convolutional neural network).
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/Design of an artificial neural network}}}
+	\caption{Design of an artificial neural network with one layer, $\pmb{x}$ as input, $z_i$ as activation function, $V$ und $w$ as weights and $f(\pmb{x})$ as prediction. Taken from~\cite{MachineLearning:NeuralNetworks}.}
+	\label{fig:sample_neural_network_design}
+\end{figure}
+
+A rather simple feed-forward network is depicted in \autoref{fig:sample_neural_network_design}. Each line between two bubbles represents a connection, meaning the output of the bubble at the bottom is passed to the bubble at the top. The function used in calculating the various values for $z_i$ is called sigmoid (see~\cite{MachineLearning:NeuralNetworks}) and has an S-like shape. In terms of biology it can be though of as a boundary which has to be overcome prior to a signal being passed on. The references in the following paragraph are in regards to this figure.
+
+Layers not representing the input or output are called hidden layers ({\color{blue}blue bubbles}). However the dimensions of an input ({\color{green}green bubbles}) are also referred to as features. The function of a node is called \textit{activation function} ($z_i$). The term \textit{learning} in the context of neural network refers to the process of adapting parameters or \textit{weights} ($V$ and $w$) of a nodes via a gradient which optimizes the desired function. The desired function is usually referred to as \textit{loss} and e.g. describes how many false classifications have been made. It is the job of the \textit{optimizer} to adapt the weights in a way which minimizes the function, a task usually done via propagating the error back through the network in a schema called \textit{back propagation}. The term \textit{training} refers to the process of applying the network to a set of data and adjusting the weights as necessary for each iteration. How many individual data points one of those iterations contains is described by the \textit{batch size}.
