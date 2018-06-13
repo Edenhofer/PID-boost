@@ -1,8 +1,23 @@
-\chapter{Bayesian approach}
-\label{chap:bayesian_approach}
+\chapter{Application}
+\label{chap:application}
 
-\section{Simple Bayesian approach}
-\label{sec:simple_bayes}
+\section{Inventory}
+\label{sec:inventory}
+
+\subsection{Legacy PID}
+\label{subsec:inventory_legacy_pid}
+
+\subsection{pidProbability}
+\label{subsec:inventory_pidProbability}
+
+\subsection{pidProbability goodness}
+\label{subsec:inventory_pidProbability_goodness}
+
+\section{Bayesian approach}
+\label{sec:bayesian_approach}
+
+\subsection{Simple Bayes}
+\label{subsec:bayesian_approach_simple_bayes}
 
 The goal of a Bayesian approach is to weight the particles' probability by their abundance in the sample. This process increases the likelihood of a particle being identified as belonging to a group with a higher abundance and decreases the likelihood of being identified as belonging to a group with a lower abundance. The approach depends on the detector yielding decay-agnostic results. Hence the detector shall be assumed to always output the likelihood of measuring the received signal given a specific particle hypothesis regardless of prior probabilities. Furthermore the approach assumes a bias towards one or a few particles in the sample since otherwise the a priori probabilities would be flat and therefore boil down to the same result.
 Thankfully both of those hypothesis are given in the real world: The detector can be assumed to behaves independently of the relative particle abundance and the measured data usually shows a clear predominance of one or a few particle species.
@@ -37,10 +52,13 @@ The described effect can be seen for every stable particle with an ID and is not
 
 The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However in general the Bayesian approach is less prone to confusing particle with one another as seen in \autoref{fig:diff_heatmap_via_pid_via_flat_bayes}.
 
-\section{Univariate Bayesian approach}
-\label{sec:univariate_bayes}
+\subsection{Univariate Bayes}
+\label{subsec:bayesian_approach_univariate_bayes}
 
 The univariate Bayesian approach adds an dependency to one detector variable to the previous simple Bayesian approach. Hence instead of having a probability which depends on only on the particle abundance and the signal, the univariate approach additionally varies the probability depending on e.g. the transverse momentum. The most sensible variables are among others are said transverse momentum $p_t$ and the angle between the track of the particle and the beampipe $\Theta$.
 
-\section{Multivariate Bayesian approach}
-\label{sec:multivariate_bayes}
+\subsection{Multivariate Bayes}
+\label{subsec:bayesian_approach_multivariate_bayes}
+
+\section{Neural network approach}
+\label{sec:neural_network_approach}
