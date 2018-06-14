@@ -688,11 +688,7 @@ class ParticleFrame(dict):
                 plt.ylabel('Rate Ratio')
                 plt.legend()
 
-                title = '%s Identification'%(self.particle_base_formats[p])
-            else:
-                title = '%s Identification (without Ratios)'%(self.particle_base_formats[p])
-
-            self.pyplot_sanitize_show(title, suptitle=True, **kwargs)
+            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), suptitle=True, **kwargs)
 
     def plot_diff_abundance(self, cutting_columns_approaches=[], title_suffixes=[], particles_of_interest=None, norm='K+', cut=0.5, **kwargs):
         particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
