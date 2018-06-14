@@ -514,21 +514,10 @@ class ParticleFrame(dict):
         else:
             plt.close()
 
-    def plot_stats_by_particle(self, stat, particles_of_interest=None, **kwargs):
-        particles_of_interest = self.particles if particles_of_interest is None else particles_of_interest
-
-        for p in particles_of_interest:
-            plt.figure()
-            plt.plot(stat[p]['fpr'], stat[p]['tpr'], label='ROC')
-            # Due to the fact that FPR + TNR = 1 the plot will simply show a straight line; Use for debugging only
-            # plt.plot(stat[p]['fpr'], stat[p]['tnr'], label='True Negative Rate')
-            plt.plot(stat[p]['fpr'], stat[p]['ppv'], label='PPV')
-            plt.xlabel('False Positive Rate')
-            plt.xlim(-0.05, 1.05)
-            plt.ylabel('Particle Rates')
-            plt.ylim(-0.05, 1.05)
-            plt.legend()
-            self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), **kwargs)
+    def plot_stats_by_particle(self, stat, savefig_suffix='', **kwargs):
+        self.plot_diff_stats(stats_approaches=[stat], title_suffixes=[''], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=[('tpr', 'ROC'), ('ppv', 'PPV')], ratios=False, **kwargs)
+        self.plot_diff_stats(stats_approaches=[stat], title_suffixes=[''], x_axis=('fpr', 'False Positive Rate'), y_multi_axis=[('ppv', 'Purity')], x_lim=(None, None), savefig_suffix=' PPV over FPR' + savefig_suffix, ratios=False, **kwargs)
+        self.plot_diff_stats(stats_approaches=[stat], title_suffixes=[''], x_axis=('tpr', 'Efficiency'), y_multi_axis=[('ppv', 'Purity')], x_lim=(None, None), savefig_suffix=' PPV over TPR' + savefig_suffix, ratios=False, **kwargs)
 
     def plot_epsilonPIDs(self, epsilonPIDs_approach, **kwargs):
         plt.figure()
@@ -655,7 +644,8 @@ class ParticleFrame(dict):
                 markers = ('o', '^') if len(approach[p][x_axis[0]]) == 1 else (None, None)
                 drawing = plt.plot(approach[p][x_axis[0]], approach[p][y_multi_axis[0][0]], marker=markers[0], label=y_multi_axis[0][1] + title_suffixes[n], color=next(colors))
                 for y_axis in y_multi_axis[1:]:
-                    plt.plot(approach[p][x_axis[0]], approach[p][y_axis[0]], marker=markers[1], label=y_axis[1] + title_suffixes[n], linestyle=':', color=drawing[0].get_color())
+                    related_color = next(colors) if len(stats_approaches) == 1 else drawing[0].get_color()
+                    plt.plot(approach[p][x_axis[0]], approach[p][y_axis[0]], marker=markers[1], label=y_axis[1] + title_suffixes[n], linestyle=':', color=related_color)
 
             if ratios:
                 plt.setp(main_ax.get_xticklabels(), visible=False)
@@ -666,7 +656,7 @@ class ParticleFrame(dict):
                 plt.ylabel(y_multi_axis[0][1])
             else:
                 plt.ylabel('Particle Rate')
-            if len(stats_approaches) > 1:
+            if len(stats_approaches) > 1 or len(y_multi_axis) > 1:
                 plt.legend()
             plt.ylim(y_lim)
 
