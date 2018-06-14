@@ -1,8 +1,48 @@
 \chapter{Application}
 \label{chap:application}
 
-\section{Inventory}
-\label{sec:inventory}
+\section{Data sample}
+\label{sec:data_sample}
+
+As outlined in \autoref{subsec:particle_identification}, the main objective of particle identification at Belle~\RN{2} is to identifying tracks of kaons, pions, electrons, muons, protons and deuterons. In order to validate a particle identification approach and to make sure it is behaving as expected it is standard procedure to measure the performance on Monte Carlo simulated data. For the purpose of simulating the production and decay of the $\Upsilon(4S)$ the software framework EvtGen was used. The subsequent generic decay was simulated using generic decay files provided by the Belle~\RN{2} software. After the simulation of the particle and their various properties, the detector responses are emulated. Hits in the various detector components are simulated and at last the veracity of a track identification is calculated. For obvious reasons the process of matching the identification with the truth value is not possible for real data, however for testing purposes it is a valuable tool to measure and compare the performance of a new approach.
+
+Throughout this thesis several decays will be discussed, most notably the decay of the charged $B$ mesons. $\Upsilon(4S)$ decays in $(51.4 \pm 0.6) \%$ of cases into the charged $B^+$ and $B^-$. Therefore it represents a good sample of the overall to be expected particle species. Observations seen in this generic charged decay were validated using data of the `mixed' decay into $B^0$ and $\bar{B}^0$ which has a branching ratio of $(48.6 \pm 0.6) \%$. Both samples are generic decays and not specific to one analysis. A complete list of possible decay-strings as well as the above mentioned branching fractions may be found in~\cite{Patrignani:2016xqp}.
+
+Additional a simulated decay of the $B^+ B^-$ with non-generic properties was generated. The properties are outlined in \autoref{tab:simulated_decay}. It allowed for fast processing of tests due to its simplicity and helped in differentiating between decay specific observations and generic ones.
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{ll}
+		$\Upsilon(4S) \rightarrow B^+ B^-$ & $1.$ \\
+		\quad $B^+ \rightarrow \mu^+ \nu_{\mu} \gamma$ & $1.$ \\
+		\quad $B^- \rightarrow \pi^- D^0$ & $1.$ \\
+		\qquad $D^0 \rightarrow K^- \pi^+$ & $0.2$ \\
+		\qquad 	$D^0 \rightarrow K^- \pi^+ \pi^0$ & $0.2$ \\
+		\qquad 	$D^0 \rightarrow K^- \pi^+ \pi^+ \pi^-$ & $0.2$ \\
+		\qquad 	$D^0 \rightarrow K^- K^+$ & $0.2$ \\
+		\qquad 	$D^0 \rightarrow \pi^+ \pi^0$ & $0.2$ \\
+	\end{tabular}
+	\caption{Simulated non-generic decay of the $\Upsilon(4S)$ with charge conjugated decays implied.}
+	\label{tab:simulated_decay}
+\end{table}
+
+As seen in \autoref{fig:true_particle_abundance} the decays are dominated by kaons and pions. However the overall distribution is much more peaked for the charged generic decay. Furthermore the non-generic sample decay features a feature a lot more $\mu^+$ relatively speaking in comparisons charged generic decay. The mixed generic decay has been disregarded for this plot due to its distinct similarity to the charged decay.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Charged\label{fig:charged_decay_true_particle_abundance}}{
+		\includegraphics[width=0.43\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
+	}
+	\hspace{2em}
+	\subcaptionbox{Sample\label{fig:sample_decay_true_particle_abundance}}{
+		\includegraphics[width=0.43\textwidth,height=\textheight,keepaspectratio]{{{../res/sample/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
+	}
+	\caption{True particle abundance in various simulated decays with particle on the $x$-axis sorted by their frequency. \textit{NaN} stands for an invalid translation\protect\footnotemark from the particles' PDG code to an actual particle.}
+	\label{fig:true_particle_abundance}
+\end{figure}
+\footnotetext{The error occurs due to the PDG code in the ROOT file being saved as \lstinline|float32| but some particle's code exceed the memory limit of $32$-bits. Notably, this effects the deuteron as well as its anti-particles.}
+
+The generic decay files used in the following discussion (charged for exploration, mixed for validation) each feature about $100,000$ initial $B \bar{B}$ events and about ten times as many identified tracks. The non-generic decay contains $10,000$ initial events and about $40,000$ tracks.
 
 \subsection{Legacy PID}
 \label{subsec:inventory_legacy_pid}
@@ -23,15 +63,7 @@ The goal of a Bayesian approach is to weight the particles' probability by their
 Thankfully both of those hypothesis are given in the real world: The detector can be assumed to behaves independently of the relative particle abundance and the measured data usually shows a clear predominance of one or a few particle species.
 This is not surprising in itself as the branching fractions are not equally distributed. Dictated by the laws of physics one particle species might be produced more frequently.
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
-	\caption{True particle abundance in the charged MC9 simulated data. \textit{NaN} stands for an invalid translation\protect\footnotemark from the particles' PDG code to an actual particle.}
-	\label{fig:true_particle_abundance}
-\end{figure}
-\footnotetext{The error occurs due to the PDG code in the ROOT file being saved as \lstinline|float32| but some particle's code exceed the memory limit of $32$-bits. Notably, this effects the deuteron as well as its anti-particles.}
-
-The absolute particle abundance of a sample taken from the Monte Carlo simulation of the charged decay of the $B$-mesons can be seen in \autoref{fig:true_particle_abundance}. In this example the bias towards pions and kaons can be clearly observed.
+The absolute particle abundance of a sample taken from the Monte Carlo simulation of the charged decay of the $B$-mesons can be seen in \autoref{fig:charged_decay_true_particle_abundance}. In this example the bias towards pions and kaons can be clearly observed.
 
 \begin{figure}[ht]
 	\centering
