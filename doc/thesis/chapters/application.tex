@@ -127,6 +127,17 @@ The approach is significantly less prone to just differentiating between kaons a
 \subsection{pidProbability goodness}
 \label{subsec:pid_variables_pidProbability_goodness}
 
+In order to make sure the pidProbability variable is properly defined, one may validate its behavior using the Neyman-Pearson lemma outlined in \autoref{subsec:likelihood_ratios_neyman_pearson}. The lemma states that the highest purity for a given efficiency is to be expected for each selection on the likelihood ratio. Hence by plotting the purity over the likelihood ratio one should expect to observe a monotonically increasing function. An idealized version of one possible graph is depicted in \autoref{fig:neyman_pearson_visualization}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/Neyman-Pearson Visualization}}}
+	\caption{Visualization of a test on the likelihood ratio. Based on the Neyman-Pearson lemma one should expect an monotonically increasing function. Horizontal lines indicate likelihood ratio bins, while the line represents the overall trend and guides the eye.}
+	\label{fig:neyman_pearson_visualization}
+\end{figure}
+
+However the underlying does not provide a continuos stream of events and as such one must resort to binning the likelihoods. In this step the data is sampled into $10$ bins of equal height as to provide a balanced statistics for each bin. The error in a bin is given by a vertical line. It is calculated via gaussian error propagation under the assumption that the counting of the events follow a Poisson distribution. Thereby we assume that the number of desired particles in a bin and the number of undesired particles are independent.
+
 \section{Bayesian approach}
 \label{sec:bayesian_approach}
 
