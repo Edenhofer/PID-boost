@@ -5,7 +5,7 @@
 \label{sec:classification_functions}
 
 A main part of identifying particles is to examine statistical measures. The main concepts used throughout the thesis heavily relies on such values to compare the goodness of a identification method. However their use is not limited to physics, let alone particle physics, but spans over all field containing some form of (binary) classification problems.
-In the following explanatory paragraphs I will assume that we are about to identify kaons in a set of data containing a multitude of alternative particles.
+In the following explanatory paragraphs it is assumed that one wants to identify kaons in a set of data containing a multitude of alternative particles.
 
 The most important classification functions are:
 \begin{itemize}
@@ -101,7 +101,7 @@ The ratio of likelihoods is commonly used for comparisons of the goodness of two
 	\frac{\mathcal{L}(\pmb{x}|H_0)}{\mathcal{L}(\pmb{x}|H_1)}
 \end{equation*} denotes how many times more likely the event $\pmb{x}$ is under hypothesis $H_0$ relative to $H_1$.
 
-However the event $\pmb{x}$ must not necessarily take the form a simple one dimensional value. It may very well be a composition of e.g. in our case multiple detectors responses. Nevertheless if we assume all constituents $x_i$ of $\pmb{x}$ are independent of each other, we may simple construct $\mathcal{L}(\pmb{x}|H_0)$ by multiplying the separate likelihoods of each $x_i$ given that $H_0$ is true:
+However the event $\pmb{x}$ must not necessarily take the form a simple one dimensional value. It may very well be a composition of e.g. in our case multiple detectors responses. Nevertheless if one assumes all constituents $x_i$ of $\pmb{x}$ are independent of each other, one may simple construct $\mathcal{L}(\pmb{x}|H_0)$ by multiplying the separate likelihoods of each $x_i$ given that $H_0$ is true:
 \begin{equation*}
 	\mathcal{L}(\pmb{x}|H_0) = \prod \limits_{i} \ell_i(x_i|H_0).
 \end{equation*}
