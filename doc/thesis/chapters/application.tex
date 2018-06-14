@@ -97,6 +97,33 @@ This unbalanced classification is further emphasized by analyzing the identifica
 \subsection{pidProbability}
 \label{subsec:pid_variables_pidProbability}
 
+The pidProbability approach is the upcoming approach which will be used as new default variable on which to select particle samples. Instead of having the likelihood of the pion fixed in the denominator of every particle's id it is now replaced by the sum over all the other particles. Hence the pidProbability of the kaon is now represented by the likelihood of the kaon divided by sum over all the likelihoods of every other particle including the kaon itself. The complete list of the definition can be seen in \autoref{tab:pidProbability_variables}.
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{l|l}
+		pidProbabilityPion & $\mathcal{L}_{\pi} / \mathcal{L}_{all}$ \\
+		pidProbabilityKaon & $\mathcal{L}_{K} / \mathcal{L}_{all}$ \\
+		pidProbabilityProton & $\mathcal{L}_{p} / \mathcal{L}_{all}$ \\
+		pidProbabilityElectron & $\mathcal{L}_{e} / \mathcal{L}_{all}$ \\
+		pidProbabilityMuon & $\mathcal{L}_{\mu} / \mathcal{L}_{all}$ \\
+		pidProbabilityDeuteron & $\mathcal{L}_{d} / \mathcal{L}_{all}$ \\
+		\hline
+		\multicolumn{2}{c}{$\mathcal{L}_{all} = \sum \limits_{x \in {\pi, K, p, e, \mu, d}} \mathcal{L}_{x}$}
+	\end{tabular}
+	\caption{Definition of the pidProbability variables which will be used by default for particle identification in the future.}
+	\label{tab:pidProbability_variables}
+\end{table}
+
+The approach is significantly less prone to just differentiating between kaons and pions but instead has a more balanced classification as can be seen in \autoref{fig:pidProbability_epsilon_pid}. This newly gained precision for less abundance particles however comes at the cost of worsening the classification with a very high abundance like the pion.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Heatmap of epsilonPID Matrix for an exclusive Cut}}}
+	\caption{Matrix of $\epsilon$ values for the pidProbability approach.}
+	\label{fig:pidProbability_epsilon_pid}
+\end{figure}
+
 \subsection{pidProbability goodness}
 \label{subsec:pid_variables_pidProbability_goodness}
 
