@@ -44,14 +44,59 @@ As seen in \autoref{fig:true_particle_abundance} the decays are dominated by kao
 
 The generic decay files used in the following discussion (charged for exploration, mixed for validation) each feature about $100,000$ initial $B \bar{B}$ events and about ten times as many identified tracks. The non-generic decay contains $10,000$ initial events and about $40,000$ tracks.
 
+\section{Particle identification variables}
+\label{sec:pid_variables}
+
 \subsection{Legacy PID}
-\label{subsec:inventory_legacy_pid}
+\label{subsec:pid_variables_legacy_pid}
+
+The current particle identification approach consists of variables calculated via ratios of likelihoods. A particle identification is performed by applying a selection, also called \textit{cut} on the variables.
+
+As of \formatdate{28}{06}{2018} the current approach is to take the likelihood of the desired particle and divide it by itself plus the likelihood of the pion. To construct the ID of the pion the kaon likelihood is used as second term in the denominator. \autoref{tab:legacy_particleid_variables} shows the definition of the ID for each of the six particle species of interest. In the future it will be replaced by the pidProbability approach, described in \autoref{subsec:pid_variables_pidProbability}.
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{l|l}
+		pionID & $\mathcal{L}_{\pi} / (\mathcal{L}_{\pi} + \mathcal{L}_{K})$ \\
+		kaonID & $\mathcal{L}_{K} / (\mathcal{L}_{K} +\mathcal{L}_{\pi})$ \\
+		protonID & $\mathcal{L}_{p} / (\mathcal{L}_{p} +\mathcal{L}_{\pi})$ \\
+		electronID & $\mathcal{L}_{e} / (\mathcal{L}_{e} +\mathcal{L}_{\pi})$ \\
+		muonID & $\mathcal{L}_{\mu} / (\mathcal{L}_{\mu} +\mathcal{L}_{\pi})$ \\
+		deuteronID & $\mathcal{L}_{d} / (\mathcal{L}_{d} +\mathcal{L}_{\pi})$
+	\end{tabular}
+	\caption{Definition of the ParticleID variables currently used by default for particle identification.}
+	\label{tab:legacy_particleid_variables}
+\end{table}
+
+Its identification rate for pions and kaons is therefore rather good as it able to properly differentiate both classes. However it has obvious limitations in identifying rare particles as the fraction will always be dominated by the high abundance of the pion. The difference in the TPR for identifying the kaon and the electron can be seen in \autoref{fig:legacy_pid_particle_identification}. Not only is does the TPR take a less steep ascent for the electron identification the PPV is also consistently lower.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Kaon identification\label{fig:legacy_pid_kaon_identification}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Particle ID Approach: K Identification}}}
+	}
+	\hspace{2em}
+	\subcaptionbox{Electron identification\label{fig:legacy_pid_electron_identification}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Particle ID Approach: e Identification}}}
+	}
+	\caption{Particle identification rates for the kaon and electron using the legacy PID approach, each showing the True Positive Rate (ROC curve) and the Positive Predicted Value depending on the False Positive Rate.}
+	\label{fig:legacy_pid_particle_identification}
+\end{figure}
+
+This unbalanced classification is further emphasized by analyzing the identification efficiencies. The matrix shown in \autoref{fig:legacy_pid_epsilon_pid} clearly shows the bias of the classification towards kaons and pions.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Particle ID Approach: Heatmap of epsilonPID Matrix for an exclusive Cut}}}
+	\caption{Matrix of $\epsilon$ values for the legacy particle ID approach.}
+	\label{fig:legacy_pid_epsilon_pid}
+\end{figure}
 
 \subsection{pidProbability}
-\label{subsec:inventory_pidProbability}
+\label{subsec:pid_variables_pidProbability}
 
 \subsection{pidProbability goodness}
-\label{subsec:inventory_pidProbability_goodness}
+\label{subsec:pid_variables_pidProbability_goodness}
 
 \section{Bayesian approach}
 \label{sec:bayesian_approach}
