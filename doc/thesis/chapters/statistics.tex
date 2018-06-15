@@ -17,7 +17,7 @@ The most important classification functions are:
 	\item \textbf{T}rue \textbf{N}egative \textbf{R}ate or Specificity (\textbf{TNR}): \textit{Proportion of rejected elements which are incorrect relative to all negatives}
 
 	\nobreak
-	In our example this would translate to the ratio of non-kaon particles being identified as non-kaons in proportion to the number of all non-kaon particles.
+	In the example this would translate to the ratio of non-kaon particles being identified as non-kaons in proportion to the number of all non-kaon particles.
 
 	\item \textbf{F}alse \textbf{P}ositive \textbf{R}ate (\textbf{FPR}): \textit{Proportion of accepted elements which are incorrect relative to all negatives}
 
@@ -27,12 +27,12 @@ The most important classification functions are:
 	\item \textbf{F}alse \textbf{N}egative \textbf{R}ate (\textbf{FNR}): \textit{Proportion of rejected elements which are correct relative to all positives}
 
 	\nobreak
-	Using our kaon sample once more; this would represent the fraction of kaons classified as being non-kaons over the number of all non-kaons.
+	Using the kaon sample once more; this would represent the fraction of kaons classified as being non-kaons over the number of all non-kaons.
 
 	\item \textbf{P}ositive \textbf{P}redicted \textbf{V}alue (\textbf{PPV}): \textit{Proportion of accepted elements which are correct relative to all accepted}
 
 	\nobreak
-	Using our kaon sample one last time; this would represent the fraction of kaons classified as being as kaons over the number of all tracks classified as kaons but not necessarily being one.
+	Using the kaon sample one last time; this would represent the fraction of kaons classified as being as kaons over the number of all tracks classified as kaons but not necessarily being one.
 
 \end{itemize}
 
@@ -77,7 +77,7 @@ The values of the matrix are given by the fraction of particles $i$ classified a
 	\epsilon_{i j} = \frac{N_{i \text{ classified as } j}}{A_{i \text{ true}}}.
 \end{equation}
 
-For our six particle species with ID the matrix has the following shape:
+For the six particle species with ID the matrix has the following shape:
 
 \begin{equation}
 	\begin{pmatrix}
@@ -101,7 +101,7 @@ The ratio of likelihoods is commonly used for comparisons of the goodness of two
 	\frac{\mathcal{L}(\pmb{x}|H_0)}{\mathcal{L}(\pmb{x}|H_1)}
 \end{equation*} denotes how many times more likely the event $\pmb{x}$ is under hypothesis $H_0$ relative to $H_1$.
 
-However the event $\pmb{x}$ must not necessarily take the form a simple one dimensional value. It may very well be a composition of e.g. in our case multiple detectors responses. Nevertheless if one assumes all constituents $x_i$ of $\pmb{x}$ are independent of each other, one may simple construct $\mathcal{L}(\pmb{x}|H_0)$ by multiplying the separate likelihoods of each $x_i$ given that $H_0$ is true:
+However the event $\pmb{x}$ must not necessarily take the form of a simple one dimensional value. It may very well be a composition of e.g. multiple detectors responses. Nevertheless if one assumes all constituents $x_i$ of $\pmb{x}$ are independent of each other, one may simple construct $\mathcal{L}(\pmb{x}|H_0)$ by multiplying the separate likelihoods of each $x_i$ given that $H_0$ is true:
 \begin{equation*}
 	\mathcal{L}(\pmb{x}|H_0) = \prod \limits_{i} \ell_i(x_i|H_0).
 \end{equation*}
