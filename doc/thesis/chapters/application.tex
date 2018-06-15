@@ -199,11 +199,33 @@ In conclusion the likelihood of the proton given by the CDC detector should be s
 \subsection{Simple Bayes}
 \label{subsec:bayesian_approach_simple_bayes}
 
-The goal of a Bayesian approach is to weight the particles' probability by their abundance in the sample. This process increases the likelihood of a particle being identified as belonging to a group with a higher abundance and decreases the likelihood of being identified as belonging to a group with a lower abundance. The approach depends on the detector yielding decay-agnostic results. Hence the detector shall be assumed to always output the likelihood of measuring the received signal given a specific particle hypothesis regardless of prior probabilities. Furthermore the approach assumes a bias towards one or a few particles in the sample since otherwise the a priori probabilities would be flat and therefore boil down to the same result.
-Thankfully both of those hypothesis are given in the real world: The detector can be assumed to behaves independently of the relative particle abundance and the measured data usually shows a clear predominance of one or a few particle species.
-This is not surprising in itself as the branching fractions are not equally distributed. Dictated by the laws of physics one particle species might be produced more frequently.
+The goal of a Bayesian approach is to weight the particles' probability by their abundance in the sample. This process increases the likelihood of a particle being identified as belonging to a group with a higher abundance and decreases the likelihood of being identified as belonging to a group with a lower abundance. Bayes law provides the mathematical foundation as is given by
+\begin{equation*}
+	\displaystyle P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}
+	\qquad
+	\text{e.g.} \quad P(e|Signal) = \frac{P(Signal|e) \cdot P(e)}{P(Signal)}.
+\end{equation*}
+The variable $P(e|Signal)$ is the probabilities of the track being from an electron given that $Signal$ was measured. The part of most interest in the equation is the a prior probability $P(A)$, respectively $P(e)$. As a first simple approach this variable is now dependant on the absolute abundance of electrons. The probabilities of the detecting the signal can be modeled using
+\begin{equation*}
+	P(Signal) = \sum \limits_{x \in {\pi, K, p, e, \mu, d}} P(Signal|x) \cdot P(x)
+\end{equation*}
+with $P(Signal|x)$ being the previously discussed likelihoods of the signal using the particle hypothesis $x$.
 
 The absolute particle abundance of a sample taken from the Monte Carlo simulation of the charged decay of the $B$-mesons can be seen in \autoref{fig:charged_decay_true_particle_abundance}. In this example the bias towards pions and kaons can be clearly observed.
+
+The approach depends on the detector yielding decay-agnostic results. Hence the detector shall be assumed to always output the likelihood of measuring the received signal given a specific particle hypothesis regardless of prior probabilities. Furthermore the approach assumes a bias towards one or a few particles in the data since otherwise the a priori probabilities would be flat and would have no effect.
+Thankfully both of those hypothesis are fulfilled in the real world: The detector can be assumed to behave independently of the relative particle abundance and the measured data usually shows a clear predominance of one or a few particle species. This is not surprising in itself as the branching fractions are not equally distributed. Dictated by the laws of physics one particle species might be produced more frequently.
+
+\subsection{Univariate Bayes}
+\label{subsec:bayesian_approach_univariate_bayes}
+
+The univariate Bayesian approach adds an dependency to one detector variable to the previous simple Bayesian approach. Hence instead of having a probability which depends on only on the particle abundance and the signal, the univariate approach additionally varies the probability depending on e.g. the transverse momentum. The most sensible variables are among others are said transverse momentum $p_t$ and the angle between the track of the particle and the beampipe $\Theta$.
+
+\subsection{Multivariate Bayes}
+\label{subsec:bayesian_approach_multivariate_bayes}
+
+\subsection{Comparisons}
+\label{subsec:bayesian_approach_comparisons}
 
 \begin{figure}[ht]
 	\centering
@@ -212,7 +234,7 @@ The absolute particle abundance of a sample taken from the Monte Carlo simulatio
 	\label{fig:diff_stats_K_identification_via_pid_via_flat_bayes}
 \end{figure}
 
-\autoref{fig:diff_stats_K_identification_via_pid_via_flat_bayes} shows a comparison of the standard PID approach to the discussed Bayesian one. Using the Bayesian approach for identifying particles yields a very high positive predicted values even for low false positive rates as the introduced bias in the particle classification can utilize the unbalanced abundances. Furthermore the true positive rate of the Bayesian approach has a much steeper increase in comparison to the PID's one. However it levels of quicker, indicating that it fails to identify a few particles even at a high false positive rate.
+\autoref{fig:diff_stats_K_identification_via_pid_via_flat_bayes} shows a comparison of the legacy PID approach to the discussed Bayesian one. Using the Bayesian approach for identifying particles yields a very high positive predicted values even for low false positive rates as the introduced bias in the particle classification can utilize the unbalanced abundances. Furthermore the true positive rate of the Bayesian approach has a much steeper increase in comparison to the legacy PID's one. However it levels of quicker, indicating that it fails to identify a few particles even at a high false positive rate.
 The described effect can be seen for every stable particle with an ID and is not limited to the kaon. However it serves as a good example as it provides sufficient statistics for a throughout analysis.
 
 \begin{figure}[ht]
@@ -223,14 +245,6 @@ The described effect can be seen for every stable particle with an ID and is not
 \end{figure}
 
 The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However in general the Bayesian approach is less prone to confusing particle with one another as seen in \autoref{fig:diff_heatmap_via_pid_via_flat_bayes}.
-
-\subsection{Univariate Bayes}
-\label{subsec:bayesian_approach_univariate_bayes}
-
-The univariate Bayesian approach adds an dependency to one detector variable to the previous simple Bayesian approach. Hence instead of having a probability which depends on only on the particle abundance and the signal, the univariate approach additionally varies the probability depending on e.g. the transverse momentum. The most sensible variables are among others are said transverse momentum $p_t$ and the angle between the track of the particle and the beampipe $\Theta$.
-
-\subsection{Multivariate Bayes}
-\label{subsec:bayesian_approach_multivariate_bayes}
 
 \section{Neural network approach}
 \label{sec:neural_network_approach}
