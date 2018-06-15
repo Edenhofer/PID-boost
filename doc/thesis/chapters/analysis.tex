@@ -245,14 +245,23 @@ The multivariate approach extends the univariate one by further increasing the n
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: Multi-axes Histogram of pt, cosTheta}}}
+	\includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: Multi-axes Histogram of pt, cosTheta}}}
 	\caption{Two dimensional scatter plot with tracks represented as opaque points depending on $p_t$ and $\cos(\Theta)$ and the color encoding the particle species.}
 	\label{fig:multivariate_bayes_multi_axis_histogram_by_pt_by_costheta}
 \end{figure}
 
-\autoref{fig:multivariate_bayes_multi_axis_histogram_by_pt_by_costheta}~shows tracks as transparent dots scattered across the plane, accompanied by two histograms showing the distribution in transverse momentum and the cosine of the angle between beampipe and track. It is important to note the sickle shape of the distribution. Higher cosine values are a little preferred over lower ones due to the asymmetry of the beams and angles of about $90^{\circ}$ ($\cos(\Theta) = 0$) correspond to the highest transverse momentums. Furthermore a slight separation can be seen between two stacked sickle shapes at a high transverse momentum. Intuitively this makes sense since the production of e.g. a proton consumes a lot of phase space which in turn reduces the amount of momentum it can carry. Vice verse a pion is relatively speaking light and therefore may carry a lot of momentum (not necessarily transverse momentum though). Obviously this argumentation disregards the fact that particles are not created one by one but rather in a complex decay and the phase space is distributed across all daughters. Nevertheless it illustrates the observed effect quite nicely.
+\autoref{fig:multivariate_bayes_multi_axis_histogram_by_pt_by_costheta}~shows tracks as transparent dots scattered across the plane, accompanied by two histograms showing the distribution in transverse momentum and the cosine of the angle between beampipe and track. It is important to note the sickle shape of the distribution. Higher cosine values are a little preferred over lower ones due to the asymmetry of the beams and angles of about $90^{\circ}$ ($\cos(\Theta) = 0$) correspond to the highest transverse momentums. Furthermore a slight separation can be seen between the outermost green sickle and the slightly blueish middle sickle. Intuitively this makes sense since the production of e.g. a proton consumes a lot of phase space which in turn reduces the amount of momentum it can carry. Vice verse a pion is relatively speaking light and therefore may carry a lot of momentum (not necessarily transverse momentum though). Obviously this argumentation disregards the fact that particles are not created one by one but rather in a complex decay and the phase space is distributed across all daughters. Nevertheless it illustrates the observed effect quite nicely.
 
-Allowing the a priori probability to depend on those measurements enables it to pick the best priors according to the Monte Carlo information for each combination of variables. In order th
+Allowing the a priori probability to depend on those measurements enables it to pick the best priors according to the Monte Carlo information for each combination of variables. In order to achieve this the variable $p_t$ and $\cos(\Theta)$ were distributed across equal height bins and the relative abundance of each particle relative to the pion were calculated for every combination of $p_t$ and $\cos(\Theta)$ bin.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: K Spectra Ratios Relative to pi}}}
+	\caption{Relative kaon abundance in equal height transverse momentum and cosine of $\Theta$ bins.}
+	\label{fig:multivariate_bayes_k_spectra_relative_to_pi}
+\end{figure}
+
+The abundance of kaons relative to the abundance of pions can be seen in~\autoref{fig:multivariate_bayes_k_spectra_relative_to_pi}. The graph emphasizes the fact that particles abundances are unevenly distributed across the $p_t$-, $\cos(\Theta)$-plane and as such this additional information may be used to better classify the particles.
 
 \subsection{Comparisons}
 \label{subsec:bayesian_approach_comparisons}

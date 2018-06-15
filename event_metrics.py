@@ -461,10 +461,10 @@ if args.run_multivariate_bayes:
         plt.imshow(np.array(iteration_priors[norm][p]).reshape(nbins, nbins).T, cmap='viridis')
         plt.grid(b=False, axis='both')
         plt.xlabel(ParticleFrame.variable_formats[holdings[0]] + ' (' + ParticleFrame.variable_units[holdings[0]] + ')')
-        plt.xticks(range(nbins), interval_centers[holdings[0]][p])
+        plt.xticks(range(nbins), ['%.3f'%(center) for center in interval_centers[holdings[0]][p]])
         fig.autofmt_xdate()
         plt.ylabel(ParticleFrame.variable_formats[holdings[1]] + ' (' + ParticleFrame.variable_units[holdings[1]] + ')')
-        plt.yticks(range(nbins), interval_centers[holdings[1]][p])
+        plt.yticks(range(nbins), ['%.3f'%(center) for center in interval_centers[holdings[1]][p]])
         plt.colorbar()
         data.pyplot_sanitize_show('%s Spectra Ratios Relative to %s'%(ParticleFrame.particle_base_formats[p], ParticleFrame.particle_base_formats[norm]), savefig_prefix='Multivariate Bayesian Approach: ')
 
