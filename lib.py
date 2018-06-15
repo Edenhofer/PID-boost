@@ -295,9 +295,9 @@ class ParticleFrame(dict):
 
                 line = 'Particle %10s: TPR=%6.6f; FPR=%6.6f; TNR=%6.6f; PPV=%6.6f; FDR=%6.6f; cut=%4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], stat[p]['ppv'][-1], stat[p]['fdr'][-1], cut)
                 if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
-                    logging.info('VALUES INCONSISTENT: ' + line)
+                    logging.debug('VALUES INCONSISTENT: ' + line)
                 else:
-                    logging.info(line)
+                    logging.debug(line)
 
         return stat
 
@@ -320,7 +320,7 @@ class ParticleFrame(dict):
                 # The deuterium code is not properly stored in the mcPDG variable, hence the use of `pdg_from_name_faulty()`
                 epsilonPIDs[i][j] = np.float64(self[i_p][((self[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (self[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))) & (self[i_p][cutting_columns[j_p]] > cut)].shape[0]) / np.float64(self[i_p][(self[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (self[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))].shape[0])
 
-        logging.info("epsilon_PID matrix:\n%s"%(epsilonPIDs))
+        logging.debug("epsilon_PID matrix:\n%s"%(epsilonPIDs))
         return np.nan_to_num(epsilonPIDs)
 
     def mimic_pid(self, detector_weights=None, check=True):
@@ -439,7 +439,7 @@ class ParticleFrame(dict):
                     y = {p: np.float64(particle_data[selection & ((particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p)))].shape[0]) for p in self.particles}
                     priors = {p: y[p] / y[norm] for p in self.particles}
 
-                    logging.info('Priors ' + str(holdings) + ' at ' + str(i) + ' of ' + str(nbins) + ': ' + str(priors))
+                    logging.debug('Priors ' + str(holdings) + ' at ' + str(i) + ' of ' + str(nbins) + ': ' + str(priors))
                 else:
                     priors = {p: 1. for p in self.particles}
 
@@ -458,7 +458,7 @@ class ParticleFrame(dict):
                         priors[p] = y[p] / y[norm]
                         iteration_priors[l][p][iteration] += [priors[p]]
 
-                    if not mc_best: logging.info('Priors ' + str(holdings) + ' at ' + str(i) + ' of ' + str(nbins) + ' after %2d: '%(iteration + 1) + str(priors))
+                    if not mc_best: logging.debug('Priors ' + str(holdings) + ' at ' + str(i) + ' of ' + str(nbins) + ' after %2d: '%(iteration + 1) + str(priors))
 
         return cutting_columns, category_columns, intervals, iteration_priors
 

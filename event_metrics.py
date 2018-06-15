@@ -81,7 +81,9 @@ group_util.add_argument('--input-pickle', dest='input_pickle', action='store', d
                     help='Pickle file path containing a ParticleFrame object which shall be read in instead of ROOT files; Takes precedence when specified')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'')
-group_util.add_argument('-v', '--verbose', dest='loglevel', action='store_const', const=logging.INFO, default=logging.WARNING,
+group_util.add_argument('-v', '--verbose', dest='loglevel', action='store_const', const=logging.DEBUG, default=logging.WARNING,
+                    help='Increase verbosity and show non-essential statistics and otherwise possibly useful information')
+group_util.add_argument('--info', dest='loglevel', action='store_const', const=logging.INFO, default=logging.WARNING,
                     help='Increase verbosity and show non-essential statistics and otherwise possibly useful information')
 group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
                     help='Run interactively, i.e. show plots')
@@ -164,7 +166,7 @@ if args.run_pidProbability:
     detectors_of_interest = ['all', 'cdc']
 
     if slicing_method == 'vertex':
-        logging.info('Description of raw %s-Data:\n'%(norm), data[norm][['d0', 'z0', 'mcDX', 'mcDY', 'mcDZ']].describe())
+        logging.debug('Description of raw %s-Data:\n'%(norm), data[norm][['d0', 'z0', 'mcDX', 'mcDY', 'mcDZ']].describe())
 
         plt.figure()
         for i in ['mcDX', 'mcDY', 'mcDZ']:
@@ -177,7 +179,7 @@ if args.run_pidProbability:
         for particle_data in special_slice.data.values():
             # The unit of mcDX, mcDY and mcDZ is not the same as the one of d0 and z0
             particle_data.query('(mcDX**2 + mcDY**2 + mcDZ**2) < 120000', inplace=True)
-        logging.info('Description of sliced %s-Data:\n'%(norm), special_slice[norm][['d0', 'z0', 'mcDX', 'mcDY', 'mcDZ']].describe())
+        logging.debug('Description of sliced %s-Data:\n'%(norm), special_slice[norm][['d0', 'z0', 'mcDX', 'mcDY', 'mcDZ']].describe())
         savefig_prefix = 'pidProbability Approach (tight Vertex): '
     elif slicing_method == 'primary':
         special_slice = ParticleFrame(output_directory=output_directory, interactive=interactive)
