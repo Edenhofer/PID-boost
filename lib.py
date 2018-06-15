@@ -2,10 +2,10 @@
 
 import argparse
 import itertools
+import logging
 import os
 import pickle
 import re
-import sys
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
@@ -120,7 +120,7 @@ class ParticleFrame(dict):
     # Queries for variables for selecting physically sensible results
     physical_boundaries = {'0.05 < pt < 5.29', 'abs(z0) < 5', 'abs(d0) < 2', 'mcPDG != 0'}
 
-    def __init__(self, pickle_path=None, input_directory=None, output_directory=None, interactive=None, descriptions=None):
+    def __init__(self, pickle_path=None, input_directory=None, output_directory=None, interactive=None, descriptions=None, loglevel=None):
         """Initialize and empty ParticleFrame.
 
         Args:
@@ -129,6 +129,7 @@ class ParticleFrame(dict):
             output_directory (:obj:`str`, optional): Default output directory for data generated using this ParticleFrame.
             interactive (:obj:`bool`, optional): Whether plotting should be done interactively.
             descriptions (:obj:`dict` of :obj:`str`, optional): Descriptions for cutting columns. For each key there shall exist a correspond cutting column.
+            loglevel (:obj:`int`, optional): Level of verbosity in values interpretable by the logging python module.
 
         Raises:
             ValueError: If given not-none values for both `pickle_path` and `input_directory`.
@@ -144,6 +145,9 @@ class ParticleFrame(dict):
         self.output_directory = os.path.join('res', '') if output_directory is None else output_directory
         self.interactive = False if interactive is None else interactive
         self.descriptions = {} if descriptions is None else descriptions
+
+        self.loglevel = logging.WARNING if loglevel is None else loglevel
+        logging.basicConfig(level=self.loglevel)
 
     def __setitem__(self, key, item):
         self.data[key] = item
@@ -238,7 +242,7 @@ class ParticleFrame(dict):
 
         if pickle_path != '/dev/null':
             if not os.path.exists(os.path.dirname(pickle_path)):
-                print('Creating desired parent directory "%s" for the pickle file "%s"'%(os.path.dirname(pickle_path), pickle_path), file=sys.stderr)
+                logging.warning('Creating desired parent directory "%s" for the pickle file "%s"'%(os.path.dirname(pickle_path), pickle_path))
                 os.makedirs(os.path.dirname(pickle_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
             pickle.dump([self.data, self.descriptions], open(pickle_path, 'wb'), pickle.HIGHEST_PROTOCOL)
@@ -289,10 +293,11 @@ class ParticleFrame(dict):
                 stat[p]['ppv'] = np.append(stat[p]['ppv'], [true_positive / true_positive_plus_false_positive])
                 stat[p]['fdr'] = np.append(stat[p]['fdr'], [false_positive / true_positive_plus_false_positive])
 
+                line = 'Particle %10s: TPR=%6.6f; FPR=%6.6f; TNR=%6.6f; PPV=%6.6f; FDR=%6.6f; cut=%4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], stat[p]['ppv'][-1], stat[p]['fdr'][-1], cut)
                 if not np.isclose(stat[p]['fpr'][-1]+stat[p]['tnr'][-1], 1, atol=1e-2):
-                    print('VALUES INCONSISTENT: ', end='')
-
-                print('Particle %10s: TPR=%6.6f; FPR=%6.6f; TNR=%6.6f; PPV=%6.6f; FDR=%6.6f; cut=%4.4f'%(p, stat[p]['tpr'][-1], stat[p]['fpr'][-1], stat[p]['tnr'][-1], stat[p]['ppv'][-1], stat[p]['fdr'][-1], cut))
+                    logging.info('VALUES INCONSISTENT: ' + line)
+                else:
+                    logging.info(line)
 
         return stat
 
@@ -315,7 +320,7 @@ class ParticleFrame(dict):
                 # The deuterium code is not properly stored in the mcPDG variable, hence the use of `pdg_from_name_faulty()`
                 epsilonPIDs[i][j] = np.float64(self[i_p][((self[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (self[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))) & (self[i_p][cutting_columns[j_p]] > cut)].shape[0]) / np.float64(self[i_p][(self[i_p]['mcPDG'] == pdg_from_name_faulty(i_p)) | (self[i_p]['mcPDG'] == -1 * pdg_from_name_faulty(i_p))].shape[0])
 
-        print("epsilon_PID matrix:\n%s"%(epsilonPIDs))
+        logging.info("epsilon_PID matrix:\n%s"%(epsilonPIDs))
         return np.nan_to_num(epsilonPIDs)
 
     def mimic_pid(self, detector_weights=None, check=True):
@@ -352,7 +357,7 @@ class ParticleFrame(dict):
                     # Assert for equality of the manual calculation and analysis software's output
                     npt.assert_allclose(particle_data['assumed_' + self.particleIDs[p]].values, particle_data[self.particleIDs[p]].astype(np.float64).values, atol=1e-3)
 
-        print('Successfully calculated the particleIDs using the logLikelihoods only.')
+        logging.info('Successfully calculated the particleIDs using the logLikelihoods only.')
 
     def bayes(self, priors=defaultdict(lambda: 1., {}), detector='all', mc_best=False):
         """Compute probabilities for particle hypothesis using a Bayesian approach.
@@ -434,7 +439,7 @@ class ParticleFrame(dict):
                     y = {p: np.float64(particle_data[selection & ((particle_data['mcPDG'] == pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * pdg_from_name_faulty(p)))].shape[0]) for p in self.particles}
                     priors = {p: y[p] / y[norm] for p in self.particles}
 
-                    print('Priors ', holdings, ' at ', i, ' of ' + str(nbins) + ': ', priors)
+                    logging.info('Priors ' + str(holdings) + ' at ' + str(i) + ' of ' + str(nbins) + ': ' + str(priors))
                 else:
                     priors = {p: 1. for p in self.particles}
 
@@ -453,7 +458,7 @@ class ParticleFrame(dict):
                         priors[p] = y[p] / y[norm]
                         iteration_priors[l][p][iteration] += [priors[p]]
 
-                    if not mc_best: print('Priors ', holdings, ' at ', i, ' of ' + str(nbins) + ' after %2d: '%(iteration + 1), priors)
+                    if not mc_best: logging.info('Priors ' + str(holdings) + ' at ' + str(i) + ' of ' + str(nbins) + ' after %2d: '%(iteration + 1) + str(priors))
 
         return cutting_columns, category_columns, intervals, iteration_priors
 
@@ -498,7 +503,7 @@ class ParticleFrame(dict):
 
         if output_directory != '/dev/null':
             if not os.path.exists(output_directory):
-                print('Creating desired output directory "%s"'%(output_directory), file=sys.stderr)
+                logging.warning('Creating desired output directory "%s"'%(output_directory))
                 os.makedirs(output_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
 
             sanitized_title = re.sub('[\\\\$_^{}]', '', savefig_prefix + title + savefig_suffix)
