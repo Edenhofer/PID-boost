@@ -209,7 +209,7 @@ The variable $P(e|Signal)$ is the probabilities of the track being from an elect
 \begin{equation*}
 	P(Signal) = \sum \limits_{x \in {\pi, K, p, e, \mu, d}} P(Signal|x) \cdot P(x)
 \end{equation*}
-with $P(Signal|x)$ being the previously discussed likelihoods of the signal using the particle hypothesis $x$.
+with $P(Signal|x)$ being the previously discussed likelihoods of the signal using the particle hypothesis $x$. Note that the normalization of $P(x)$ cancels out as it occurs in both nominator and denominator. Therefore, it makes no difference if in the actual calculation the value of the abundance is used directly.
 
 The absolute particle abundance of a sample taken from the Monte Carlo simulation of the charged decay of the $B$-mesons can be seen in \autoref{fig:charged_decay_true_particle_abundance}. In this example the bias towards pions and kaons can be clearly observed.
 
@@ -219,7 +219,24 @@ Thankfully both of those hypothesis are fulfilled in the real world: The detecto
 \subsection{Univariate Bayes}
 \label{subsec:bayesian_approach_univariate_bayes}
 
-The univariate Bayesian approach adds an dependency to one detector variable to the previous simple Bayesian approach. Hence instead of having a probability which depends on only on the particle abundance and the signal, the univariate approach additionally varies the probability depending on e.g. the transverse momentum. The most sensible variables are among others are said transverse momentum $p_t$ and the angle between the track of the particle and the beampipe $\Theta$.
+The univariate Bayesian approach adds a further dependency in the form of one detector variable to the a priori probabilities of the Bayesian approach. Hence instead of having a priori probability which depends only on the particle abundance, the univariate approach additionally varies the value depending on e.g. the transverse momentum or the angle between beampipe and track $\Theta$. Those two variables make the most sense as they play a significant role in the track fitting process and are dominant factors for the particle classification process outlined in~\autoref{subsec:particle_identification}.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{$p_t$\label{fig:univariate_bayes_priors_by_pt}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Univariate Bayesian Approach: K Spectra Ratios Relative to pi for pt bins}}}
+	}
+	\hspace{2em}
+	\subcaptionbox{$\cos(\Theta)$\label{fig:univariate_bayes_priors_by_costheta}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Univariate Bayesian Approach: K Spectra Ratios Relative to pi for cos(Theta) bins}}}
+	}
+	\caption{Kaon abundance relative to the pion abundance in bins of $p_t$ and $\cos(\Theta)$ with horizontal lines indicating the size of each bin.}
+	\label{fig:univariate_bayes_priors}
+\end{figure}
+
+The relative abundance of one particle in comparison to the pion is shown in \autoref{fig:univariate_bayes_priors}. It is important that the relations between particle abundances are correct, hence the normalization via the pion abundance, the absolute value however does not matter. The graphs underline the motivation for using such an approach as the abundance varies between different bins. Especially the dependency on $p_t$ revealed drastic changes in the relative frequency of the kaon.
+
+Due to its additional variable the univariate Bayesian approach is able to adapt to the underlying data a little better as it does not fix the abundance of particles in general as the simple Bayesian approach does.
 
 \subsection{Multivariate Bayes}
 \label{subsec:bayesian_approach_multivariate_bayes}
