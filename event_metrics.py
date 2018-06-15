@@ -519,7 +519,7 @@ if args.run_multivariate_bayes_motivation:
     # NOTE: This is one of the few place where we differentiate between particle and anti-particle
     for v in np.unique(particle_data[selection]['mcPDG'].values):
         particle_data.at[selection & (particle_data[selection]['mcPDG'] == v), truth_color_column] = list(np.unique(particle_data[selection]['mcPDG'].values)).index(v)
-    plt.scatter(particle_data[selection][holdings[0]], particle_data[selection][holdings[1]], c=particle_data[selection][truth_color_column], cmap=plt.cm.get_cmap('viridis', np.unique(particle_data[selection]['mcPDG'].values).shape[0]), s=5., alpha=.1)
+    plt.scatter(particle_data[selection][holdings[0]], particle_data[selection][holdings[1]], c=particle_data[selection][truth_color_column], cmap=plt.cm.get_cmap('viridis', np.unique(particle_data[selection]['mcPDG'].values).shape[0]), s=5., alpha=.01)
     plt.setp(main_ax.get_xticklabels(), visible=False)
     plt.setp(main_ax.get_yticklabels(), visible=False)
 
