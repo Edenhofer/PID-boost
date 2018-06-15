@@ -112,6 +112,15 @@ In out case $\mathcal{L}(\pmb{x}|H_0)$ might be seen as the likelihood of measur
 
 When separating two models which have no unknown parameters the Neyman-Pearson lemma states that a test on the likelihood ratio has the highest probability of correctly rejecting the original hypothesis if the alternative hypothesis is indeed true. In other words it states that a test on the likelihood ratio providing the highest purity at a given efficiency.
 
+Hence by plotting the purity over the likelihood ratio one should expect to observe a monotonically increasing function. An idealized version of such a graph is depicted in \autoref{fig:neyman_pearson_visualization}. Since the underlying data may not be assumed to be a continues stream the likelihood ratio has been binned as it better represents the actual shape to be expected.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/Neyman-Pearson Visualization}}}
+	\caption{Visualization of a test on the likelihood ratio. Based on the Neyman-Pearson lemma one should expect an monotonically increasing function. Horizontal lines indicate likelihood ratio bins, while the line represents the overall trend and guides the eye.}
+	\label{fig:neyman_pearson_visualization}
+\end{figure}
+
 \section{Neural network}
 \label{sec:neural_network}
 

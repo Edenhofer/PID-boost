@@ -127,16 +127,71 @@ The approach is significantly less prone to just differentiating between kaons a
 \subsection{pidProbability goodness}
 \label{subsec:pid_variables_pidProbability_goodness}
 
-In order to make sure the pidProbability variable is properly defined, one may validate its behavior using the Neyman-Pearson lemma outlined in \autoref{subsec:likelihood_ratios_neyman_pearson}. The lemma states that the highest purity for a given efficiency is to be expected for each selection on the likelihood ratio. Hence by plotting the purity over the likelihood ratio one should expect to observe a monotonically increasing function. An idealized version of one possible graph is depicted in \autoref{fig:neyman_pearson_visualization}.
+In order to make sure the pidProbability variable is properly defined, one may validate its behavior using the Neyman-Pearson lemma outlined in \autoref{subsec:likelihood_ratios_neyman_pearson}. The lemma states that the highest purity for a given efficiency is to be expected for each selection on the likelihood ratio as seen in \autoref{fig:neyman_pearson_visualization}.
+
+For the following discussion the data has been sampled into $10$ bins of equal height as to provide a balanced statistics for each bin. The error in a bin is given by a vertical line. It is calculated via gaussian error propagation under the assumption that the counting of the events follow a Poisson distribution. Thereby we assume that the number of desired particles in a bin and the number of undesired particles are independent. The error will be underestimated for a purity of $0$ and $1$.
+
+When applying the previously discussed approach to the data the goodness of the likelihoods can be validated as seen in \autoref{fig:likelihood_ratio_kaon_all}. The purity of the kaon sample in the bins increases with a stricter likelihood cut and the uncertainty is low due to the high statistics. However \autoref{fig:likelihood_ratio_proton_all} paints a completely different picture. The purity peaks at an likelihood ratio of about $0.35$, while the following values are far lower. However this effect is unique to the proton and can not be observed in any other of the six particle species of interest. On one hand this means the likelihoods for the kaon, pion, electron, muon and deuteron are properly defined and actually behave like probabilities. On the other hand it also reveals a flaw in the calculation of the proton likelihood. Thankfully the proton does not play a significant role in the analysis done in the following sections but nevertheless it is important to keep in mind that identifying protons via their likelihood (likelihood ratio) has inherent flaws.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/Neyman-Pearson Visualization}}}
-	\caption{Visualization of a test on the likelihood ratio. Based on the Neyman-Pearson lemma one should expect an monotonically increasing function. Horizontal lines indicate likelihood ratio bins, while the line represents the overall trend and guides the eye.}
-	\label{fig:neyman_pearson_visualization}
+	\subcaptionbox{Kaon\label{fig:likelihood_ratio_kaon_all}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative K Abundance in Likelihood Ratio Bins for ALL detector}}}
+	}
+	\hspace{2em}
+	\subcaptionbox{Proton\label{fig:likelihood_ratio_proton_all}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for ALL detector}}}
+	}
+	\caption{Relative abundance (purity) of various particle samples in likelihood ratio bins.}
+	\label{fig:likelihood_ratio_all}
 \end{figure}
 
-However the underlying does not provide a continuos stream of events and as such one must resort to binning the likelihoods. In this step the data is sampled into $10$ bins of equal height as to provide a balanced statistics for each bin. The error in a bin is given by a vertical line. It is calculated via gaussian error propagation under the assumption that the counting of the events follow a Poisson distribution. Thereby we assume that the number of desired particles in a bin and the number of undesired particles are independent.
+In order to understand the observed effect in \autoref{fig:likelihood_ratio_proton_all} it is important to pin down its cause. Since the likelihoods are values which are returned by each detector one natural conclusion might be that it is caused by one poorly defined detector response. \autoref{fig:likelihood_ratio_proton_by_detector} shows the relative abundance of the proton in likelihood ratio bins for various detector components.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{SVD\label{fig:likelihood_ratio_proton_svd}}{
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative K Abundance in Likelihood Ratio Bins for SVD detector}}}
+	}
+	\hspace{0.5em}
+	\subcaptionbox{CDC\label{fig:likelihood_ratio_proton_cdc}}{
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector}}}
+	}
+	\hspace{0.5em}
+	\subcaptionbox{TOP\label{fig:likelihood_ratio_proton_top}}{
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for TOP detector}}}
+	}
+
+	\subcaptionbox{ARICH\label{fig:likelihood_ratio_proton_arich}}{
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for ARICH detector}}}
+	}
+	\hspace{0.5em}
+	\subcaptionbox{ECL\label{fig:likelihood_ratio_proton_ecl}}{
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for ECL detector}}}
+	}
+	\hspace{0.5em}
+	\subcaptionbox{KLM\label{fig:likelihood_ratio_proton_klm}}{
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for KLM detector}}}
+	}
+
+	\caption{Relative abundance (purity) of the proton in likelihood ratio bins for all available detectors.}
+	\label{fig:likelihood_ratio_proton_by_detector}
+\end{figure}
+
+The response of the SVD is in perfect agreement with the expectation, the CDC however shows the same kink merely shifted a little to the left and the TOP is in agreement again. The ARICH, ECL and KLM either have a bad statistics and or the likelihoods not filling the whole range and underestimate the error at critical points close to a purity of $0$. Hence the ECL seems like the only viable cause of the unexpected kink in the proton purity over likelihood ratio plot. The observed shift to the left is due to the likelihood of a single detector in general being lower than the  likelihood of all detectors combined.
+
+As a further clue the $p_t$ dependency in the CDC detector was analysed as depicted in \autoref{fig:likelihood_ratio_proton_by_pt}. As sampling method three equal height bins were chosen, as using rather vew bins with the same overall number of particles in each provides a good statistic and allows for fair comparisons. Analyzing the picture it becomes obvious that especially low to medium transverse momentum protons constituent to the effect.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector for equal size pt bins}}}
+	\caption{Relative abundance of the proton in likelihood ratio bins for different transverse momentum ranges in units of $GeV/c$ for the CDC detector.}
+	\label{fig:likelihood_ratio_proton_by_pt}
+\end{figure}
+
+As a further information it is important to bear the locations of the detector components in mind. Of special interest in the discussed case is the end of the TOP detector, at roughly $- 60^{\circ}$ relative to the beampipe (see~\autoref{fig:belle2_detector_design_white_paper}). At this point the particle identification gets notably different. However as this effects all tracks equally it cancels out in comparisons.
+
+In conclusion the likelihood of the proton given by the CDC detector should be seen with a healthy skepticism and not be taken for granted as it does not behave as a likelihood. Further analysis needs to take place in order to pin down the actual cause.
 
 \section{Bayesian approach}
 \label{sec:bayesian_approach}
