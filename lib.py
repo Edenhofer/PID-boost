@@ -714,6 +714,7 @@ class ParticleFrame(dict):
 
             drawing = plt.errorbar(range(len(particles_of_interest)), abundance_correct[sorted_range], xerr=0.5, elinewidth=1, marker='None', linestyle='None', alpha=0.7)
             plt.errorbar(range(len(particles_of_interest)), abundance[sorted_range], xerr=0.5, marker='None', linestyle='None', alpha=0.8, color=drawing[0].get_color(), label=title_suffixes[i].lstrip() + ' (absolute, true)')
+            logging.info('Overall efficiency%s: %.6f'%(title_suffixes[i], abundance_correct.sum()/abundance.sum()))
 
         plt.legend()
         sorted_particles = np.array(particles_of_interest)[sorted_range]
