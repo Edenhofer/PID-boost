@@ -230,16 +230,29 @@ The univariate Bayesian approach adds a further dependency in the form of one de
 	\subcaptionbox{$\cos(\Theta)$\label{fig:univariate_bayes_priors_by_costheta}}{
 		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Univariate Bayesian Approach: K Spectra Ratios Relative to pi for cos(Theta) bins}}}
 	}
-	\caption{Kaon abundance relative to the pion abundance in bins of $p_t$ and $\cos(\Theta)$ with horizontal lines indicating the size of each bin.}
+	\caption{Kaon abundance relative to the pion abundance in equal height bins of $p_t$ and $\cos(\Theta)$ with horizontal lines indicating the size of each bin.}
 	\label{fig:univariate_bayes_priors}
 \end{figure}
 
-The relative abundance of one particle in comparison to the pion is shown in \autoref{fig:univariate_bayes_priors}. It is important that the relations between particle abundances are correct, hence the normalization via the pion abundance, the absolute value however does not matter. The graphs underline the motivation for using such an approach as the abundance varies between different bins. Especially the dependency on $p_t$ revealed drastic changes in the relative frequency of the kaon.
+The relative abundance of one particle in comparison to the pion is shown in \autoref{fig:univariate_bayes_priors}. Equal height bins were chosen to enforce a good statistics across all bins. It is important that the relations between particle abundances are correct, hence the normalization via the pion abundance, the absolute value however does not matter. The graphs underline the motivation for using such an approach as the abundance varies between different bins. Especially the dependency on $p_t$ revealed drastic changes in the relative frequency of the kaon.
 
 Due to its additional variable the univariate Bayesian approach is able to adapt to the underlying data a little better as it does not fix the abundance of particles in general as the simple Bayesian approach does.
 
 \subsection{Multivariate Bayes}
 \label{subsec:bayesian_approach_multivariate_bayes}
+
+The multivariate approach extends the univariate one by further increasing the number of free parameters the a priori probabilities may depends on. As previously mentioned both $p_t$ and $\cos(\Theta)$ make for an excellence choice as default variables for said dependency. For certain pockets those variables provide a good separation between different particle species.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: Multi-axes Histogram of pt, cosTheta}}}
+	\caption{Two dimensional scatter plot with tracks represented as opaque points depending on $p_t$ and $\cos(\Theta)$ and the color encoding the particle species.}
+	\label{fig:multivariate_bayes_multi_axis_histogram_by_pt_by_costheta}
+\end{figure}
+
+\autoref{fig:multivariate_bayes_multi_axis_histogram_by_pt_by_costheta}~shows tracks as transparent dots scattered across the plane, accompanied by two histograms showing the distribution in transverse momentum and the cosine of the angle between beampipe and track. It is important to note the sickle shape of the distribution. Higher cosine values are a little preferred over lower ones due to the asymmetry of the beams and angles of about $90^{\circ}$ ($\cos(\Theta) = 0$) correspond to the highest transverse momentums. Furthermore a slight separation can be seen between two stacked sickle shapes at a high transverse momentum. Intuitively this makes sense since the production of e.g. a proton consumes a lot of phase space which in turn reduces the amount of momentum it can carry. Vice verse a pion is relatively speaking light and therefore may carry a lot of momentum (not necessarily transverse momentum though). Obviously this argumentation disregards the fact that particles are not created one by one but rather in a complex decay and the phase space is distributed across all daughters. Nevertheless it illustrates the observed effect quite nicely.
+
+Allowing the a priori probability to depend on those measurements enables it to pick the best priors according to the Monte Carlo information for each combination of variables. In order th
 
 \subsection{Comparisons}
 \label{subsec:bayesian_approach_comparisons}
