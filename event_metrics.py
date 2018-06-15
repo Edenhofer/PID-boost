@@ -79,7 +79,7 @@ group_util.add_argument('-i', '--input', dest='input_directory', action='store',
 group_util.add_argument('--input-pickle', dest='input_pickle', action='store', default=None,
                     help='Pickle file path containing a ParticleFrame object which shall be read in instead of ROOT files; Takes precedence when specified')
 group_util.add_argument('-o', '--output', dest='output_directory', action='store', default='./res/',
-                    help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'.')
+                    help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'')
 group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
                     help='Run interactively, i.e. show plots')
 group_util.add_argument('--non-interactive', dest='interactive', action='store_false', default=True,
