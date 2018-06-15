@@ -407,14 +407,18 @@ if args.run_univariate_bayes_priors:
 
     for p in particles_of_interest:
         plt.figure()
-        plt.errorbar(interval_centers[p], iteration_priors_viaBest[norm][p][-1], xerr=interval_widths[p], label='Truth', fmt='*')
+        fmt = 'o' if niterations == 0 else '*'
+        plt.errorbar(interval_centers[p], iteration_priors_viaBest[norm][p][-1], xerr=interval_widths[p], label='Truth', fmt=fmt)
         for n in range(niterations):
             plt.errorbar(interval_centers[p], iteration_priors_viaIter[norm][p][n], xerr=interval_widths[p], label='Iteration %d'%(n+1), fmt='o')
 
         plt.xlabel(ParticleFrame.variable_formats[hold] + ' (' + ParticleFrame.variable_units[hold] + ')')
         plt.ylabel('Relative Abundance')
-        plt.legend()
-        data.pyplot_sanitize_show('%s Spectra Ratios Relative to %s'%(ParticleFrame.particle_base_formats[p], ParticleFrame.particle_base_formats[norm]), savefig_prefix='Univariate Bayesian Approach: ')
+        title = '%s Spectra Ratios Relative to %s for %s bins'%(ParticleFrame.particle_base_formats[p], ParticleFrame.particle_base_formats[norm], ParticleFrame.variable_formats[hold])
+        if niterations > 0:
+            plt.legend()
+            title = title + ' after %d iterations'%(niterations)
+        data.pyplot_sanitize_show(title, savefig_prefix='Univariate Bayesian Approach: ')
 
 if args.run_univariate_bayes_outliers:
     hold = args.hold
