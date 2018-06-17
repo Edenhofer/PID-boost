@@ -116,7 +116,7 @@ if args.run_stats:
     particles_of_interest = args.particles_of_interest
 
     # Abundances might vary due to some preliminary mass hypothesis being applied on reconstruction
-    # ~~Ignore this for now and just plot the dataset belonging to the `norm` particle~~ --> Do this for every particle in particle_of_interest
+    # ~~Ignore this for now and just plot the dataset belonging to the `norm` particle~~ --> Do this for every particle in particles_of_interest
     for p in particles_of_interest:
         particle_data = data[p]
 
