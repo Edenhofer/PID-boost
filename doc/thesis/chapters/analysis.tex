@@ -337,6 +337,18 @@ Differences in abundances were not observed. The global efficiencies over all pa
 	\label{tab:overall_efficiencies}
 \end{table}
 
+
+\subsection{Summary and outlook}
+\label{subsc:bayesian_approach_summary}
+
+In comparison to the legacy PID approach the positive effect introduced by the Bayesian approach are mainly due to inclusion of further particle likelihoods. Both the pidProbability approach as well as the Bayesian one decrease the rate at which particles of high abundance are identified. However both approaches in turn increase the identical efficiencies of particles with a low abundance significantly. Hereby, the Bayesian approach is able shine as it correctly classifies more pions correctly in the charged generic decay at the cost of a reduced identifying rate for some particles of lower abundance particles.
+
+The difference between the simple Bayesian approach, the univariate Bayesian approach and the multivariate Bayesian approach is slim. Neither the overall identification efficiencies change significantly, nor does the identification rate of certain particles get boosted. Slight overall gains are measurable but insignificant.
+
+As an outlook, further studies concerning the cell structure of the a priori probabilities are worth considering. The current approach of selecting equal height bins has been shown to be useful. Nevertheless, it is limited especially if used in conjunction with multiple other variables. Two intervals on separate variables, each containing a certain percent of the data, are not guaranteed to contain the same amount of data if intersected. A possible extension could be to implement a proper two dimensional clustering using e.g. Voronoi cells (see~\cite{KnowledgeDiscoveryInDatabases1:Clustering}) instead of interval boundaries. Density based clustering algorithms such as DBSCAN and OPTICS (see~\cite{KnowledgeDiscoveryInDatabases1:Clustering}) might also be worth considering. Those approaches could further extend the a priori probabilities of the two dimensional cells of the multivariate Bayesian approach to density connected clusters.
+
+Additionally overlapping boundaries either from the current approach or introduced by new clustering algorithms could be used to weight a priori probabilities. Instead of relying on one exclusive boundary, the mean of multiple a priori probabilities estimates could be used instead.
+
 \section{Neural network approach}
 \label{sec:neural_network_approach}
 
