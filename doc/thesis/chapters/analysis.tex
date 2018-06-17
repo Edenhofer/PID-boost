@@ -339,3 +339,35 @@ Differences in abundances were not observed. The global efficiencies over all pa
 
 \section{Neural network approach}
 \label{sec:neural_network_approach}
+
+\subsection{Design}
+\label{subsec:neural_network_design}
+
+The neural network used in the following discussion consists of eight sequential layers. By comparing a multitude of networks with different number of layers eight was found to perform best without just over-fitting the data. Hereby two different concepts for layers were used; On one hand a so called \textit{dense} layer connects all inputs with each node in the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a rather high number of free parameters depending on the function used in each node. On the other hand a so called \textit{dropout} layer was employed which as its name suggests drops a certain percentage of inputs by chance and enforces the training on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit (see~\cite{MachineLearning:DeepLearning}).
+
+Three different approaches for the choice of input parameters were evaluated. First the unaltered pidProbability variable for each detector was used as a baseline. As second approach a rich mixture of variables were used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the pidProbability for each detector. The third approach used the same initial inputs as the second one. However prior to passing the values to the network, a Principal Component Analysis (see~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData}) on the standardized data was performed. The standardization step centers the data by removing the mean and scales the the value so that the standard deviation becomes one. It is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
+
+The output, i.e. the actual classification, was done in the final step of the network via the previously discussed softmax algorithm using the gradient of the cross-entropy for weight adaption. In order to get a unique classification, the class with the highest softmax value was selected. As targets for classification the six long-living particle species were used with the addition of a zeroth class used for classifying particles which do not belong to the six other classes. This zeroth class includes just a fractional amount of particles but it is important to have it either way as each track on which the network is supposed to learn is required to have a target associated with it.
+
+\autoref{tab:neural_network_parameters} shows the parametrization used for the network. Overall it has between $1,200$ and $1,800$ free parameters which are to be adapted, depending on the dimensionality of the input.
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{l|llll}
+		Layer number & Type & Activation & Bias & \#Outputs  \\
+		\hline
+		1 & Dense & ReLU & True & 14 \\
+		2 & Dropout ($20\%$) \\
+		3 & Dense & ReLU & True & 21 \\
+		4 & Dropout ($20\%$) \\
+		5 & Dense & ReLU & True & 14 \\
+		6 & Dropout ($20\%$) \\
+		7 & Dense & ReLU & True & 10 \\
+		8 & Dense & Softmax & True & 7
+	\end{tabular}
+	\caption{Design parameters of the neural network.}
+	\label{tab:neural_network_parameters}
+\end{table}
+
+\subsection{Performance}
+\label{subsec:neural_network_performance}
