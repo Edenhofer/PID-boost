@@ -343,18 +343,18 @@ Differences in abundances were not observed. The global efficiencies over all pa
 \subsection{Design}
 \label{subsec:neural_network_design}
 
-The neural network used in the following discussion consists of eight sequential layers. By comparing a multitude of networks with different number of layers eight was found to perform best without just over-fitting the data. Hereby two different concepts for layers were used; On one hand a so called \textit{dense} layer connects all inputs with each node in the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a rather high number of free parameters depending on the function used in each node. On the other hand a so called \textit{dropout} layer was employed which as its name suggests drops a certain percentage of inputs by chance and enforces the training on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit (see~\cite{MachineLearning:DeepLearning}).
+In the following discussion a neural networking consists of eight sequential layers is chosen. Eight layers were found to perform best without over-fitting the data. Two different concepts for layers were used; On one hand a so called \textit{dense} layer connects all inputs with each node in the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a rather high number of free parameters depending on the used function in a node. On the other hand a so called \textit{dropout} layer was employed which as its name suggests drops a certain percentage of inputs by chance and enforces the training on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit (see~\cite{MachineLearning:DeepLearning}).
 
 Three different approaches for the choice of input parameters were evaluated. First the unaltered pidProbability variable for each detector was used as a baseline. As second approach a rich mixture of variables were used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the pidProbability for each detector. The third approach used the same initial inputs as the second one. However prior to passing the values to the network, a Principal Component Analysis (see~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData}) on the standardized data was performed. The standardization step centers the data by removing the mean and scales the the value so that the standard deviation becomes one. It is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
 
-The output, i.e. the actual classification, was done in the final step of the network via the previously discussed softmax algorithm using the gradient of the cross-entropy for weight adaption. In order to get a unique classification, the class with the highest softmax value was selected. As targets for classification the six long-living particle species were used with the addition of a zeroth class used for classifying particles which do not belong to the six other classes. This zeroth class includes just a fractional amount of particles but it is important to have it either way as each track on which the network is supposed to learn is required to have a target associated with it.
+The output, i.e., the actual classification, was done in the final step of the network via the previously discussed softmax algorithm using the gradient of the cross-entropy for weight adaption. In order to get a unique classification, the class with the highest softmax value was selected. As targets for classification the six long-living particle species were used with the addition of a zeroth class used for classifying particles which do not belong to the six other classes. This zeroth class includes just a fractional amount of particles but it is important to have it either way as each track on which the network is supposed to learn is required to have a target associated with it.
 
 \autoref{tab:neural_network_parameters} shows the parametrization used for the network. Overall it has between $1,200$ and $1,800$ free parameters which are to be adapted, depending on the dimensionality of the input.
 
 \begin{table}[ht]
 	\centering
 	\begin{tabular}{l|llll}
-		Layer number & Type & Activation & Bias & \#Outputs  \\
+		Layer number & Type & Activation & Bias & \#Nodes  \\
 		\hline
 		1 & Dense & ReLU & True & 14 \\
 		2 & Dropout ($20\%$) \\
@@ -371,3 +371,64 @@ The output, i.e. the actual classification, was done in the final step of the ne
 
 \subsection{Performance}
 \label{subsec:neural_network_performance}
+
+As performance measurement the accuracy is used. It is the fraction of correctly classified tracks relative to all available ones. In the discussed case it is synonymous to the overall efficiency.
+
+Testing and validation is done using a fixed split between training and validation data (\textit{holdout method}). It is important to separate those two samples in order to spot networks which over-fit the data instead of actually `learning'. The training data is a random sample containing $80\%$ the number of tracks as the original data --- Note, this does not necessarily need to actually be $80\%$ of the data as some tracks can be picked multiple times. The remaining tracks are used for validating the actual learning process. Both training set and validation set are used to compute the accuracy however only the training sample is used to adapt weights. In the case of no over-fitting the validation accuracy fluctuates around the training accuracy.
+
+Furthermore two approaches for sampling the data are analysed. One approach picks all tracks at random with equal weights and hence in theory has a bias towards particle species with a higher abundance. The other approach weights tracks in a way which make every particle specie equally likely to be picked (\textit{upsampling}).
+
+Each training is performed with a batch size of $256$. Smaller batch sizes turn out to perform bad as the weights are adapted too frequently and the accuracy fluctuates without increasing overall. The current batch size is found via iteratively picking higher values until finding a rate at which the accuracy increases only gradually.
+
+Furthermore several optimizers --- algorithms, describing the process of weight adaption --- are tested. In the end Adadelta (see~\cite{DBLP:journals/corr/abs-1212-5701}) and Adamax (see~\cite{DBLP:journals/corr/KingmaB14}) prove to have the best performance with the least fluctuations in the validation accuracy. Hence, the following discussion will focus on only those two weight adaption approaches.
+
+\autoref{fig:neural_network_all_biased} shows the two optimizers in comparison. Both yield pretty similar results, especially considering the scaling of the accuracy. It is important to note that both are able to `learn' the classification problem rather quickly. Within the first epoch --- the first iteration through all the tracks --- both are able to achieve accuracies of about $90\%$. However, they level off rather quickly. After approximately $15$ iterations no noticeable change in the training accuracy can be observed. The validation accuracy follows the general trend of the training accuracy but as expected it shows a lot more fluctuation.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Adadelta\label{fig:neural_network_all_biased_adadelta}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all biased nLayers8 Optimizeradadelta LearningRateNone nEpochs15 BatchSize256}}}
+	}
+	\hspace{2em}
+	\subcaptionbox{Adamax\label{fig:neural_network_all_biased_adamax}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all biased nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+	}
+	\caption{Accuracy of the neural network using the Adadelta and Adamax optimizer with everything selected as features. The values are displayed for a biased sampling approach.}
+	\label{fig:neural_network_all_biased}
+\end{figure}
+
+The high slope at which the accuracy initially increases even within the first epoch, can be observed independently of the sampling method and the feature selection.
+
+\autoref{fig:neural_network_pidProbability_by_sampling_method} compares the two sampling approaches. The graph employs the Adamax optimizer, however the Adadelta behaves similarly. One may observe that the network which receives the tracks of the particles in proportion to their abundance (biased sampling) is able to outperform the network which is trained on data using upsampling. The final difference in validation accuracy is about $4\%$.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Biased\label{fig:neural_network_pidProbability_biased_adamax}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pidProbability biased nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+	}
+	\hspace{2em}
+	\subcaptionbox{Upsampled\label{fig:neural_network_pidProbability_fair_adamax}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pidProbability fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+	}
+	\caption{Accuracy of the neural network using the Adamax optimizer with the pidProbability as features. The values are displayed for a biased sampling approach (left) and the upsampling approach (right).}
+	\label{fig:neural_network_pidProbability_by_sampling_method}
+\end{figure}
+
+In~\autoref{fig:neural_network_pca_all} the PCA feature selection approach is shown next to the `all' approach. The term `all' in this context denotes that every available variable is selected as feature. As seen in the graph, the accuracy increases with the number of components and even surpasses the selection of all components. The values are considerable worse than the one which were calculated using biased sampling.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{`All'\label{fig:neural_network_all_fair_adamax}}{
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+	}
+	\hspace{0.5em}
+	\subcaptionbox{PCA, $50$ components\label{fig:neural_network_pca50_fair_adamax}}{
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents50 fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+	}
+	\hspace{0.5em}
+	\subcaptionbox{PCA, $90$ components\label{fig:neural_network_pca90_fair_adamax}}{
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents90 fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+	}
+	\caption{Accuracy of the neural network using the Adamax optimizer with selecting all features (left), the $50$ most principal components (center) and the $90$ most principal components (right). The values are displayed for a set using upsampling.}
+	\label{fig:neural_network_pca_all}
+\end{figure}
