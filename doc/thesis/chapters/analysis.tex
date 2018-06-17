@@ -269,21 +269,73 @@ The abundance of kaons relative to the abundance of pions can be seen in~\autore
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Diff Statistics: K Identification via PID, via simple Bayes}}}
-	\caption{Comparisons of PPV and TPR for simple Bayes and legacy PID approach for identifying kaons. The upper graph shows both rates of each approach separately using different colors, while the lower visualizes the ratio between the PPV's respectively the TPR's.}
+	\caption{Comparisons of PPV, TPR and FPR for simple Bayes and legacy PID approach for identifying kaons. The upper graph shows both rates of each approach separately using different colors, while the lower visualizes the ratio between the PPV's respectively the TPR's.}
 	\label{fig:diff_stats_K_identification_via_pid_via_simple_bayes}
 \end{figure}
 
-\autoref{fig:diff_stats_K_identification_via_pid_via_simple_bayes} shows a comparison of the legacy PID approach to the discussed simple Bayesian one. Using simple Bayes for identifying particles yields a very high positive predicted values even for low false positive rates as the introduced bias in the particle classification can utilize the unbalanced abundances. Furthermore the true positive rate of the Bayesian approach has a much steeper increase in comparison to the legacy PID's one. However it levels of quicker, indicating that it fails to identify a few particles even at a high false positive rate.
-The described effect can be seen for every stable particle with an ID and is not limited to the kaon. However it serves as a good example as it provides sufficient statistics for a throughout analysis.
+\autoref{fig:diff_stats_K_identification_via_pid_via_simple_bayes} shows a comparison of the \textbf{legacy PID} approach to the discussed \textbf{simple Bayes}ian one for identifying kaons. Using simple Bayes for identifying particles yields a very high positive predicted values even for low false positive rates as the introduced bias in the particle classification can utilize the unbalanced abundances. Furthermore the true positive rate of the Bayesian approach has a much steeper increase in comparison to the legacy PID's one. However it levels of quicker, indicating that it fails to identify a few particles even at a high false positive rate.
+The described effect can be seen for every stable particle with an ID and is not limited to the kaon. However the comparison of the kaon identification is a rather conservative choice as the legacy PID approach favors high abundance particles. Particles like the electron or muon perform consistently better using the new approach.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, via simple Bayes}}}
-	\caption{Comparisons of the row-wised normed confusion matrix for simple Bayes and legacy PID approach.}
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, via simple Bayes}}}
+	\caption{Comparisons of the row-wised normed confusion matrix for simple Bayes and the legacy PID approach.}
 	\label{fig:diff_heatmap_via_pid_via_simple_bayes}
 \end{figure}
 
 The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However in general the simple Bayesian approach is less prone to confusing particle with one another as seen in~\autoref{fig:diff_heatmap_via_pid_via_simple_bayes}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via pidProbability, via simple Bayes}}}
+	\caption{Comparisons of the row-wised normed confusion matrix for pidProbability and simple Bayes.}
+	\label{fig:diff_heatmap_via_pidProbability_via_simple_bayes}
+\end{figure}
+
+In comparison to the \textbf{pidProbability} variable the differences are less pronounced as seen in~\autoref{fig:diff_heatmap_via_pidProbability_via_simple_bayes}. At this point it becomes a question of the desired goal. Surely the pion identification is boosted but only at the cost of loosing efficiency for the muon. At the same time the efficiencies for the kaon, electron and proton identification stayed about the same. However overall the approach is better since kaons are present in a higher abundance and therefore technically more particles are correctly classified as seen in~\autoref{fig:diff_abundances_via_pid_via_pidprobability_via_simple_bayes}. Especially the Bayesian approach shines in when comparing the true and predicted particle abundances as the information was built into its design.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{PID, simple Bayes\label{fig:diff_abundances_via_pid_via_simple_bayes}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Diff Abundances: Particle Abundances in the K+-Data via PID, via simple Bayes}}}
+	}
+	\hspace{2em}
+	\subcaptionbox{pidProbability, simple Bayes\label{fig:diff_abundances_via_pid_via_simple_bayes}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Diff Abundances: Particle Abundances in the K+-Data via pidProbability, via simple Bayes}}}
+	}
+	\caption{Counting from the top the first line of each approach (color coded) represents the abundance according to the approach, while the lower line represents the number of correctly classified particles. The particle classification hereby is exclusive.}
+	\label{fig:diff_abundances_via_pid_via_pidprobability_via_simple_bayes}
+\end{figure}
+
+Introducing more degrees of freedom in the form of the \textbf{univariate Bayes}ian approach further extends the existing strengths of the simple Bayesian approach while compensating some of the downsides. Using the kaon again as conservative sample the identification improves slightly as seen in~\autoref{fig:diff_stats_K_identification_via_simple_bayes_via_univariate_bayes}. Although slightly less particles are classified overall which can be seen via the ratio of the TPRs being below $1.$, a boost of the rate of correctly classified particles more than compensates for the slight loss. The efficiencies for each particle identification further manifests this view although
+Overall its behavior is very similar to the simple Bayesian one and a comparison between univariate Bayes and pidProbability respectively the legacy PID approach would therefore be redundant.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Diff Statistics: K Identification via simple Bayes, via univariate Bayes}}}
+	\caption{Comparisons of PPV, TPR and FPR for simple Bayes and univariate Bayes for identifying kaons. The tail of the PPV ratio is due the ever decreasing PPV in general and does not necessarily mean it that superior.}
+	\label{fig:diff_stats_K_identification_via_simple_bayes_via_univariate_bayes}
+\end{figure}
+
+Lastly the \textbf{multivariate Bayes}ian approach was tested. Its TPR and PPV are for every particle species in the sample, neglecting effects below a maximal relative changes of $2 \%$, identical to the univariate approach. At this point it is important to emphasize that the new dependency improved results rather than worsen them; Negative effects in TPR and PPV were always smaller than $0.3 \cdot 10^{-3}$ while the maximal change of $2 \%$ slightly boosted the PPV for the muon identification at one point.
+This is also reflected in the efficiencies for identifying particles which virtually take the same form as the one from the univariate Bayesian approach.
+
+Differences in abundances were not observed. The global efficiencies over all particle species are displayed in~\autoref{tab:overall_efficiencies}. The drop between
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{l|l}
+		Particle identification approach & Overall identification efficiency \\
+		\hline
+		legacy PID & $0.848342$ \\
+		pidProbability & $0.793748$ \\
+		simple Bayes & $0.884109$ \\
+		univariate Bayes & $0.886597$ \\
+		multivariate Bayes & $0.886819$
+	\end{tabular}
+	\caption{Overall efficiencies for various particle identical approaches.}
+	\label{tab:overall_efficiencies}
+\end{table}
 
 \section{Neural network approach}
 \label{sec:neural_network_approach}
