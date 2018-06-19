@@ -339,7 +339,7 @@ if args.diff_methods:
             raise ValueError('received unknown method "%s"'%(m))
 
         if m in data.descriptions:
-            s = ' ' + data.descriptions[m]
+            s = t + ' ' + data.descriptions[m]
         else:
             s = t
 

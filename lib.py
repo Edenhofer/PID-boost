@@ -135,6 +135,13 @@ class ParticleFrame(dict):
             ValueError: If given not-none values for both `pickle_path` and `input_directory`.
 
         """
+        self.output_directory = os.path.join('res', '') if output_directory is None else output_directory
+        self.interactive = False if interactive is None else interactive
+        self.descriptions = {} if descriptions is None else descriptions
+
+        self.loglevel = logging.WARNING if loglevel is None else loglevel
+        logging.basicConfig(level=self.loglevel)
+
         self.data = {}
         if pickle_path is not None and input_directory is not None:
             raise ValueError('invalid number of inputs; Received `pickle_path` and `input_directory`; Please decide upon one method for class initialization')
@@ -142,12 +149,6 @@ class ParticleFrame(dict):
             self.read_root(input_directory)
         elif pickle_path is not None:
             self.read_pickle(pickle_path)
-        self.output_directory = os.path.join('res', '') if output_directory is None else output_directory
-        self.interactive = False if interactive is None else interactive
-        self.descriptions = {} if descriptions is None else descriptions
-
-        self.loglevel = logging.WARNING if loglevel is None else loglevel
-        logging.basicConfig(level=self.loglevel)
 
     def __setitem__(self, key, item):
         self.data[key] = item
