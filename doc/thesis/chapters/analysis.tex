@@ -42,7 +42,9 @@ As seen in \autoref{fig:true_particle_abundance} the decays are dominated by kao
 	\caption{True particle abundance in various simulated decays with particle on the $x$-axis sorted by their frequency. \textit{NaN} stands for an invalid translation\protect\footnotemark from the particles' PDG code to an actual particle.}
 	\label{fig:true_particle_abundance}
 \end{figure}
-\footnotetext{The error occurs due to the PDG code in the ROOT file being saved as \lstinline|float32| but some particle's code exceed the memory limit of $32$-bits. Notably, this effects the deuteron as well as its anti-particles.}
+\footnotetext{The error occurs due to the PDG code in the ROOT file being saved as \lstinline|float32|. However, some particle's code exceed the memory limit of $32$-bits. Notably this effects the deuteron and its anti-particle.}
+
+Prior to evaluating the data, it is stripped of falsely identified and poorly defined tracks. First the transverse momentum is limited to the range of $0.0$ to $5.29$. This removes very slow and very fast particles as both provide very badly described tracks. Next, the transverse distance of the closest point of the track to the point of interaction is limited to $2 \mathrm{~cm}$, respectively $5 \mathrm{~cm}$ for the longitudinal distance. Lastly, tracks with no assigned PDG code are pruned. Such tracks are considered falsely reconstructed as a majority of hits of the track do not belong to the true simulated track. Including those kinds of tracks would have suggested the particle identification process shall identify non-particles tracks. Overall the effect of tracks with no PDG code does not influence the final result in any significant way. The tracks were merely excluded for the purpose of clarity.
 
 The generic decay files are used in the following discussion. Each decay file features $100,000$ initial $B \bar{B}$ events and about ten times as many identified tracks. The non-generic decay contains $10,000$ initial events and about $40,000$ tracks.
 
