@@ -56,7 +56,7 @@ If not specifically otherwise stated it can be assumed that the graphs and visua
 
 The current particle identification approach consists of variables calculated via ratios of likelihoods. A particle identification is performed by applying a selection, also called \textit{cut} on the variables.
 
-As of \formatdate{28}{06}{2018}, the current approach is to take the likelihood of the desired particle and divide it by itself plus the likelihood of the pion. To construct the ID of the pion the kaon likelihood is used as second summand in the denominator. \autoref{tab:legacy_particleid_variables} shows the definition of the ID for each of the six particle species of interest. In the future it will be replaced by the pidProbability approach, described in \autoref{subsec:pid_variables_pidProbability}.
+As of \formatdate{28}{06}{2018}, the current approach is to take the likelihood of the desired particle and divide it by itself plus the likelihood of the pion. To construct the ID of the pion the kaon likelihood is used as second summand in the denominator. \autoref{tab:legacy_particleid_variables} shows the definition of the ID for each of the six particle species of interest. In the future it will be replaced by the global PID approach, described in \autoref{subsec:pid_variables_global_pid}.
 
 \begin{table}[ht]
 	\centering
@@ -98,40 +98,40 @@ This unbalanced classification is further emphasized by analyzing the identifica
 	\label{fig:legacy_pid_epsilon_pid}
 \end{figure}
 
-\subsection{pidProbability}
-\label{subsec:pid_variables_pidProbability}
+\subsection{global PID}
+\label{subsec:pid_variables_global_pid}
 
-The pidProbability approach is the upcoming approach which is to be used as new default variable on which to select particle samples. Instead of having the likelihood of the pion fixed in the denominator of every particle's id, it is replaced by the sum over all the other particles. Hence the pidProbability of the kaon is now represented by the likelihood of the kaon divided by sum of all the likelihoods of every other particle including the kaon itself. The complete list of the definition can be seen in \autoref{tab:pidProbability_variables}.
+The global PID approach is the upcoming approach which is to be used as new default variable on which to select particle samples. Instead of having the likelihood of the pion fixed in the denominator of every particle's id, it is replaced by the sum over all the other particles. Hence, the global PID of the kaon is now represented by the likelihood of the kaon divided by sum of all the likelihoods of every other particle including the kaon itself. The complete list of the definition can be seen in \autoref{tab:global_pid_variables}.
 
 \begin{table}[ht]
 	\centering
 	\begin{tabular}{l|l}
-		pidProbabilityPion & $\mathcal{L}_{\pi} / \mathcal{L}_{all}$ \\
-		pidProbabilityKaon & $\mathcal{L}_{K} / \mathcal{L}_{all}$ \\
-		pidProbabilityProton & $\mathcal{L}_{p} / \mathcal{L}_{all}$ \\
-		pidProbabilityElectron & $\mathcal{L}_{e} / \mathcal{L}_{all}$ \\
-		pidProbabilityMuon & $\mathcal{L}_{\mu} / \mathcal{L}_{all}$ \\
-		pidProbabilityDeuteron & $\mathcal{L}_{d} / \mathcal{L}_{all}$ \\
+		globalPionID & $\mathcal{L}_{\pi} / \mathcal{L}_{all}$ \\
+		globalKaonID & $\mathcal{L}_{K} / \mathcal{L}_{all}$ \\
+		globalProtonID & $\mathcal{L}_{p} / \mathcal{L}_{all}$ \\
+		globalElectronID & $\mathcal{L}_{e} / \mathcal{L}_{all}$ \\
+		globalMuonID & $\mathcal{L}_{\mu} / \mathcal{L}_{all}$ \\
+		globalDeuteronID & $\mathcal{L}_{d} / \mathcal{L}_{all}$ \\
 		\hline
 		\multicolumn{2}{c}{$\mathcal{L}_{all} = \sum \limits_{x \in {\pi, K, p, e, \mu, d}} \mathcal{L}_{x}$}
 	\end{tabular}
-	\caption{Definition of the pidProbability variables which is to be used by default for particle identification in the future.}
-	\label{tab:pidProbability_variables}
+	\caption{Definition of the globalPID variables which is to be used by default for particle identification in the future.}
+	\label{tab:global_pid_variables}
 \end{table}
 
-The approach is significantly less prone to merely differentiating between kaons and pions but instead has a more balanced classification as can be seen in \autoref{fig:pidProbability_epsilon_pid}. This newly gained efficiency in identifying particles of lower abundance comes at the cost of worsening the classification of particles of high abundance. Both the kaon and the pion are less likely to be correctly identified, with the pion efficiency taking an especially steep decline.
+The approach is significantly less prone to merely differentiating between kaons and pions but instead has a more balanced classification as can be seen in \autoref{fig:global_pid_epsilon_pid}. This newly gained efficiency in identifying particles of lower abundance comes at the cost of worsening the classification of particles of high abundance. Both the kaon and the pion are less likely to be correctly identified, with the pion efficiency taking an especially steep decline.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Heatmap of epsilonPID Matrix for an exclusive Cut}}}
-	\caption{Matrix of $\epsilon$ values for the pidProbability approach.}
-	\label{fig:pidProbability_epsilon_pid}
+	\caption{Matrix of $\epsilon$ values for the global PID approach.}
+	\label{fig:global_pid_epsilon_pid}
 \end{figure}
 
-\subsection{pidProbability goodness}
-\label{subsec:pid_variables_pidProbability_goodness}
+\subsection{Goodness of the global PID variables}
+\label{subsec:pid_variables_global_pid_goodness}
 
-In order to ensure the pidProbability variables are properly defined, a likelihood ratio test based on the Neyman-Pearson lemma as outlined in \autoref{subsec:likelihood_ratios_neyman_pearson} is used. The lemma states that the highest purity for a given efficiency is to be expected for each selection on the likelihood ratio as seen in \autoref{fig:neyman_pearson_visualization}.
+In order to ensure the global PID variables are properly defined, a likelihood ratio test based on the Neyman-Pearson lemma as outlined in \autoref{subsec:likelihood_ratios_neyman_pearson} is used. The lemma states that the highest purity for a given efficiency is to be expected for each selection on the likelihood ratio as seen in \autoref{fig:neyman_pearson_visualization}.
 
 For the following analysis the data is sampled into $10$ bins of equal height as to provide a balanced statistics for each bin. The error in a bin is given by a vertical line. It is calculated via gaussian error propagation under the assumption that the counting of the events follow a Poisson distribution. Thereby assumption is made that the number of desired particles in a bin and the number of undesired particles are independent. The error is underestimated for a purity of $0$ and $1$.
 
@@ -293,14 +293,14 @@ The improvements in the identification efficiencies are less obvious for an excl
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via pidProbability, via simple Bayes}}}
-	\caption{Comparison of the row-wised normed confusion matrix for the pidProbability approach with simple Bayes.}
-	\label{fig:diff_heatmap_via_pidProbability_via_simple_bayes}
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via global PID, via simple Bayes}}}
+	\caption{Comparison of the row-wised normed confusion matrix for the global PID approach with simple Bayes.}
+	\label{fig:diff_heatmap_via_global_pid_via_simple_bayes}
 \end{figure}
 
-The differences are less pronounced in comparison to the \textbf{pidProbability} variables as seen in~\autoref{fig:diff_heatmap_via_pidProbability_via_simple_bayes}. At this point it becomes a question of the desired goal. The pion identification is boosted but only at the cost of loosing efficiency for the muon identification. At the same time the efficiencies for the kaon, electron and proton identification stayed about the same.
+The differences are less pronounced in comparison to the \textbf{global PID} variables as seen in~\autoref{fig:diff_heatmap_via_global_pid_via_simple_bayes}. At this point it becomes a question of the desired goal. The pion identification is boosted but only at the cost of loosing efficiency for the muon identification. At the same time the efficiencies for the kaon, electron and proton identification stayed about the same.
 
-Overall, simple Bayes achieves a higher efficiency since kaons are particles of higher abundance. Therefore, in general it classifies more tracks correctly as seen in~\autoref{fig:diff_abundances_via_pid_via_pidprobability_via_simple_bayes}. Of special interest is the good agreement of predicted and true particle abundances for the Bayesian approach as the information was built into it by design.
+Overall, simple Bayes achieves a higher efficiency since kaons are particles of higher abundance. Therefore, in general it classifies more tracks correctly as seen in~\autoref{fig:diff_abundances_via_pid_via_global_pid_via_simple_bayes}. Of special interest is the good agreement of predicted and true particle abundances for the Bayesian approach as the information was built into it by design.
 
 \begin{figure}[ht]
 	\centering
@@ -308,14 +308,14 @@ Overall, simple Bayes achieves a higher efficiency since kaons are particles of 
 		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Diff Abundances: Particle Abundances in the K+-Data via PID, via simple Bayes}}}
 	}
 	\hspace{2em}
-	\subcaptionbox{pidProbability, simple Bayes\label{fig:diff_abundances_via_pid_via_simple_bayes}}{
-		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Diff Abundances: Particle Abundances in the K+-Data via pidProbability, via simple Bayes}}}
+	\subcaptionbox{global PID, simple Bayes\label{fig:diff_abundances_via_pid_via_simple_bayes}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Diff Abundances: Particle Abundances in the K+-Data via global PID, via simple Bayes}}}
 	}
 	\caption{Counting from the top the first line of each approach (color coded) represents the abundance according to the approach, while the lower line represents the number of correctly classified particles. The particle classification hereby is exclusive.}
-	\label{fig:diff_abundances_via_pid_via_pidprobability_via_simple_bayes}
+	\label{fig:diff_abundances_via_pid_via_global_pid_via_simple_bayes}
 \end{figure}
 
-Introducing more degrees of freedom in the form of the \textbf{univariate Bayes}ian approach reveals no difference . Using the pion again as conservative sample, the identification improves slightly as seen in~\autoref{fig:diff_stats_pi_identification_via_simple_bayes_via_univariate_bayes}. Although slightly less particles are classified overall which can be seen via the ratio of the TPRs being below $1.$, a boost of the rate of correctly classified particles more than compensates for the slight loss. The efficiencies for each particle identification further manifests this view although overall its behavior is very similar to the simple Bayesian one and a comparison between univariate Bayes and pidProbability respectively the legacy PID approach would therefore be redundant.
+Introducing more degrees of freedom in the form of the \textbf{univariate Bayes}ian approach reveals no difference . Using the pion again as conservative sample, the identification improves slightly as seen in~\autoref{fig:diff_stats_pi_identification_via_simple_bayes_via_univariate_bayes}. Although slightly less particles are classified overall which can be seen via the ratio of the TPRs being below $1.$, a boost of the rate of correctly classified particles more than compensates for the slight loss. The efficiencies for each particle identification further manifests this view although overall its behavior is very similar to the simple Bayesian one and a comparison between univariate Bayes and global PID respectively the legacy PID approach would therefore be redundant.
 
 \begin{figure}[ht]
 	\centering
@@ -335,7 +335,7 @@ The global efficiencies over all particle species are displayed in~\autoref{tab:
 		Particle identification approach & Overall identification efficiency \\
 		\hline
 		legacy PID & $(844 \pm 4) \permille$ \\ % 0.841650, 0.840713, 0.841381, 0.840628, 0.848190, 0.848589, 0.848208, 0.848342
-		pidProbability & $(792 \pm 2) \permille$ \\ % 0.790291, 0.790009, 0.790600, 0.790581, 0.793814, 0.793484, 0.794605, 0.793748
+		global PID & $(792 \pm 2) \permille$ \\ % 0.790291, 0.790009, 0.790600, 0.790581, 0.793814, 0.793484, 0.794605, 0.793748
 		simple Bayes & $(882 \pm 2) \permille$ \\ % 0.880800, 0.880086, 0.880715, 0.880286, 0.884530, 0.884318, 0.884664, 0.884109
 		univariate Bayes & $(885 \pm 3) \permille$ \\ % 0.882854, 0.882183, 0.882980, 0.882411, 0.886828, 0.886719, 0.887014, 0.886597
 		multivariate Bayes & $(885 \pm 3) \permille$ % 0.882964, 0.882461, 0.883159, 0.882591, 0.886961, 0.887016, 0.887171, 0.886819
@@ -348,7 +348,7 @@ The global efficiencies over all particle species are displayed in~\autoref{tab:
 \subsection{Summary and outlook}
 \label{subsc:bayesian_approach_summary}
 
-In comparison to the legacy PID approach the positive effect introduced by the Bayesian approach are mainly due to inclusion of further particle likelihoods. Both the pidProbability approach as well as the Bayesian one decrease the rate at which particles of high abundance are identified. However both approaches in turn increase the identical efficiencies of particles with a low abundance significantly. Hereby, the Bayesian approach is able shine as it correctly classifies more pions correctly in the charged generic decay at the cost of a reduced identifying rate for some particles of lower abundance particles.
+In comparison to the legacy PID approach the positive effect introduced by the Bayesian approach are mainly due to inclusion of further particle likelihoods. Both the global PID approach as well as the Bayesian one decrease the rate at which particles of high abundance are identified. However both approaches in turn increase the identical efficiencies of particles with a low abundance significantly. Hereby, the Bayesian approach is able shine as it correctly classifies more pions correctly in the charged generic decay at the cost of a reduced identifying rate for some particles of lower abundance particles.
 
 The difference between the simple Bayesian approach, the univariate Bayesian approach and the multivariate Bayesian approach is slim. Neither the overall identification efficiencies change significantly, nor does the identification rate of certain particles get boosted. Slight overall gains are measurable but insignificant.
 
@@ -364,7 +364,7 @@ Additionally overlapping boundaries either from the current approach or introduc
 
 In the following discussion a neural networking consists of eight sequential layers is chosen. Eight layers were found to perform best without over-fitting the data. Two different concepts for layers were used; On one hand a so called \textit{dense} layer connects all inputs with each node in the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a rather high number of free parameters depending on the used function in a node. On the other hand a so called \textit{dropout} layer was employed which as its name suggests drops a certain percentage of inputs by chance and enforces the training on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit (see~\cite{MachineLearning:DeepLearning}).
 
-Three different approaches for the choice of input parameters were evaluated. First the unaltered pidProbability variable for each detector was used as a baseline. As second approach a rich mixture of variables were used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the pidProbability for each detector. The third approach used the same initial inputs as the second one. However prior to passing the values to the network, a Principal Component Analysis (see~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData}) on the standardized data was performed. The standardization step centers the data by removing the mean and scales the the value so that the standard deviation becomes one. It is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
+Three different approaches for the choice of input parameters were evaluated. First the unaltered global PID variables for each detector are used as a baseline. As second approach a rich mixture of variables are used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the global PID variables for each detector. The third approach used the same initial inputs as the second one. However prior to passing the values to the network, a Principal Component Analysis (see~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData}) on the standardized data was performed. The standardization step centers the data by removing the mean and scales the the value so that the standard deviation becomes one. It is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
 
 The output, i.e., the actual classification, was done in the final step of the network via the previously discussed softmax algorithm using the gradient of the cross-entropy for weight adaption. In order to get a unique classification, the class with the highest softmax value was selected. As targets for classification the six long-living particle species were used with the addition of a zeroth class used for classifying particles which do not belong to the six other classes. This zeroth class includes just a fractional amount of particles but it is important to have it either way as each track on which the network is supposed to learn is required to have a target associated with it.
 
@@ -418,19 +418,19 @@ Furthermore several optimizers --- algorithms, describing the process of weight 
 
 The high slope at which the accuracy initially increases even within the first epoch, can be observed independently of the sampling method and the feature selection.
 
-\autoref{fig:neural_network_pidProbability_by_sampling_method} compares the two sampling approaches. The graph employs the Adamax optimizer, however the Adadelta behaves similarly. One may observe that the network which receives the tracks of the particles in proportion to their abundance (biased sampling) is able to outperform the network which is trained on data using upsampling. The final difference in validation accuracy is about $4\%$.
+\autoref{fig:neural_network_global_pid_by_sampling_method} compares the two sampling approaches. The graph employs the Adamax optimizer, however the Adadelta behaves similarly. One may observe that the network which receives the tracks of the particles in proportion to their abundance (biased sampling) is able to outperform the network which is trained on data using upsampling. The final difference in validation accuracy is about $4\%$.
 
 \begin{figure}[ht]
 	\centering
-	\subcaptionbox{Biased\label{fig:neural_network_pidProbability_biased_adamax}}{
+	\subcaptionbox{Biased\label{fig:neural_network_global_pid_biased_adamax}}{
 		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pidProbability biased nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
 	}
 	\hspace{2em}
-	\subcaptionbox{Upsampled\label{fig:neural_network_pidProbability_fair_adamax}}{
+	\subcaptionbox{Upsampled\label{fig:neural_network_global_pid_fair_adamax}}{
 		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pidProbability fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
 	}
-	\caption{Accuracy of the neural network using the Adamax optimizer with the pidProbability as features. The values are displayed for a biased sampling approach (left) and the upsampling approach (right).}
-	\label{fig:neural_network_pidProbability_by_sampling_method}
+	\caption{Accuracy of the neural network using the Adamax optimizer with the global PID as features. The values are displayed for a biased sampling approach (left) and the upsampling approach (right).}
+	\label{fig:neural_network_global_pid_by_sampling_method}
 \end{figure}
 
 In~\autoref{fig:neural_network_pca_all} the PCA feature selection approach is shown next to the `all' approach. The term `all' in this context denotes that every available variable is selected as feature. As seen in the graph, the accuracy increases with the number of components and even surpasses the selection of all components. The values are considerable worse than the one which were calculated using biased sampling.
