@@ -130,8 +130,10 @@ if args.run_stats:
         plt.figure()
         plt.grid(b=False, axis='x')
         plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
-        plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles])
-        plt.ylabel('Abundance')
+        plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles], fontsize='large')
+        plt.yticks(fontsize='large')
+        plt.xlabel('Particle Specie', fontsize='larger')
+        plt.ylabel('Abundance', fontsize='larger')
         data.pyplot_sanitize_show('True Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[p]), savefig_prefix='General Purpose Statistics: ')
 
 if args.run_pid:
@@ -385,8 +387,10 @@ if args.run_univariate_bayes:
         actual_abundance = np.array([data[p][((data[p]['mcPDG'] == lib.pdg_from_name_faulty(p)) | (data[p]['mcPDG'] == -1 * lib.pdg_from_name_faulty(p))) & (data[p][category_columns[hold]] == it)].shape[0] for it in range(nbins)])
         plt.errorbar(interval_centers[p], assumed_abundance / actual_abundance, xerr=interval_widths[p], label='%s'%(ParticleFrame.particle_base_formats[p]), fmt='o')
 
-    plt.xlabel(ParticleFrame.variable_formats[hold] + ' (' + ParticleFrame.variable_units[hold] + ')')
-    plt.ylabel('True Positive Rate')
+    plt.xticks(fontsize='large')
+    plt.yticks(fontsize='large')
+    plt.xlabel(ParticleFrame.variable_formats[hold] + ' (' + ParticleFrame.variable_units[hold] + ')', fontsize='larger')
+    plt.ylabel('True Positive Rate', fontsize='larger')
     plt.legend()
     data.pyplot_sanitize_show('True Positive Rate for a Cut at %.2f'%(cut), savefig_prefix='Univariate Bayesian Approach: ')
 
@@ -421,8 +425,10 @@ if args.run_univariate_bayes_priors:
         for n in range(niterations):
             plt.errorbar(interval_centers[p], iteration_priors_viaIter[norm][p][n], xerr=interval_widths[p], label='Iteration %d'%(n+1), fmt='o')
 
-        plt.xlabel(ParticleFrame.variable_formats[hold] + ' (' + ParticleFrame.variable_units[hold] + ')')
-        plt.ylabel('Relative Abundance')
+        plt.xticks(fontsize='large')
+        plt.yticks(fontsize='large')
+        plt.xlabel(ParticleFrame.variable_formats[hold] + ' (' + ParticleFrame.variable_units[hold] + ')', fontsize='larger')
+        plt.ylabel('Relative Abundance', fontsize='larger')
         title = '%s Spectra Ratios Relative to %s for %s bins'%(ParticleFrame.particle_base_formats[p], ParticleFrame.particle_base_formats[norm], ParticleFrame.variable_formats[hold])
         if niterations > 0:
             plt.legend()
@@ -505,10 +511,10 @@ if args.run_multivariate_bayes_motivation:
     for (j, i), label in np.ndenumerate(correlation_matrix):
         plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(np.piecewise(label, [label < 0, label >= 0], [1, 0])))
     plt.grid(b=False, axis='both')
-    plt.xlabel('Predicted Particle')
-    plt.xticks(range(len(holdings)), [ParticleFrame.variable_formats[v] for v in holdings])
-    plt.ylabel('True Particle')
-    plt.yticks(range(len(holdings)), [ParticleFrame.variable_formats[v] for v in holdings])
+    plt.xlabel('Variable', fontsize='larger')
+    plt.xticks(range(len(holdings)), [ParticleFrame.variable_formats[v] for v in holdings], fontsize='large')
+    plt.ylabel('Variable', fontsize='larger')
+    plt.yticks(range(len(holdings)), [ParticleFrame.variable_formats[v] for v in holdings], fontsize='large')
     plt.colorbar()
     data.pyplot_sanitize_show('Heatmap of Correlation Matrix of ROOT Variables', savefig_prefix='Multivariate Bayesian Approach: ')
 

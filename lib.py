@@ -531,10 +531,10 @@ class ParticleFrame(dict):
         for (j, i), label in np.ndenumerate(epsilonPIDs_approach):
             plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(np.piecewise(label, [label < 0.5, label >= 0.5], [1, 0])))
         plt.grid(b=False, axis='both')
-        plt.xlabel('Predicted Particle')
-        plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
-        plt.ylabel('True Particle')
-        plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles])
+        plt.xlabel('Predicted Particle', fontsize='larger')
+        plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles], fontsize='large')
+        plt.ylabel('True Particle', fontsize='larger')
+        plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles], fontsize='large')
         plt.colorbar()
         self.pyplot_sanitize_show(**kwargs)
 
@@ -566,20 +566,24 @@ class ParticleFrame(dict):
 
             if len(category_intervals) > 2:
                 plt.figure(figsize=(10, 3))
+                fontsize = 'medium'
             else:
                 plt.figure()
+                plt.xticks(fontsize='large')
+                plt.yticks(fontsize='large')
+                fontsize = 'larger'
+
             for i in range(len(category_intervals) - 1):
                 selection = (categories == i)
                 if len(category_intervals) > 2:
                     plt.subplot(1, len(category_intervals)-1, i+1)
                     plt.title('(%.2f < %s < %.2f)'%(category_intervals[i], self.variable_formats[hold], category_intervals[i+1]), fontsize=10)
-                plt.xlabel(r'$\mathcal{LR}($%s$)$'%(current_format))
 
                 if i == 0:
-                    plt.ylabel('Relative Abundance')
+                    plt.ylabel('Relative Abundance', fontsize=fontsize)
                 else:
                     plt.setp(plt.gca().get_yticklabels(), visible=False)
-                plt.xlabel(r'$\mathcal{LR}($%s$)$'%(current_format))
+                plt.xlabel(r'$\mathcal{LR}($%s$)$'%(current_format), fontsize=fontsize)
 
                 likelihood_ratio_bins, intervals = pd.cut(particle_data_charged[selection][cutting_columns[p]], nbins, labels=range(nbins), retbins=True)
                 abundance_ratio = np.zeros(nbins)
@@ -642,6 +646,12 @@ class ParticleFrame(dict):
             plt.figure()
             if ratios:
                 grid = plt.GridSpec(3, 1, hspace=0.1)
+                fontsize = None
+            else:
+                plt.xticks(fontsize='large')
+                plt.yticks(fontsize='large')
+                fontsize = 'larger'
+
             colors = iter(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])
 
             if ratios:
@@ -656,12 +666,13 @@ class ParticleFrame(dict):
             if ratios:
                 plt.setp(main_ax.get_xticklabels(), visible=False)
             else:
-                plt.xlabel(x_axis[1])
+                plt.xlabel(x_axis[1], fontsize=fontsize)
                 plt.xlim(x_lim)
+
             if len(y_multi_axis) == 1:
-                plt.ylabel(y_multi_axis[0][1])
+                plt.ylabel(y_multi_axis[0][1], fontsize=fontsize)
             else:
-                plt.ylabel('Particle Rate')
+                plt.ylabel('Particle Rate', fontsize=fontsize)
             if len(stats_approaches) > 1 or len(y_multi_axis) > 1:
                 plt.legend()
             plt.ylim(y_lim)
@@ -689,9 +700,9 @@ class ParticleFrame(dict):
 
                 plt.axhline(y=1., color='dimgrey', linestyle='--')
                 plt.grid(b=True, axis='both')
-                plt.xlabel(x_axis[1])
+                plt.xlabel(x_axis[1], fontsize=fontsize)
                 plt.xlim(x_lim)
-                plt.ylabel('Rate Ratio')
+                plt.ylabel('Rate Ratio', fontsize=fontsize)
                 plt.legend()
 
             self.pyplot_sanitize_show('%s Identification'%(self.particle_base_formats[p]), suptitle=True, **kwargs)
@@ -719,6 +730,7 @@ class ParticleFrame(dict):
 
         plt.legend()
         sorted_particles = np.array(particles_of_interest)[sorted_range]
-        plt.xticks(range(len(particles_of_interest)), [self.particle_base_formats[p] for p in sorted_particles])
-        plt.ylabel('Abundance')
+        plt.xticks(range(len(particles_of_interest)), [self.particle_base_formats[p] for p in sorted_particles], fontsize='large')
+        plt.xlabel('Particle Specie', fontsize='larger')
+        plt.ylabel('Abundance', fontsize='larger')
         self.pyplot_sanitize_show('Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[norm]), **kwargs)
