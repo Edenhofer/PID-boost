@@ -311,14 +311,14 @@ if args.diff_methods:
 
         if m == 'pid':
             c = ParticleFrame.particleIDs
-            t = ' via PID'
+            t = ' via legacy PID'
         elif m == 'flat_bayes':
             c = data.bayes()
             t = ' via flat Bayes'
         elif m == 'pidProbability':
             # Consistency check for flat_bayes, as both should yield the same results (mathematically)
             c = {p: 'pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + detector + '__bc' for p in ParticleFrame.particles}
-            t = ' via pidProbability'
+            t = ' via global PID'
         elif m == 'simple_bayes':
             c = data.bayes(mc_best=True)
             t = ' via simple Bayes'
