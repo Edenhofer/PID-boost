@@ -525,30 +525,29 @@ if args.run_multivariate_bayes_motivation:
     grid = plt.GridSpec(4, 4, hspace=0.2, wspace=0.2)
 
     main_ax = plt.subplot(grid[:-1, 1:])
-    # NOTE: This is one of the few place where we differentiate between particle and anti-particle
-    for v in np.unique(particle_data[selection]['mcPDG'].values):
-        particle_data.at[selection & (particle_data[selection]['mcPDG'] == v), truth_color_column] = list(np.unique(particle_data[selection]['mcPDG'].values)).index(v)
-    plt.scatter(particle_data[selection][holdings[0]], particle_data[selection][holdings[1]], c=particle_data[selection][truth_color_column], cmap=plt.cm.get_cmap('viridis', np.unique(particle_data[selection]['mcPDG'].values).shape[0]), s=5., alpha=.01)
+    for p in particles_of_interest:
+        particle_data.at[selection & ((particle_data['mcPDG'] == lib.pdg_from_name_faulty(p)) | (particle_data['mcPDG'] == -1 * lib.pdg_from_name_faulty(p))), truth_color_column] = particles_of_interest.index(p)
+    plt.scatter(particle_data[selection & particle_data[truth_color_column].notnull()][holdings[0]], particle_data[selection & particle_data[truth_color_column].notnull()][holdings[1]], c=particle_data[selection & particle_data[truth_color_column].notnull()][truth_color_column], cmap=plt.cm.get_cmap('viridis', len(particles_of_interest)), s=5., alpha=.05)
     plt.setp(main_ax.get_xticklabels(), visible=False)
     plt.setp(main_ax.get_yticklabels(), visible=False)
 
     plt.subplot(grid[-1, 1:], sharex=main_ax)
-    plt.hist(particle_data[selection][holdings[0]], nbins, histtype='step', orientation='vertical')
+    plt.hist(particle_data[selection & particle_data[truth_color_column].notnull()][holdings[0]], nbins, histtype='step', orientation='vertical')
     plt.gca().invert_yaxis()
     plt.xlabel(ParticleFrame.variable_formats[holdings[0]] + ' (' + ParticleFrame.variable_units[holdings[0]] + ')')
     plt.subplot(grid[:-1, 0], sharey=main_ax)
-    plt.hist(particle_data[selection][holdings[1]], nbins, histtype='step', orientation='horizontal')
+    plt.hist(particle_data[selection & particle_data[truth_color_column].notnull()][holdings[1]], nbins, histtype='step', orientation='horizontal')
     plt.gca().invert_xaxis()
     plt.ylabel(ParticleFrame.variable_formats[holdings[1]] + ' (' + ParticleFrame.variable_units[holdings[1]] + ')')
 
     fig.subplots_adjust(right=0.85)
     cbar_ax = fig.add_axes([0.88, 0.20, 0.05, 0.6])
-    cbar = plt.colorbar(cax=cbar_ax, ticks=range(np.unique(particle_data[selection]['mcPDG'].values).shape[0]))
+    cbar = plt.colorbar(cax=cbar_ax, ticks=range(len(particles_of_interest)))
     cbar.set_alpha(1.)
-    cbar.set_ticklabels([ParticleFrame.particle_formats[lib.pdg_to_name_faulty(v)] for v in np.unique(particle_data[selection]['mcPDG'].values)])
+    cbar.set_ticklabels([ParticleFrame.particle_base_formats[p] for p in particles_of_interest])
     cbar.draw_all()
 
-    data.pyplot_sanitize_show('Multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings), savefig_prefix='Multivariate Bayesian Approach: ', suptitle=True, format='png')
+    data.pyplot_sanitize_show('Multi-axes Histogram of ' + ', '.join(format(hold) for hold in holdings) + ' for ' + ', '.join(ParticleFrame.particle_base_formats[p] for p in particles_of_interest), savefig_prefix='Multivariate Bayesian Approach: ', suptitle=True, format='png')
 
 
 plt.show()
