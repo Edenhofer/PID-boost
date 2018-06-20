@@ -336,7 +336,7 @@ if (history_path != '/dev/null') and history is not None:
 # Save module if requested
 if module_path != '/dev/null':
     if module_path == None:
-        module_path = os.path.join(output_directory, 'model_' + run + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '.h5')
+        module_path = os.path.join(output_directory, 'model_' + savefile_suffix + '.h5')
     if not os.path.exists(os.path.dirname(module_path)):
         print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(module_path), module_path), file=sys.stderr)
         os.makedirs(os.path.dirname(module_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
