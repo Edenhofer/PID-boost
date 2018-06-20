@@ -121,14 +121,7 @@ The global PID approach is the upcoming approach which is to be used as new defa
 	\label{tab:global_pid_variables}
 \end{table}
 
-The approach is significantly less prone to merely differentiating between kaons and pions but instead has a more balanced classification as can be seen in \autoref{fig:global_pid_epsilon_pid}. This newly gained efficiency in identifying particles of lower abundance comes at the cost of worsening the classification of particles of high abundance. Both the kaon and the pion are less likely to be correctly identified, with the pion efficiency taking an especially steep decline.
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Heatmap of epsilonPID Matrix for an exclusive Cut}}}
-	\caption{Matrix of $\epsilon$ values for the global PID approach.}
-	\label{fig:global_pid_epsilon_pid}
-\end{figure}
+The approach is not biased towards merely differentiating between kaons and pions but instead has a more balanced classification. Every likelihood of a particle specie has the same weight in the denominator.
 
 \subsection{Goodness of the global PID variables}
 \label{subsec:pid_variables_global_pid_goodness}
@@ -252,7 +245,7 @@ The multivariate approach extends the univariate one by further increasing the n
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: Multi-axes Histogram of pt, cosTheta for e, K, pi}}}
+	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: Multi-axes Histogram of pt, cosTheta for e, K, pi}}}
 	\caption{Scatter plot with tracks represented as opaque points depending on $p_t$ and $\cos(\Theta)$. The color encodes the specie of the particle.}
 	\label{fig:multivariate_bayes_multi_axis_histogram_by_pt_by_costheta}
 \end{figure}
@@ -264,7 +257,7 @@ Enabling the a priori probability to depend on those measurements allows it to p
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: K Spectra Ratios Relative to pi}}}
+	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: K Spectra Ratios Relative to pi}}}
 	\caption{Relative kaon abundance in equal height transverse momentum and cosine of $\Theta$ bins.}
 	\label{fig:multivariate_bayes_k_spectra_relative_to_pi}
 \end{figure}
@@ -281,28 +274,21 @@ The abundance of kaons relative to the abundance of pions can be seen in~\autore
 	\label{fig:diff_stats_pi_identification_via_pid_via_simple_bayes}
 \end{figure}
 
-\autoref{fig:diff_stats_pi_identification_via_pid_via_simple_bayes} shows a comparison of the \textbf{legacy PID} approach to the \textbf{simple Bayes}ian one for identifying pions. The simple Bayesian approach is able to achieve a lot higher efficiencies at a low FPR. In addition the new approach provides a very high purity also at a very low FPR in a range where the legacy PID approach is not even able to identify pions. For a high FPR both approaches converge into similar shapes with rate ratios close to one.
-The described effect can be seen for every stable particle with an ID and is not limited to the pion. The comparison of the pion identification is a rather conservative choice as the legacy PID approach favors high abundance particles and should have put it at an advantage. Particles like the electron or muon perform consistently better using the new approach even at false positive rates above $50\%$.
+\autoref{fig:diff_stats_pi_identification_via_pid_via_simple_bayes} shows a comparison of the \textbf{legacy PID} approach to the \textbf{simple Bayes}ian one for identifying pions. The simple Bayesian approach is able to achieve a lot higher efficiencies at a low FPR. In addition the new approach provides a very high purity at a very low FPR in a range where the legacy PID approach is not even able to identify pions. For a high FPR both approaches converge into similar shapes with rate ratios close to one.
+The described effect can be seen for every particle with an ID and is not limited to the pion. However, the comparison of the pion identification is a rather conservative choice as the legacy PID approach favors high abundance particles and should have put it at an advantage. Particles like the electron or muon perform consistently better using the new approach even at false positive rates above $50\%$.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via PID, via simple Bayes}}}
-	\caption{Comparison of the row-wised normed confusion matrix for simple Bayes with the legacy PID approach.}
+	\caption{Comparison of the row-wised normed confusion matrix for the legacy PID approach with the simple Bayesian one.}
 	\label{fig:diff_heatmap_via_pid_via_simple_bayes}
 \end{figure}
 
 The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However in general the simple Bayesian approach is less prone to confusing particle with one another as seen in~\autoref{fig:diff_heatmap_via_pid_via_simple_bayes}.
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via global PID, via simple Bayes}}}
-	\caption{Comparison of the row-wised normed confusion matrix for the global PID approach with simple Bayes.}
-	\label{fig:diff_heatmap_via_global_pid_via_simple_bayes}
-\end{figure}
+The differences are less pronounced in comparison to the \textbf{global PID} variables. Both approaches misclassify only a low percentage of each particle specie. The global PID one classifies muons with a higher efficiency while the simple Bayesain approach is better at identifying pions. At this point it becomes a question of the desired goal. The efficiencies for the kaon, electron and proton identification stayed about the same. Both have a lower efficiency for the kaon and pion than the legacy PID approach has. Especially the pion identification takes a steep decline. Bear in mind that it is the particle of highest abundance.
 
-The differences are less pronounced in comparison to the \textbf{global PID} variables as seen in~\autoref{fig:diff_heatmap_via_global_pid_via_simple_bayes}. At this point it becomes a question of the desired goal. The pion identification is boosted but only at the cost of loosing efficiency for the muon identification. At the same time the efficiencies for the kaon, electron and proton identification stayed about the same.
-
-Overall, simple Bayes achieves a higher efficiency since kaons are particles of higher abundance. Therefore, in general it classifies more tracks correctly as seen in~\autoref{fig:diff_abundances_via_pid_via_global_pid_via_simple_bayes}. Of special interest is the good agreement of predicted and true particle abundances for the Bayesian approach as the information was built into it by design.
+Overall, simple Bayes achieves a higher efficiency than the legacy and global PID approaches. Hence, in general it classifies more tracks correctly as seen in~\autoref{fig:diff_abundances_via_pid_via_global_pid_via_simple_bayes}. The good agreement of predicted and true particle abundances for the simple Bayesian approach is of special interest. It emphasizes the idea behind simple Bayes is taking effect.
 
 \begin{figure}[ht]
 	\centering
@@ -317,19 +303,20 @@ Overall, simple Bayes achieves a higher efficiency since kaons are particles of 
 	\label{fig:diff_abundances_via_pid_via_global_pid_via_simple_bayes}
 \end{figure}
 
-Introducing more degrees of freedom in the form of the \textbf{univariate Bayes}ian approach reveals no difference . Using the pion again as conservative sample, the identification improves slightly as seen in~\autoref{fig:diff_stats_pi_identification_via_simple_bayes_via_univariate_bayes}. Although slightly less particles are classified overall which can be seen via the ratio of the TPRs being below $1.$, a boost of the rate of correctly classified particles more than compensates for the slight loss. The efficiencies for each particle identification further manifests this view although overall its behavior is very similar to the simple Bayesian one and a comparison between univariate Bayes and global PID respectively the legacy PID approach would therefore be redundant.
+Introducing more degrees of freedom in the form of the \textbf{univariate Bayes}ian approach reveals merely slight differences in comparison to the simple Bayesian approach. \autoref{fig:diff_heatmap_via_global_pid_via_univariate_bayes}~shows a comparison of the global PID approach and the univariate Bayesian one. The observed changes are predominantly inherited from the simple Bayesian one. A slight loss in efficiencies of low abundance particles is more than compensated by the gain in the pion identification efficiency. Between the simple Bayesian approach and the univariate one, merely changes of $0.01$ are seen in the particle identification efficiencies. The univariate Bayesian approach boosts the kaon and proton identification by this amount at the cost of a reduced efficiency for the muon.
+A comparison between the univariate Bayesian approach and the legacy PID is redundant due to the similarity between the simple Bayesian and univariate Bayesian approach.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Diff Statistics: pi Identification via simple Bayes, via univariate Bayes}}}
-	\caption{Comparison of PPV, TPR and FPR for simple Bayes with univariate Bayes for identifying pions. The tail of the PPV ratio is due the ever decreasing PPV and the relative change getting bigger and does not necessarily allows for a conclusion of superiority.}
-	\label{fig:diff_stats_pi_identification_via_simple_bayes_via_univariate_bayes}
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via global PID, via univariate Bayes}}}
+	\caption{Comparison of the row-wised normed confusion matrix for the global PID approach with the univariate Bayesian one.}
+	\label{fig:diff_heatmap_via_global_pid_via_univariate_bayes}
 \end{figure}
 
-Lastly the \textbf{multivariate Bayes}ian approach is tested. Its TPR and PPV are identical to the univariate approach for every particle species in the sample --- neglecting effects below a maximal relative changes of $2 \%$. At this point it is important to emphasize that the change, albeit being small, improve results rather than worsen them; Negative effects in TPR and PPV are always below a threshold of $0.3 \cdot 10^{-3}$ while the maximal change of $2 \%$ slightly boosted the PPV for the muon identification at one point.
-The similarity of the multivariate and univariate approach is also reflected in the efficiencies of the row-wised normed confusion matrix being virtually identical.
+Lastly, the \textbf{multivariate Bayes}ian approach is tested. The TPR and PPV for every particle specie are very similar to the univariate approach --- neglecting effects below a maximal relative change of $2 \%$. Negative effects in the TPR and PPV are always below a threshold of $0.3 \cdot 10^{-3}$ while the maximal change of $2 \%$ slightly boosted the PPV for the muon identification at one point.
+The similarity of the multivariate and univariate approach is also reflected in the efficiencies of the row-wised normed confusion matrix being virtually identical. Comparing the approach to the legacy PID, global PID or simple Bayesian approach would mention the same observations as the comparison between those and th univariate Bayesian one.
 
-The global efficiencies over all particle species are displayed in~\autoref{tab:overall_efficiencies}.
+The global efficiencies over all particle species are displayed in~\autoref{tab:overall_efficiencies}. It emphasizes the quasi non-existing performance improvement of the multivariate Bayesian approach relative to univariate Bayes. Furthermore it highlights the previously discussed overall improvements in the various other approaches approaches.
 
 \begin{table}[ht]
 	\centering
@@ -346,17 +333,16 @@ The global efficiencies over all particle species are displayed in~\autoref{tab:
 	\label{tab:overall_efficiencies}
 \end{table}
 
-
 \subsection{Summary and outlook}
 \label{subsc:bayesian_approach_summary}
 
-In comparison to the legacy PID approach the positive effect introduced by the Bayesian approach are mainly due to inclusion of further particle likelihoods. Both the global PID approach as well as the Bayesian one decrease the rate at which particles of high abundance are identified. However both approaches in turn increase the identical efficiencies of particles with a low abundance significantly. Hereby, the Bayesian approach is able shine as it correctly classifies more pions correctly in the charged generic decay at the cost of a reduced identifying rate for some particles of lower abundance particles.
+In comparison to the legacy PID approach the positive effect introduced by the Bayesian approaches are mainly due to inclusion of further particle likelihoods. Both the global PID approach as well as the Bayesian one decrease the rate at which particles of high abundance are identified. However, both kinds of approaches in turn increase the identical efficiencies of particles with a low abundance significantly. Hereby, the Bayesian approach is able shine as it correctly classifies more pions correctly in the charged generic decay at the cost of a reduced identifying rate for some particles of lower abundance particles.
 
-The difference between the simple Bayesian approach, the univariate Bayesian approach and the multivariate Bayesian approach is slim. Neither the overall identification efficiencies change significantly, nor does the identification rate of certain particles get boosted. Slight overall gains are measurable but insignificant.
+The difference between the simple Bayesian approach, the univariate Bayesian approach and the multivariate Bayesian approach is slim. Neither the overall identification efficiencies change significantly, nor does the identification rate of certain particles get boosted. Slight overall gains are measurable.
 
-As an outlook, further studies concerning the cell structure of the a priori probabilities are worth considering. The current approach of selecting equal height bins has been shown to be useful. Nevertheless, it is limited especially if used in conjunction with multiple other variables. Two intervals on separate variables, each containing a certain percent of the data, are not guaranteed to contain the same amount of data if intersected. A possible extension could be to implement a proper two dimensional clustering using, e.g., Voronoi cells (see~\cite{KnowledgeDiscoveryInDatabases1:Clustering}) instead of interval boundaries. Density based clustering algorithms such as DBSCAN and OPTICS (see~\cite{KnowledgeDiscoveryInDatabases1:Clustering}) might also be worth considering. Those approaches could further extend the a priori probabilities of the two dimensional cells of the multivariate Bayesian approach to density connected clusters.
+As an outlook, further studies concerning the cell structure of the a priori probabilities are worth considering. The current approach of selecting equal height bins has been shown to be useful. Nevertheless, it hast its limitations. Especially if used in conjunction with multiple other variables. Two intervals on separate variables, each containing a certain percentage of the data, are not guaranteed to contain the same amount of data if intersected. A possible extension could be to implement a proper two dimensional clustering using, e.g., Voronoi cells (see~\cite{KnowledgeDiscoveryInDatabases1:Clustering}) instead of interval boundaries. Density based clustering algorithms such as DBSCAN and OPTICS (see~\cite{KnowledgeDiscoveryInDatabases1:Clustering}) might also be worth considering. Those approaches could further extend the a priori probabilities of the two dimensional cells of the multivariate Bayesian approach to density connected clusters.
 
-Additionally overlapping boundaries either from the current approach or introduced by new clustering algorithms could be used to weight a priori probabilities. Instead of relying on one exclusive boundary, the mean of multiple a priori probabilities estimates could be used instead.
+Additionally overlapping boundaries either from the current approach or introduced by new clustering algorithms could be used to weight multiple a priori probabilities. Instead of relying on one exclusive boundary, the mean of several a priori probabilities estimates could be used instead.
 
 \section{Neural network approach}
 \label{sec:neural_network_approach}
