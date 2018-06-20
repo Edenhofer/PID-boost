@@ -5,7 +5,7 @@
 \label{sec:experimental}
 
 The Belle~\RN{2} experiment is performed at the SuperKEKB accelerator located in Tsukuba, Ibaraki Prefecture, Japan. It is designed to study the B meson and the violation of the CP symmetry.
-At the experiment asymmetric electron-, positron-beams are collided with a center of mass energy of $\sqrt{S} = 10.58 \mathrm{~GeV}$, just right to create the $\Upsilon (4S)$ meson. The two beams, positrons at $4 \mathrm{~GEV}$, electrons at $7 \mathrm{~GEV}$ are focussed to a cross section of $~10 \mathrm{\mu m} \times 60 \mathrm{nm}$. The additional boost in one direction is used to get a time measurement of the B-lifetime. %TODO
+At the experiment asymmetric electron- positron-beams are collided with a center of mass energy of $\sqrt{S} = 10.58 \mathrm{~GeV}$, just right to create the $\Upsilon (4S)$ meson. The two beams, positrons at $4 \mathrm{~GeV}$, electrons at $7 \mathrm{~GeV}$, are focussed to a cross section of $~10 \mathrm{\mu m} \times 60 \mathrm{nm}$. The additional boost in one direction is used to get a time measurement of the B-lifetime. %TODO
 
 In comparison to the predecessor experiment Belle the integrated luminosity will be $50$ times higher at $50~{ab}^{-1}$ and the instantaneous luminosity has been increased $40$-fold to $8 \cdot 10^{35} \mathrm{cm}^{-2} \mathrm{s}^{-1}$.
 
@@ -15,13 +15,13 @@ In comparison to the predecessor experiment Belle the integrated luminosity will
 \subsection{Overview}
 \label{subsec:detector_system_overview}
 
-If not specifically stated otherwise the charge conjugate of a particle shall be assumed to be included if a particle is mentioned.
+If not specifically stated otherwise the charge conjugate of a particle will be assumed to be included if a particle is mentioned.
 
-The Belle~\RN{2} detector system is a composition of multiple detectors, each measuring a subset of properties of particle's track.
+The Belle~\RN{2} detector system is a composition of multiple detectors, each measuring a subset of properties of a particle's track.
 The inner three detectors --- \textbf{P}i\textbf{X}el \textbf{D}etector (PXD), \textbf{S}ilicon \textbf{V}ertex \textbf{D}etector (SVD) and \textbf{C}entral \textbf{D}rift \textbf{C}hamber (CDC) --- record the position of particles. Hence they are also called tracking detectors. They are located in a homogeneous magnetic field of $1.5~\mathrm{T}$.
 The innermost detector is the PXD. Together with the SVD, located right after it, they are used to reconstruct decay vertices and identify tracks belonging to particles with a low-momentum.
 The CDC measures the momentum and charge of particles via their curvature in the magnetic field.
-Next the \textbf{T}ime \textbf{O}f \textbf{P}ropagation counter (TOP) (`Barrel PID' in \autoref{fig:belle2_detector_design_white_paper}) and the \textbf{A}erogel \textbf{RICH} counter (ARICH) (`Endcap PID' in \autoref{fig:belle2_detector_design_white_paper}) are used to identify charged particles via their emission of Cherenkov radiation in the detector. However there is no such installation for the backwards-facing endcap of the detector.
+Next, the \textbf{T}ime \textbf{O}f \textbf{P}ropagation counter (TOP) (`Barrel PID' in \autoref{fig:belle2_detector_design_white_paper}) and the \textbf{A}erogel \textbf{RICH} counter (ARICH) (`Endcap PID' in \autoref{fig:belle2_detector_design_white_paper}) are used to identify charged particles via their emission of Cherenkov radiation in the detector. However, there is no such installation for the backwards-facing endcap of the detector.
 The \textbf{E}lectromagnetic \textbf{C}a\textbf{L}orimeter (ECL) identifies photons and electron.
 The outermost detector called $\boldsymbol{K}^0_{\boldsymbol{L}}$/$\boldsymbol{\mu}$ (KLM) is used to identify kaons and muons.
 
@@ -40,22 +40,22 @@ The PXD and SVD consist of tiny doped silicon chips which yield the location of 
 \subsection{Central drift chamber}
 \label{subsec:detector_system_tracking_detectors}
 
-The CDC, which surrounds the PXD and SVD, consists of a collection of charged wires and detection wires located in a gas filled volume. The detection wires are used to measure the drop in voltage produced by electromagnetic showers created by particles passing through the gas. The wires are close to being parallel to the beampipe but have a slight twist. This allows the detector to not only have an excellence estimation of the transverse distance to the beam pipe but also provides information about the longitudinal position.
+The CDC, which surrounds the PXD and SVD, consists of a collection of charged wires and detection wires located in a gas filled volume. The detection wires are used to measure the drop in voltage produced by electromagnetic showers created by particles passing through the gas. The wires are close to being parallel to the beampipe but have a slight twist. This allows the detector to not only have an excellent estimation of the transverse distance to the beam pipe but also provides information about the longitudinal position.
 
 \subsection{Barrel and endcap PID}
 \label{subsec:detector_system_barrel_and_endcap_pid}
 
-In the TOP and ARICH detector the Cherenkov effect is used to measure the momentum and velocity of particles. Charged particles which travel faster than the speed of light in the medium --- Quartz in case of the TOP detector and aerogel for the ARICH detector --- produce light due to their uneven polarization of the medium. By measuring the time of propagation and the angle of the emitted light (Cherenkov angle) an estimation of the velocity as well as the momentum can be calculated.
+The Cherenkov effect is used to measure the velocity of particles in the TOP and ARICH detector. Charged particles which travel faster than the speed of light in the medium --- Quartz in case of the TOP detector and aerogel for the ARICH detector --- produce light due to their uneven polarization of the medium. The velocity can be calculated by measuring the time of propagation and the angle of the emitted light (Cherenkov angle).
 
 \subsection{Electromagnetic calorimeter}
 \label{subsec:detector_system_electromagnetic_calorimeter}
 
-The main purpose of the ECL detector is to measure the position and energy of photons and electrons. Both particle species excite the medium and create electromagnetic showers. The light from the de-excitation can subsequently be measured.
+The main purpose of the ECL detector is to measure the position and energy of photons and electrons. Both particle species excite the medium and create electromagnetic showers. The light of the de-excitation can subsequently be measured.
 
 \subsection{$\boldsymbol{K}^0_{\boldsymbol{L}}$/$\boldsymbol{\mu}$ detector}
 \label{subsec:detector_system_k0lmu}
 
-Last but not least the KLM detector measures the penetration ability of particles in order to differentiate between muons and kaons. When flying through the detector the particles passes through plates serving as electrodes separated by a layers of gas in between them. Created ionized particles are accelerated in this field and subsequently produce a spark picked up by the detector via measuring the voltage.
+Last but not least the KLM detector measures the penetration ability of particles in order to differentiate between muons and kaons. When flying through the detector, the particles pass through plates serving as electrodes separated by a layers of gas in between them. Created ionized particles are accelerated in this field and subsequently produce a spark picked up by the detector via measuring the voltage.
 
 \section{Interaction with matter}
 \label{sec:interaction_with_matter}
@@ -65,30 +65,30 @@ Last but not least the KLM detector measures the penetration ability of particle
 
 Particles with a non-zero charge mainly interact with the medium electromagnetically. An interaction occurs either by scattering in the electric field of the atom, polarization of the medium, ionization, excitation or scattering at the atom itself. Positrons and electrons additionally have the ability to annihilate.
 
-The polarization of the medium causes Cherenkov radiation to be emitted. At velocities below the speed of light in the medium ($v < c/n$) nothing of interest may be observed. However at $v > c/n$ the Cherenkov effect must be taken into account. The effect occurs due to the information about the charge of the traversing particle not or reaching the medium in front of it soon enough. Hence medium behind the particle being already already aligned with the electric field while the medium in front not being it. This results in an electromagnetic wave. The angle between the normal vector of the wave and the track of the particle is given by
+The polarization of the medium causes Cherenkov radiation to be emitted. At velocities below the speed of light in the medium ($v < c/n$) nothing of interest may be observed. However at $v > c/n$ the Cherenkov effect must be taken into account. The effect occurs due to the information about the charge of the traversing particle not reaching the medium in front of it soon enough. Hence medium behind the particle is already aligned with the electric field while the medium in front is not. The result is an electromagnetic wave. The angle between the normal vector of the wave and the track of the particle is given by
 \begin{equation*}
 	\cos(\Theta_{c}) = \frac{1}{v/c \cdot n} = \frac{1}{\beta \cdot n}
 	\mathrm{.}
 \end{equation*}
-It is the effect on which the TOP and ARICH detectors build upon.
+It is the effect on which the TOP and ARICH detectors are built upon.
 
-Particles with a low-energy traveling through a medium interact predominantly with atomic electrons. The average energy loss of a particle is described by the Bethe-Bloch formula. For velocities of up to about $90\%$ of the speed of light it is given by $<\mathrm{d}E/\mathrm{d}x> \propto 1/{\beta^2}$ and for $\beta \gamma \approx 4$ it is minimal. As such it describes the momentum dependency of the average energy loss. For different particle species it gets shifted horizontally. However the actual $mathrm{d}E/\mathrm{d}x$ distribution is modelled by the Landau distribution. Note that the assumptions needed for this ansatz are not met for electrons as both particles of the interaction belong to the same group and their mass is too similar.
+Particles with a low-energy traveling through a medium interact predominantly with atomic electrons. The average energy loss of a particle is described by the Bethe-Bloch formula. It is given by $\left< \mathrm{d}E/\mathrm{d}x \right> \propto 1/{\beta^2}$ for velocities of up to about $90\%$ of the speed of light and is minimal at $\beta \gamma \approx 4$. As such it describes the momentum dependency of the average energy loss. However, the actual shape of $mathrm{d}E/\mathrm{d}x$ is modelled by the Landau distribution. Note that the initial assumptions needed for this ansatz are not met for electrons as both particles of the interaction belong to the same group and their masses being identical.
 A $\mathrm{d}E/\mathrm{d}x$-measurement is performed at the silicon detectors and the CDC.
 
-For high-energy particles the loss in energy by interacting with the electromagnetic field of the nucleus is the dominant part. Energy is radiated away via so called Bremsstrahlung. The left over energy decreases exponentially with the distance traversed and is inversely proportional to the square root of the mass. Therefore it is most important for particles with a low mass, e.g. electrons.
+The loss in energy by interacting with the electromagnetic field of the nucleus is the dominant energy loss for high-energy particles. Energy is radiated away via so called Bremsstrahlung. The leftover energy decreases exponentially with the distance traversed and is inversely proportional to the square root of the mass. Therefore it is most important for particles with a low mass, e.g., electrons.
 The radiation due to this effect is mainly measured at the ECL.
 
 \subsection{Particle identification}
 \label{subsec:particle_identification}
 
-At Belle~\RN{2} the detector system differentiates between six long living particle species: $\{K, \pi, e, \mu, p, deuteron\}$.
+At Belle~\RN{2} the detector system differentiates between six long living particle species: $\{K, \pi, e, \mu, p, \hbox{deuteron}\}$.
 
-For momentums below $1 \mathrm{~GeV/c}$ the $\mathrm{d}E/\mathrm{d}x$-measurement from the silicon detectors and the CDC are the most useful. \autoref{fig:de_dx_for_SVD} showcases this for one of the tracking detectors. Distinct patterns may be observed for various particle species below $1 \mathrm{~GeV/c}$ in the figure. The fact that the mean is truncated simply denotes the fact that in order to reduce outliers the lowest $5\%$ and highest $25\%$ of each track were not used in the estimation.
+The $\mathrm{d}E/\mathrm{d}x$-measurement from the silicon detectors and the CDC are the most useful. \autoref{fig:de_dx_for_SVD} showcases this for one of the tracking detectors for momentums below $1 \mathrm{~GeV/c}$. Distinct patterns may be observed for various particle species below $1 \mathrm{~GeV/c}$ in the figure. The circumstance that the mean in the graph are truncated, denotes that in order to reduce outliers the lowest $5\%$ and highest $25\%$ of each track were not used in the estimation.
 New tracks can now be assigned a likelihood of belonging to a particle species by putting forward a hypothesis for each such species.
 
-ARICH, TOP and CDC furthermore extend the identification and are able to differentiate between $\{K, \pi, p, deuteron\}$ quite nicely but also contribute to $\{e, \mu\}$. They as well provide likelihoods for each signal given a particle hypothesis.
+ARICH, TOP and CDC furthermore extend the identification and are able to differentiate between $\{K, \pi, p, \hbox{deuteron}\}$ quite nicely but also contribute to $\{e, \mu\}$. They as well provide likelihoods for each signal given a particle hypothesis.
 
-Further out the ECL detector provides good separation of electrons to other charged particles above $1 \mathrm{~GeV/c}$. It is able to do so via the measured $E/p$ shower using different particle hypothesis for estimating the goodness of their fit. An exemplary $E/p$ curve is show in \autoref{fig:e_p_for_ECL}. It emphasizes the differences seen for electrons to other particle species but also shows that no clear separation of pions and muons is possible.
+Further out the ECL detector provides good separation of electrons to other charged particles above $1 \mathrm{~GeV/c}$. It is able to do so via the measured $E/p$ shower using different particle hypothesis for estimating the goodness of their fit. An exemplary $E/p$ curve is shown in \autoref{fig:e_p_for_ECL}. It emphasizes the observable difference for electrons compared to other particle species but also shows that no clear separation of pions and muons is possible.
 
 The KLM detector provides good separation between muons and non-muons and yield such separation in the form of different likelihoods as well.
 
@@ -101,6 +101,6 @@ The KLM detector provides good separation between muons and non-muons and yield 
 	\subcaptionbox{$E/p$ distribution for different particle species. Taken from~\cite{Belle2Collaboration:B2TiP}.\label{fig:e_p_for_ECL}}{
 		\includegraphics[width=0.43\textwidth,height=\textheight,keepaspectratio]{{{../res/E p for ECL detector by particles}}}
 	}
-	\caption{Separation between different of particle species for various signals.}
+	\caption{Separation different of particle species for various signals.}
 \end{figure}
 
