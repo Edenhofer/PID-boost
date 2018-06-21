@@ -4,6 +4,40 @@
 
 The main inspiration for the thesis heavily relies on the research performed at the ALICE Collaboration ([Particle identification in ALICE: a Bayesian approach](https://arxiv.org/abs/1602.01392), [Bayesian Approach for Combined Particle Identification in Alice Experiment at LHC](https://cds.cern.ch/record/865616/files/p423.pdf)).
 
+## Outline of the thesis
+
+1. Abstract
+* Introduction: Standard Model, flavour physics, ultra-rare decays, CP-Violation
+* Belle 2
+  * Experiment: About the experiment itself
+  * Detector system
+  * Interaction with matter: particle identification -- from the initial event to a final PID
+* Statistics for particle analysis
+  * Classification functions: FPR, TPR, PPV, ...
+  * Receiver operating characteristic
+  * Identification efficiencies: confusion matrix
+  * Likelihood: likelihood ratio, Neyman-Pearson
+  * Neural network
+* Application
+  * Data sample
+  * Particle identification variables: inventory
+    * Legacy PID
+    * Global PID
+    * Goodness of the global PID: Default approach for upcoming releases, Neyman-Pearson
+  * Bayesian Approach
+    * Simple Bayes
+    * Univariate Bayes
+    * Multivariate Bayes
+    * Comparison
+    * Summary and outlook
+  * Neural network
+    * Design: dense layers, drop-out, classification, activation, optimizers
+    * Performance
+    * Comparison
+    * Summary and outlook
+* Conclusion
+1. Computer code
+
 ## Roadmap
 
 * ~~Calculate a sensible ROC figure~~
@@ -48,40 +82,6 @@ The main inspiration for the thesis heavily relies on the research performed at 
   * ~~Regenerate charged MC9 data using an altered detector configuration~~
   * ~~Rerun the analysis on the generated data~~
   * ~~Validate the new graphs by rerunning the analysis on generated data with the old calibration~~
-
-## Outline of the thesis
-
-1. Abstract
-* Introduction: Standard Model, flavour physics, ultra-rare decays, CP-Violation
-* Belle 2
-  * Experiment: About the experiment itself
-  * Detector system
-  * Interaction with matter: particle identification -- from the initial event to a final PID
-* Statistics for particle analysis
-  * Classification functions: FPR, TPR, PPV, ...
-  * Receiver operating characteristic
-  * Identification efficiencies: confusion matrix
-  * Likelihood: likelihood ratio, Neyman-Pearson
-  * Neural network
-* Application
-  * Data sample
-  * Particle identification variables: inventory
-    * Legacy PID
-    * Global PID
-    * Goodness of the `pidProbability`: Default approach for upcoming releases, Neyman-Pearson
-  * Bayesian Approach
-    * Simple Bayes
-    * Univariate Bayes
-    * Multivariate Bayes
-    * Comparison
-    * Summary and outlook
-  * Neural network
-    * Design: dense layers, drop-out, classification, activation, optimizers
-    * Performance
-    * Comparison
-    * Summary and outlook
-* Conclusion
-1. Computer code
 
 ### Bayes, lib and beyond
 
