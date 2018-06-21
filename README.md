@@ -143,17 +143,17 @@ title_suffixes += [' via SVD PID']
 * Library
 
 ```python
-    def __init__(self, particles=None, particle_base_formats=None, detectors=None, pseudo_detectors=None, detector_weights=None, physical_boundaries=None):
-        """Base definitions of stable particles and detector components to be included in calculations."""
+def __init__(self, particles=None, particle_base_formats=None, detectors=None, pseudo_detectors=None, detector_weights=Nonephysical_boundaries=None):
+    """Base definitions of stable particles and detector components to be included in calculations."""
 
-        self.particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron'] if particles is None else particles
-        self.detectors = ['pxd', 'svd', 'cdc', 'top', 'arich', 'ecl', 'klm'] if detectors is None else detectors
-        self.pseudo_detectors = ['all', 'default'] if pseudo_detectors is None else pseudo_detectors
-        # Use the detector weights to exclude certain detectors, e.g. for debugging purposes
-        # Bear in mind that if all likelihoods are calculated correctly this should never improve the result
-        self.detector_weights = {d: 1. for d in ['pxd', 'svd', 'cdc', 'top', 'arich', 'ecl', 'klm', 'all', 'default']} if detector_weights is None else detector_weights
-        # Dictionary of variables and their boundaries for possible values they might yield
-        self.physical_boundaries = {'pt': (0, 5.5), 'cosTheta': (-1, 1)} if physical_boundaries is None else physical_boundaries
+    self.particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron'] if particles is None else particles
+    self.detectors = ['pxd', 'svd', 'cdc', 'top', 'arich', 'ecl', 'klm'] if detectors is None else detectors
+    self.pseudo_detectors = ['all', 'default'] if pseudo_detectors is None else pseudo_detectors
+    # Use the detector weights to exclude certain detectors, e.g. for debugging purposes
+    # Bear in mind that if all likelihoods are calculated correctly this should never improve the result
+    self.detector_weights = {d: 1. for d in ['pxd', 'svd', 'cdc', 'top', 'arich', 'ecl', 'klm', 'all', 'default']} if detector_weights is None else detector_weights
+    # Dictionary of variables and their boundaries for possible values they might yield
+    self.physical_boundaries = {'pt': (0, 5.5), 'cosTheta': (-1, 1)} if physical_boundaries is None else physical_boundaries
 ```
 
 * Search for differences in pidProbabilities for particles and ant-particles (Bear in mind `np.nan == np.nan` is `False`) &rarr; There are none!
