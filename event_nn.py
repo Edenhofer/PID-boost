@@ -5,9 +5,9 @@ from ROOT import PyConfig
 PyConfig.IgnoreCommandLineOptions = 1   # This option has to bet set prior to importing argparse
 
 import argparse
+import logging
 import os
 import pickle
-import sys
 
 import numpy as np
 import pandas as pd
@@ -87,6 +87,10 @@ group_util.add_argument('-o', '--output', dest='output_directory', action='store
                     help='Directory for the generated output (mainly plots); Skip saving plots if given \'/dev/null\'')
 group_util.add_argument('--output-pickle', dest='output_pickle', action='store', default=None,
                     help='Pickle file path containing a ParticleFrame object which shall be read in instead of ROOT files; Takes precedence when specified')
+group_util.add_argument('-v', '--verbose', dest='loglevel', action='store_const', const=logging.DEBUG, default=logging.WARNING,
+                    help='Increase verbosity and show non-essential statistics and otherwise possibly useful information')
+group_util.add_argument('--info', dest='loglevel', action='store_const', const=logging.INFO, default=logging.WARNING,
+                    help='Increase verbosity and show non-essential statistics and otherwise possibly useful information')
 group_util.add_argument('--interactive', dest='interactive', action='store_true', default=True,
                     help='Run interactively, i.e. show plots')
 group_util.add_argument('--non-interactive', dest='interactive', action='store_false', default=True,
@@ -127,6 +131,9 @@ history_path = args.history_path
 module_path = args.module_path
 pca_path = args.pca_path
 checkpoint_path = args.checkpoint_path
+
+loglevel = args.loglevel
+logging.basicConfig(level=loglevel)
 
 # Read in all the particle's information into a dictionary of pandas-frames
 if input_pickle:
@@ -172,7 +179,7 @@ if run.startswith('apply'):
     test_selection = []
     validation_selection = augmented_matrix.index
     sampling_method = 'biased'
-    print('Classified all data as validation sample')
+    logging.info('Classified all data as validation sample')
 else:
     if sampling_method == 'fair':
         augmented_matrix[sampling_weight_column] = 1. / augmented_matrix.groupby(truth_color_column)[truth_color_column].transform('count')
@@ -183,7 +190,7 @@ else:
     # Use everything not utilized for testing as validation data
     validation_selection = augmented_matrix.drop(test_selection).index
     n_duplicated = test_selection.duplicated()
-    print('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair particle treatment)'%(sum(n_duplicated), sum(n_duplicated)/test_selection.shape[0]*100))
+    logging.info('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair particle treatment)'%(sum(n_duplicated), sum(n_duplicated)/test_selection.shape[0]*100))
 
 
 # Assemble the input matrix on which to train the model
@@ -211,26 +218,26 @@ elif transformation_task == 'pidProbability':
     design_matrix = augmented_matrix[design_columns]
 elif transformation_task == 'pca':
     if input_pca:
-        print('Loading input PCA module from "%s"'%(input_pca))
+        logging.info('Loading input PCA module from "%s"'%(input_pca))
         pca, scaler = pickle.load(open(input_pca, 'rb'))
         n_components = pca.n_components_
         design_matrix = pd.DataFrame(scaler.transform(design_matrix), index=design_matrix.index)
         design_matrix = pd.DataFrame(pca.transform(design_matrix), index=design_matrix.index)
     else:
-        print('Performing a PCA using %d components on the scaled data'%(n_components))
+        logging.info('Performing a PCA using %d components on the scaled data'%(n_components))
         scaler = StandardScaler()
         scaler.fit(design_matrix.loc[test_selection])
         design_matrix = pd.DataFrame(scaler.transform(design_matrix), index=design_matrix.index)
         pca = PCA(n_components=n_components)
         pca.fit(design_matrix.loc[test_selection])
         design_matrix = pd.DataFrame(pca.transform(design_matrix), index=design_matrix.index)
-        print('Selected principal components explain %.4f of the variance in the data'%(pca.explained_variance_ratio_.sum()))
+        logging.info('Selected principal components explain %.4f of the variance in the data'%(pca.explained_variance_ratio_.sum()))
 
         if pca_path != '/dev/null':
             if pca_path == None:
                 pca_path = os.path.join(output_directory, run + '_ncomponents' + str(n_components) + '.pkl')
             if not os.path.exists(os.path.dirname(pca_path)):
-                print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(pca_path), pca_path), file=sys.stderr)
+                logging.warning('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(pca_path), pca_path))
                 os.makedirs(os.path.dirname(pca_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
             pickle.dump((pca, scaler), open(pca_path, 'wb'), pickle.HIGHEST_PROTOCOL)
 
@@ -245,7 +252,7 @@ y_validation_hot = to_categorical(y_validation, num_classes=len(labels))
 
 # Layer selection
 if input_module:
-    print('Loading input module from "%s"'%(input_module))
+    logging.info('Loading input module from "%s"'%(input_module))
     model = load_model(input_module)
 else:
     model = Sequential()
@@ -285,14 +292,14 @@ else:
         if log_directory == None:
             log_directory = os.path.join(output_directory, 'logs')
         if not os.path.exists(log_directory):
-            print('Creating desired log directory "%s"'%(log_directory), file=sys.stderr)
+            logging.warning('Creating desired log directory "%s"'%(log_directory))
             os.makedirs(log_directory, exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
         keras_callbacks += [TensorBoard(log_dir=log_directory, histogram_freq=1, batch_size=batch_size)]
     if checkpoint_path != '/dev/null':
         if checkpoint_path == None:
             checkpoint_path = os.path.join(output_directory, 'model_checkpoint_' + savefile_suffix + '.h5')
         if not os.path.exists(os.path.dirname(checkpoint_path)):
-            print('Creating desired parent directory "%s" for the checkpoint file "%s"'%(os.path.dirname(checkpoint_path), checkpoint_path), file=sys.stderr)
+            logging.warning('Creating desired parent directory "%s" for the checkpoint file "%s"'%(os.path.dirname(checkpoint_path), checkpoint_path))
             os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
         keras_callbacks += [ModelCheckpoint(checkpoint_path, monitor='val_acc', save_best_only=True, save_weights_only=False, period=1)]
 
@@ -300,7 +307,7 @@ else:
     history = model.fit(x_test, y_test_hot, epochs=epochs, batch_size=batch_size, validation_data=(x_validation, y_validation_hot), shuffle=True, callbacks=keras_callbacks)
 
 score = model.evaluate(x_validation, y_validation_hot, batch_size=batch_size)
-print('\nModel validation using independent data - loss: %.6f - acc: %.6f'%(score[0], score[1]))
+logging.info('\nModel validation using independent data - loss: %.6f - acc: %.6f'%(score[0], score[1]))
 
 # Add predictions of the validation set to the ParticleFrame instance
 y_prediction_labels = np.argmax(model.predict(x_validation, batch_size=batch_size), axis=1)
@@ -325,7 +332,7 @@ if output_pickle != '/dev/null':
     if output_pickle == None:
         output_pickle = os.path.join(output_directory, data.__class__.__name__ + '_' + savefile_suffix + '.pkl')
     if not os.path.exists(os.path.dirname(output_pickle)):
-        print('Creating desired parent directory "%s" for the particle-data pickle file "%s"'%(os.path.dirname(output_pickle), output_pickle), file=sys.stderr)
+        logging.warning('Creating desired parent directory "%s" for the particle-data pickle file "%s"'%(os.path.dirname(output_pickle), output_pickle))
         os.makedirs(os.path.dirname(output_pickle), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
     data.descriptions['nn'] = savefile_suffix.replace('_', ' ')
     data.save(pickle_path=output_pickle)
@@ -334,7 +341,7 @@ if (history_path != '/dev/null') and history is not None:
     if history_path == None:
         history_path = os.path.join(output_directory, 'history_' + savefile_suffix + '.pkl')
     if not os.path.exists(os.path.dirname(history_path)):
-        print('Creating desired parent directory "%s" for the model-fitting history pickle file "%s"'%(os.path.dirname(history_path), history_path), file=sys.stderr)
+        logging.warning('Creating desired parent directory "%s" for the model-fitting history pickle file "%s"'%(os.path.dirname(history_path), history_path))
         os.makedirs(os.path.dirname(history_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
     # Selectively specify which data to save as the whole object can not be pickled
     history_data = {'history': history.history, 'epoch': history.epoch, 'params': history.params, 'run': run, 'n_components': n_components, 'n_Layers': str(len(config)), 'training_fraction': training_fraction, 'sampling_method': sampling_method, 'savefile_suffix': savefile_suffix.replace('_', ' ')}
@@ -344,6 +351,6 @@ if module_path != '/dev/null':
     if module_path == None:
         module_path = os.path.join(output_directory, 'model_' + savefile_suffix + '.h5')
     if not os.path.exists(os.path.dirname(module_path)):
-        print('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(module_path), module_path), file=sys.stderr)
+        logging.warning('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(module_path), module_path))
         os.makedirs(os.path.dirname(module_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
     model.save(module_path)
