@@ -171,9 +171,7 @@ for v in list(np.unique(np.abs(augmented_matrix['mcPDG'].values))):
 augmented_matrix[truth_color_column] = augmented_matrix[truth_color_column].astype(int)
 spoiling_columns.add(truth_color_column)
 
-
 run = args.run
-
 if run.startswith('apply'):
     augmented_matrix[sampling_weight_column] = np.nan
     test_selection = []
@@ -191,6 +189,12 @@ else:
     validation_selection = augmented_matrix.drop(test_selection).index
     n_duplicated = test_selection.duplicated()
     logging.info('Sampled test data contains %d duplicated rows (%.4f%%) (e.g. due to fair particle treatment)'%(sum(n_duplicated), sum(n_duplicated)/test_selection.shape[0]*100))
+
+n_additional_Layers = 1 if add_dropout else 0
+if (run == 'pca') or (run == 'applypca'):
+    savefile_suffix = run + '_ncomponents' + str(n_components) + '_' + sampling_method + '_nAdditionalLayers' + str(n_additional_Layers) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
+else:
+    savefile_suffix = run + '_' + sampling_method + '_nAdditionalLayers' + str(n_additional_Layers) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
 
 
 # Assemble the input matrix on which to train the model
@@ -235,7 +239,7 @@ elif transformation_task == 'pca':
 
         if pca_path != '/dev/null':
             if pca_path == None:
-                pca_path = os.path.join(output_directory, run + '_ncomponents' + str(n_components) + '.pkl')
+                pca_path = os.path.join(output_directory, 'transformation_' + savefile_suffix + '.pkl')
             if not os.path.exists(os.path.dirname(pca_path)):
                 logging.warning('Creating desired parent directory "%s" for the output file "%s"'%(os.path.dirname(pca_path), pca_path))
                 os.makedirs(os.path.dirname(pca_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
@@ -274,14 +278,6 @@ else:
 
     # Compilation for a multi-class classification problem
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
-
-# Set a sensibles default suffix for filenames
-config = model.get_config()
-if (run == 'pca') or (run == 'applypca'):
-    savefile_suffix = run + '_ncomponents' + str(n_components) + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
-else:
-    savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
-
 
 if run.startswith('apply'):
     history = None
@@ -344,7 +340,7 @@ if (history_path != '/dev/null') and history is not None:
         logging.warning('Creating desired parent directory "%s" for the model-fitting history pickle file "%s"'%(os.path.dirname(history_path), history_path))
         os.makedirs(os.path.dirname(history_path), exist_ok=True) # Prevent race conditions by not failing in case of intermediate dir creation
     # Selectively specify which data to save as the whole object can not be pickled
-    history_data = {'history': history.history, 'epoch': history.epoch, 'params': history.params, 'run': run, 'n_components': n_components, 'n_Layers': str(len(config)), 'training_fraction': training_fraction, 'sampling_method': sampling_method, 'savefile_suffix': savefile_suffix.replace('_', ' ')}
+    history_data = {'history': history.history, 'epoch': history.epoch, 'params': history.params, 'run': run, 'n_components': n_components, 'n_Layers': str(len(model.get_config())), 'training_fraction': training_fraction, 'sampling_method': sampling_method, 'savefile_suffix': savefile_suffix.replace('_', ' ')}
     pickle.dump(history_data, open(history_path, 'wb'), pickle.HIGHEST_PROTOCOL)
 # Save module if requested
 if module_path != '/dev/null':
