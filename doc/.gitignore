@@ -24,5 +24,9 @@ __*_temp.tex
 res/*/*.png
 res/*/*.jpg
 
+# Skip simple plots where the code can be found in the README
+res/Neyman-Pearson Visualization.pdf
+res/Sample Receiver Operating Characteristic (ROC) curve.pdf
+
 # Ignore GIMP image files
 *.xcf
