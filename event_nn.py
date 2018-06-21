@@ -37,14 +37,18 @@ group_action = parser.add_mutually_exclusive_group(required=True)
 group_opt = parser.add_argument_group('sub-options', 'Parameters which make only sense to use in combination with an action and which possibly alters their behavior')
 group_util = parser.add_argument_group('utility options', 'Parameters for altering the behavior of the program\'s input-output handling')
 group_backend = parser.add_argument_group('backend options', 'Parameters for configuring the backend used for modelling and training')
-group_action.add_argument('--apply', dest='run', action='store_const', default=None, const='apply',
-                    help='Apply the model given via input arguments instead of fitting new ones')
 group_action.add_argument('--all', dest='run', action='store_const', default=None, const='all',
                     help='Run the model using all available features of the data')
+group_action.add_argument('--apply-all', dest='run', action='store_const', default=None, const='applyall',
+                    help='Apply "all" model from input arguments instead of fitting new ones')
 group_action.add_argument('--pca', dest='run', action='store_const', default=None, const='pca',
                     help='Run the model on the principal components of the data')
+group_action.add_argument('--apply-pca', dest='run', action='store_const', default=None, const='applypca',
+                    help='Apply "PCA" model from input arguments instead of fitting new ones')
 group_action.add_argument('--pidProbability', dest='run', action='store_const', default=None, const='pidProbability',
                     help='Run the model on the `pidProbability` data by detector')
+group_action.add_argument('--apply-pidProbability', dest='run', action='store_const', default=None, const='applypidProbability',
+                    help='Apply "pidProbability" model from input arguments instead of fitting new ones')
 group_opt.add_argument('--batch-size', dest='batch_size', action='store', type=int, default=32,
                     help='Size of each batch')
 group_opt.add_argument('--epochs', dest='epochs', action='store', type=int, default=10,
@@ -163,10 +167,11 @@ spoiling_columns.add(truth_color_column)
 
 run = args.run
 
-if run == 'apply':
+if run.startswith('apply'):
     augmented_matrix[sampling_weight_column] = np.nan
     test_selection = []
     validation_selection = augmented_matrix.index
+    sampling_method = 'biased'
     print('Classified all data as validation sample')
 else:
     if sampling_method == 'fair':
@@ -186,24 +191,25 @@ design_columns = list(set(augmented_matrix.keys()) - spoiling_columns)
 # We need deterministic results here, which unfortunately we do not get by default; Hence sort it by force
 design_columns.sort()
 design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
-if run == 'apply':
-    if input_pca:
-        print('Loading input PCA module from "%s"'%(input_pca))
-        pca, scaler = pickle.load(open(input_pca, 'rb'))
-        n_components = pca.n_components_
-        design_matrix = pd.DataFrame(scaler.transform(design_matrix), index=design_matrix.index)
-        design_matrix = pd.DataFrame(pca.transform(design_matrix), index=design_matrix.index)
-    # The model is loaded later, however at least check that one is specified
+
+if run.startswith('apply'):
+    transformation_task = ''.join(run.split('apply')[1:])
+
     assert input_module, 'Missing a model'
-elif run == 'all':
+    if transformation_task == 'pca':
+        assert input_pca is not None, 'Missing a PCA model'
+else:
+    transformation_task = run
+
+if transformation_task == 'all':
     pass
-elif run == 'pidProbability':
+elif transformation_task == 'pidProbability':
     design_columns = []
     for p in ParticleFrame.particles:
         for d in ParticleFrame.detectors + ParticleFrame.pseudo_detectors:
             design_columns += ['pidProbabilityExpert__bo' + lib.basf2_Code(p) + '__cm__sp' + d + '__bc']
-    design_matrix = augmented_matrix[design_columns].fillna(0.) # Fill null in cells with no value (clean up probability columns)
-elif run == 'pca':
+    design_matrix = augmented_matrix[design_columns]
+elif transformation_task == 'pca':
     if input_pca:
         print('Loading input PCA module from "%s"'%(input_pca))
         pca, scaler = pickle.load(open(input_pca, 'rb'))
@@ -264,13 +270,13 @@ else:
 
 # Set a sensibles default suffix for filenames
 config = model.get_config()
-if (run == 'pca') or ((run == 'apply') and input_pca):
+if (run == 'pca') or (run == 'applypca'):
     savefile_suffix = run + '_ncomponents' + str(n_components) + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
 else:
     savefile_suffix = run + '_' + sampling_method + '_nLayers' + str(len(config)) + '_Optimizer' + optimizer_method + '_LearningRate' + str(learning_rate) + '_nEpochs' + str(epochs) + '_BatchSize' + str(batch_size)
 
 
-if run == 'apply':
+if run.startswith('apply'):
     history = None
 else:
     # Visualize and save the training
