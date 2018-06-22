@@ -42,6 +42,12 @@
 	\addbibresource{../literature.bib}
 
 	\makeatletter
+	% Insert a float barrier before subsections just like the package 'placeins' does for sections
+	\AtBeginDocument{%
+		\expandafter\renewcommand\expandafter\subsection\expandafter{%
+			\expandafter\@fb@secFB\subsection
+		}%
+	}
 	\makeatother
 
 	\pagestyle{headings}
