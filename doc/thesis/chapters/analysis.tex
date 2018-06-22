@@ -28,7 +28,7 @@ Additionally a simulated decay of the $B^+ B^-$ with non-generic properties is g
 	\label{tab:simulated_decay}
 \end{table}
 
-As seen in \autoref{fig:true_particle_abundance} the decays are dominated by kaons and pions. However the overall distribution is much more peaked for the charged generic decay. Furthermore the non-generic sample decay features a feature a lot more $\mu^+$ relatively speaking in comparison charged generic decay. The mixed generic decay is disregarded for this plot due to its distinct similarity to the charged decay.
+As seen in \autoref{fig:true_particle_abundance} the decays are dominated by kaons and pions. However, the overall distribution is much more peaked for the charged generic decay. Furthermore the non-generic sample decay features a feature a lot more $\mu^+$ relatively speaking in comparison charged generic decay. The mixed generic decay is disregarded for this plot due to its distinct similarity to the charged decay.
 
 \begin{figure}[ht]
 	\centering
@@ -74,7 +74,7 @@ As of \formatdate{28}{06}{2018}, the current approach is to take the likelihood 
 	\label{tab:legacy_particleid_variables}
 \end{table}
 
-The identification efficiencies for pions and kaons are rather good as the approach is able to properly differentiate both classes. However it has obvious limitations in identifying rare particles as the fraction is dominated by the high abundance of the pion.
+The identification efficiencies for pions and kaons are rather good as the approach is able to properly differentiate both classes. However, it has obvious limitations in identifying rare particles as the fraction is dominated by the high abundance of the pion.
 
 The difference in the TPR for identifying the pions and the electron can be seen in \autoref{fig:legacy_pid_particle_identification}. The pions is used as a representative of a particle specie with a high abundance, while the electron is one of the low abundance particle species. A high efficiency in selecting the particles is achieved quickly. However, the purity of the sample clearly underlines the preference towards the pion identification.
 
@@ -130,7 +130,7 @@ In order to ensure the global PID variables are properly defined, a likelihood r
 
 For the following analysis the data is sampled into $10$ bins of equal height as to provide a balanced statistics for each bin. The error in a bin is given by a vertical line. It is calculated via gaussian error propagation under the assumption that the counting of the events follow a Poisson distribution. Thereby assumption is made that the number of desired particles in a bin and the number of undesired particles are independent. The error is underestimated for a purity of $0$ and $1$.
 
-When applying the previously discussed approach to the data, the goodness of the likelihoods can be validated as seen in \autoref{fig:likelihood_ratio_kaon_all}. The purity of the kaon sample in the bins increases with a stricter likelihood cut and the uncertainty is low due to the high statistics. However \autoref{fig:likelihood_ratio_proton_all} paints a completely different picture. The purity peaks at a likelihood ratio of about $0.35$, while the following values are far lower. However this effect is unique to the proton and can not be observed in any other of the six particle species of interest. On one the hand this means the likelihoods for the kaon, pion, electron, muon and deuteron are properly defined and actually behave like probabilities. On the other hand it also reveals a flaw in the calculation of the proton likelihood. Thankfully the proton does not play a significant role in the analysis done in the following sections but nevertheless it is important to keep in mind that identifying protons via their likelihood (likelihood ratio) has inherent flaws.
+When applying the previously discussed approach to the data, the goodness of the likelihoods can be validated as seen in \autoref{fig:likelihood_ratio_kaon_all}. The purity of the kaon sample in the bins increases with a stricter likelihood cut and the uncertainty is low due to the high statistics. However, \autoref{fig:likelihood_ratio_proton_all} paints a completely different picture. The purity peaks at a likelihood ratio of about $0.35$, while the following values are far lower. However, this effect is unique to the proton and can not be observed in any other of the six particle species of interest. On one the hand this means the likelihoods for the kaon, pion, electron, muon and deuteron are properly defined and actually behave like probabilities. On the other hand it also reveals a flaw in the calculation of the proton likelihood. Thankfully the proton does not play a significant role in the analysis done in the following sections but nevertheless it is important to keep in mind that identifying protons via their likelihood (likelihood ratio) has inherent flaws.
 
 \begin{figure}[ht]
 	\centering
@@ -150,27 +150,27 @@ In order to understand the observed effect in \autoref{fig:likelihood_ratio_prot
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{SVD\label{fig:likelihood_ratio_proton_svd}}{
-		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative K Abundance in Likelihood Ratio Bins for SVD detector}}}
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative K Abundance in Likelihood Ratio Bins for SVD detector}}}
 	}
-	\hspace{0.5em}
+	\hspace{2em}
 	\subcaptionbox{CDC\label{fig:likelihood_ratio_proton_cdc}}{
-		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector}}}
-	}
-	\hspace{0.5em}
-	\subcaptionbox{TOP\label{fig:likelihood_ratio_proton_top}}{
-		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for TOP detector}}}
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector}}}
 	}
 
+	\subcaptionbox{TOP\label{fig:likelihood_ratio_proton_top}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for TOP detector}}}
+	}
+	\hspace{2em}
 	\subcaptionbox{ARICH\label{fig:likelihood_ratio_proton_arich}}{
-		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for ARICH detector}}}
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for ARICH detector}}}
 	}
-	\hspace{0.5em}
+
 	\subcaptionbox{ECL\label{fig:likelihood_ratio_proton_ecl}}{
-		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for ECL detector}}}
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for ECL detector}}}
 	}
-	\hspace{0.5em}
+	\hspace{2em}
 	\subcaptionbox{KLM\label{fig:likelihood_ratio_proton_klm}}{
-		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for KLM detector}}}
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for KLM detector}}}
 	}
 
 	\caption{Relative abundance (purity) of the proton in likelihood ratio bins for all available detectors.}
@@ -221,7 +221,7 @@ Thankfully both of those hypothesis are fulfilled in the real world: The detecto
 \subsection{Univariate Bayes}
 \label{subsec:bayesian_approach_univariate_bayes}
 
-The univariate Bayesian approach adds a further dependency in the form of a detector variable to the a priori probabilities of the Bayesian approach. Hence, instead of having a priori probability which depends only on the particle overall abundance, the univariate approach additionally varies the value. Namely the abundance is made dependant on, e.g., the transverse momentum and the angle between the beampipe and track $\Theta$ are considered. Those two variables make the most sense as they play a significant role in the track fitting process and are dominant factors for the particle classification process outlined in~\autoref{subsec:particle_identification}.
+The univariate Bayesian approach adds a further dependency in the form of a detector variable to the a priori probabilities of the Bayesian approach. Hence, instead of having a priori probability which depends only on the particle overall abundance, the univariate approach additionally varies the value. Namely the abundance is made dependant on, e.g., the transverse momentum and the angle between the beampipe and track $\Theta$ are considered. Those two variables make the most sense as they play a significant role in the track fitting process and are dominant factors for the particle classification process outlined in~\autoref{subsec:particle_identification}. In the following, the cosine of $\Theta$ is used in order to even out the distribution.
 
 \begin{figure}[ht]
 	\centering
@@ -236,7 +236,7 @@ The univariate Bayesian approach adds a further dependency in the form of a dete
 	\label{fig:univariate_bayes_priors}
 \end{figure}
 
-The relative abundance of one particle in comparison to the pion is shown in \autoref{fig:univariate_bayes_priors}. Equal height bins were chosen to enforce a good statistics across all bins. The abundance relative to the pion is used in order to introduce a point of reference. The pion as such reference point is chosen arbitrarily. As previously discussed, the absolute normalization of the a priori probabilities does not matter. The graphs underline the motivation for using such an approach as the abundance varies between different bins. Especially the dependency on $p_t$ reveals drastic changes in the relative frequency of the kaon. Overall binning by $p_t$ reveals steeper contrasts and therefore is used as default binning method.
+The relative abundance of one particle in comparison to the pion is shown in \autoref{fig:univariate_bayes_priors}. Equal height bins were chosen to enforce a good statistics across all bins. The abundance relative to the pion is used in order to introduce a point of reference. The pion as such reference point is chosen arbitrarily. As previously discussed, the absolute normalization of the a priori probabilities does not matter. The graphs underline the motivation for using such an approach as the abundance varies between different bins. Especially the dependency on $p_t$ reveals drastic changes in the relative frequency of the kaon. Overall binning by $p_t$ reveals shows a higher contrast and therefore is used as default binning method.
 
 Due to its additional dependency the univariate Bayesian approach is able to adapt to the underlying data a little better in comparison to the Bayesian approach.
 
@@ -286,7 +286,7 @@ The described effect can be seen for every particle with an ID and is not limite
 	\label{fig:diff_heatmap_via_pid_via_simple_bayes}
 \end{figure}
 
-The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However in general the simple Bayesian approach is less prone to confusing particle with one another as seen in~\autoref{fig:diff_heatmap_via_pid_via_simple_bayes}.
+The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However, in general the simple Bayesian approach is less prone to confusing particle with one another as seen in~\autoref{fig:diff_heatmap_via_pid_via_simple_bayes}.
 
 The differences are less pronounced in comparison to the \textbf{global PID} variables. Both approaches misclassify only a low percentage of each particle specie. The global PID one classifies muons with a higher efficiency while the simple Bayesain approach is better at identifying pions. At this point it becomes a question of the desired goal. The efficiencies for the kaon, electron and proton identification stayed about the same. Both have a lower efficiency for the kaon and pion than the legacy PID approach has. Especially the pion identification takes a steep decline. Bear in mind that it is the particle of highest abundance.
 
@@ -356,7 +356,7 @@ In the following discussion a neural networking consisting of sequential layers 
 
 Eight layers are found to perform best without over-fitting the data. Thereby, two different concepts for layers are used; On one the hand a so called \textit{dense} layer connects all inputs with each node in the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a rather high number of free parameters depending on the used function in a node. On the other hand a so called \textit{dropout} layer was employed which as its name suggests drops a certain percentage of inputs by chance. It enforces the weight adaption on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit (see~\cite{MachineLearning:DeepLearning}).
 
-Three different approaches for the choice of input parameters are evaluated. First the unaltered global PID variables for each detector are used as a baseline. As second approach a rich mixture of variables are used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the global PID variables for each detector. The third approach uses the same initial inputs as the second one. However prior to passing the values to the network, a Principal Component Analysis (see~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData}) on the standardized data was performed. The standardization step centers the data by removing the mean and scales the value so that the standard deviation becomes one. It is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
+Three different approaches for the choice of input parameters are evaluated. First the unaltered global PID variables for each detector are used as a baseline. As second approach a rich mixture of variables are used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the global PID variables for each detector. The third approach uses the same initial inputs as the second one. However, prior to passing the values to the network, a Principal Component Analysis (see~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData}) on the standardized data was performed. The standardization step centers the data by removing the mean and scales the value so that the standard deviation becomes one. It is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
 
 The output, i.e., the actual classification, was done in the final step of the network via the previously discussed softmax algorithm using the gradient of the cross-entropy for weight adaption. In order to get a unique classification, the class with the highest softmax value was selected. As targets for the classification the six long-living particle species were used with the addition of a zeroth class used for classifying particles which do not belong to the six other classes. This zeroth class includes just a fractional amount of particles but it is important as each track on which the network is supposed to learn is required to have a target associated with it.
 
