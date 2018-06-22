@@ -398,16 +398,16 @@ Each training is performed with a batch size of $256$. Smaller batch sizes turn 
 
 Furthermore several optimizers --- algorithms describing the process of weight adaption --- are tested. In the end Adadelta~\cite{DBLP:journals/corr/abs-1212-5701} and Adamax~\cite{DBLP:journals/corr/KingmaB14} prove to have the best performance with the least fluctuations in the validation accuracy. Hence, the following discussion will focus on only those two weight adaption approaches.
 
-\autoref{fig:neural_network_all_biased}~shows the two optimizers in comparison. Both yield pretty similar results, especially considering the scaling of the accuracy. It is important to note that both are able to `learn' the classification problem rather quickly. Within the first epoch they are able to achieve accuracies of about $90\%$. However, they level off rather quickly. After approximately $15$ iterations no noticeable change in the training accuracy can be observed. The validation accuracy follows the general trend of the training accuracy but as expected it shows a lot more fluctuation. The Adadelta algorithm performs slightly better if selecting everything as feature. The performance of the training accuracy of the adadelta algorithm is slightly better. The validation accuracy on the other hand is pretty similar for the two approaches after about $10$ epochs.
+\autoref{fig:neural_network_all_biased}~shows the two optimizers in comparison. Both yield pretty similar results, especially considering the scaling of the accuracy. It is important to note that both are able to `learn' the classification problem rather quickly. Within the first epoch they are able to achieve accuracies of about $90\%$. However, they level off rather quickly. After approximately $5$ to $10$ iterations no noticeable change in the training accuracy can be observed. The validation accuracy follows the general trend of the training accuracy but as expected it shows a lot more fluctuation. The Adadelta algorithm performs slightly better if selecting everything as feature. The performance of the training accuracy of the adadelta algorithm is slightly better. The validation accuracy on the other hand is pretty similar for the two approaches after about $10$ epochs.
 
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{Adadelta\label{fig:neural_network_all_biased_adadelta}}{
-		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all biased nLayers8 Optimizeradadelta LearningRateNone nEpochs15 BatchSize256}}}
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all biased nLayers8 Optimizeradadelta LearningRateNone nEpochs25 BatchSize256}}}
 	}
 	\hspace{2em}
 	\subcaptionbox{Adamax\label{fig:neural_network_all_biased_adamax}}{
-		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all biased nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all biased nLayers8 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
 	}
 	\caption{Accuracy of the neural network using the Adadelta and Adamax optimizer with everything selected as features. The values are displayed for a biased sampling approach.}
 	\label{fig:neural_network_all_biased}
@@ -418,11 +418,11 @@ Furthermore several optimizers --- algorithms describing the process of weight a
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{Biased\label{fig:neural_network_global_pid_biased_adamax}}{
-		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pidProbability biased nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pidProbability biased nLayers8 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
 	}
 	\hspace{2em}
 	\subcaptionbox{Upsampled\label{fig:neural_network_global_pid_fair_adamax}}{
-		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pidProbability fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pidProbability fair nLayers8 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
 	}
 	\caption{Accuracy of the neural network using the Adamax optimizer with the global PID as features. The values are displayed for a biased sampling approach (left) and the upsampling approach (right).}
 	\label{fig:neural_network_global_pid_by_sampling_method}
@@ -433,15 +433,15 @@ In~\autoref{fig:neural_network_pca_all} the PCA feature selection approach is sh
 \begin{figure}[ht]
 	\centering
 	\subcaptionbox{`All'\label{fig:neural_network_all_fair_adamax}}{
-		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all fair nLayers8 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
 	}
 	\hspace{0.5em}
 	\subcaptionbox{PCA, $50$ components\label{fig:neural_network_pca50_fair_adamax}}{
-		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents50 fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents50 fair nLayers8 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
 	}
 	\hspace{0.5em}
 	\subcaptionbox{PCA, $90$ components\label{fig:neural_network_pca90_fair_adamax}}{
-		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents90 fair nLayers8 Optimizeradamax LearningRateNone nEpochs15 BatchSize256}}}
+		\includegraphics[width=0.3\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy pca ncomponents90 fair nLayers8 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
 	}
 	\caption{Accuracy of the neural network using the Adamax optimizer with selecting all features (left), the $50$ most principal components (center) and the $90$ most principal components (right). The values are displayed for a set using upsampling.}
 	\label{fig:neural_network_pca_all}
