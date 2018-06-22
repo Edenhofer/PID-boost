@@ -143,7 +143,7 @@ title_suffixes += [' via SVD PID']
 * Library
 
 ```python
-def __init__(self, particles=None, particle_base_formats=None, detectors=None, pseudo_detectors=None, detector_weights=Nonephysical_boundaries=None):
+def __init__(self, particles=None, particle_base_formats=None, detectors=None, pseudo_detectors=None, detector_weights=None, physical_boundaries=None):
     """Base definitions of stable particles and detector components to be included in calculations."""
 
     self.particles = ['K+', 'pi+', 'e+', 'mu+', 'p+', 'deuteron'] if particles is None else particles
