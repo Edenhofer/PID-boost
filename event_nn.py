@@ -176,7 +176,6 @@ if run.startswith('apply'):
     augmented_matrix[sampling_weight_column] = np.nan
     test_selection = []
     validation_selection = augmented_matrix.index
-    sampling_method = 'biased'
     logging.info('Classified all data as validation sample')
 else:
     if sampling_method == 'fair':
