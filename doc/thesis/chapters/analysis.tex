@@ -450,3 +450,48 @@ In~\autoref{fig:neural_network_pca_all} the PCA feature selection approach is sh
 Using the PCA components as feature for the biased sampling approach yields very similar results to just using all variables as feature. However, in the end the training and validation accuracy is slightly better by about $0.01$.
 
 Overall it can observed that the high slope at which the accuracy initially increases is independently of the sampling method and the feature selection. All approaches are able to structure the data in a way to improve the classification while training. The number of samples which the training process requires before the training accuracy levels of is similar for all approaches. Overall selecting about $90$ principal components performs for a biased sample and one using upsampling. The best performers for both sampling methods are rather close in training accuracy but the validation accuracy is superior for the biased sampling approach.
+
+\subsection{Comparison}
+\label{subsec:neural_network_comparison}
+
+The following visuals are based on data from a different charged generic decay than the one which is used for training. By doing so, one achieves basically the same distribution of particles without reusing training data. The previously trained model is simply applied to this new decay using the same parameters.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 04/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut by pt & cos(Theta), via NN applypca ncomponents90 biased nAdditionalLayers1 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
+	\caption{Comparison of the row-wised normed confusion matrix for the multivariate Bayesian approach by $p_t$ and $\cos(\Theta)$, and a neural network using the $90$ most principal components as features and employing biased sampling.}
+	\label{fig:diff_heatmap_via_pt_and_costheta_via_nn_biased_global_pid}
+\end{figure}
+
+\autoref{fig:diff_heatmap_via_pt_and_costheta_via_nn_biased_global_pid}~shows the comparison of the identification efficiencies for the best performing network using biased sampling. Of note is the predominance of particles of high abundance. The network completely focusses on kaons and pions. Additionally, protons are identified rather good as well. Electrons, muons and deuterons on the other hand are disregarded completely. By comparing the neural network to the multivariate Bayesian approach, a rather harsh comparison is made as the multivariate Bayesian approach is able to achieve a good classification for particles of high abundance without disregarding particle of lower abundance. Nevertheless, the neural network would be worse in identifying particles of low abundance compared to any other approach as it does not classifies them at all.
+
+The identification efficiency of the proton behaves contrary to the efficiencies of other particles of low abundance. Of special note is that the deuteron is also classified as proton. Hence, heavier particles are predominantly categorized as protons. Further analysis shows that the purity of the selected sample is rather low. The performed selection categorizes nearly all true protons as such but it also categorizes a lot of other particles as being a proton as well. However, in comparison to the Bayesian approach the purity is still higher.
+
+\begin{figure}[ht]
+	\centering
+	\subcaptionbox{Kaon\label{fig:neural_network_via_pt_and_costheta_via_nn_fair_pca90_kaon_ppv_tpr}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 04/Diff Statistics: K Identification PPV over TPR (without Ratios) by pt & cos(Theta), via NN applypca ncomponents90 biased nAdditionalLayers1 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
+	}
+	\hspace{2em}
+	\subcaptionbox{Pion\label{fig:neural_network_via_pt_and_costheta_via_nn_fair_pca90_pion_ppv_tpr}}{
+		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 04/Diff Statistics: pi Identification PPV over TPR (without Ratios) by pt & cos(Theta), via NN applypca ncomponents90 biased nAdditionalLayers1 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
+	}
+	\caption{Purity over efficiency comparison for the kaon and pion identification using the multivariate Bayesian approach by $p_t$ and $\cos(\Theta)$, and a neural network using the $90$ principal components as feature and employing upsampling.}
+	\label{fig:neural_network_via_pt_and_costheta_via_nn_fair_ppv_tpr}
+\end{figure}
+
+The classification in~\autoref{fig:neural_network_via_pt_and_costheta_via_nn_fair_ppv_tpr} shows the purity over the efficiency for the kaon and pion identification. The network is able to outperform the multivariate Bayesian approach as the dot representing the network lies above the line for the Bayesian approach. However, the improvements are limited to those particle species plus the proton as discussed previously.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 04/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut by pt & cos(Theta), via NN applypca ncomponents90 fair nAdditionalLayers1 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
+	\caption{Comparison of the row-wised normed confusion matrix for multivariate Bayesian approach by $p_t$ and $\cos(\Theta)$, and a neural network using the $90$ most principal components as features and employing fair sampling.}
+	\label{fig:diff_heatmap_via_pt_and_costheta_via_nn_fair_global_pid}
+\end{figure}
+
+Using upsampling, slightly decreases the pion identification efficiency and increases the efficiency in identifying kaons as seen in~\autoref{fig:diff_heatmap_via_pt_and_costheta_via_nn_fair_global_pid}. Hence, the network was successfully adapted to treat particle species more evenly but was unsuccessful in making it identify electrons, muons or deuterons.
+
+Possible causes for the complete disregard of the electron, muon and proton might be that the network is over-fitting the particles of rather low abundance. However, this would not explain the high identification efficiency for the proton. One possible explanation as to why it still identifies it and classifies the deuterons as proton as well, might be due to them being comparably heavy. The mass of a particle significantly influences the detector responses and might be easy to `learn'.
+Furthermore, the batch size might be one of the causes for the indifference towards pions and kaons as it low particles of low abundance are not represented properly in each weight adaption step.
+
+Overall the classification efficiency of the network using biased sampling is $856 \permille$ compared to $801 \permille$ for the network using upsampling. The final overall efficiencies can be compared with further approaches from~\autoref{tab:overall_efficiencies}. When doing so, it is revealed that both neural networks perform significantly worse than the legacy PID and any of the Bayesian approaches. In comparison to the global PID approach the neural network perform slightly better at the cost of loosing the ability to identify anything but the kaon, pion and proton.
