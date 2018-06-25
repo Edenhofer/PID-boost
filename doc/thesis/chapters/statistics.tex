@@ -4,8 +4,8 @@
 \section{Classification functions}
 \label{sec:classification_functions}
 
-The main concepts which are used throughout the thesis heavily rely on statistical classification functions to compare the goodness of identification methods. However, their use is not limited to physics, let alone particle physics, but spans over all field containing some form of (binary) classification problem.
-In the following paragraphs the examples assume one wants to identify kaons in a set of data containing a multitude of alternative particles. A classification into kaons and non-kaons is performed.
+The main concepts to compare the goodness of identification methods which are used throughout the thesis are based on statistical classification functions. However, their use is not limited to physics, let alone particle physics, but spans over all field containing some form of (binary) classification problem. A classification function is a tool which separates elements which do not have the desired feature from those which have it.
+The classifier in the following examples assumes the role of a discriminator between kaons and non-kaons.
 
 The most important classification functions are:
 \begin{itemize}
@@ -74,10 +74,6 @@ The identification efficiency is defined as the proportion of correctly classifi
 
 The $\epsilon_{PID}$-matrix is the confusion matrix normed by row for an exclusive particle classification. The term `exclusive' in this context denotes that each track is labeled with exactly one particle hypothesis. Such a classification can be achieved by, e.g., assigning the track the label of the highest identification variable. This concept is used throughout the analysis.
 
-Each cell in a row represents the probability of a particle of that row's class being identified as the particle of that column's class. The diagonal of the matrix contains the identification efficiencies for a particle species.
-
-The definition generalizes to non-normed matrices, e.g., resulting from non-exclusive cuts. Although, reading the matrix is less intuitive as a particle might belong to multiple classes and comparing the values between different matrices becomes ambiguous.
-
 The values of the matrix are given by the fraction of particles $i$ classified as $j$ over the true abundance of particle $i$. Hence, its values are
 
 \begin{equation}
@@ -96,6 +92,10 @@ The matrix has the shape of a $6 \times 6$ matrix when listing the confusion pro
 		\epsilon_{d K} & \epsilon_{d \pi} & \epsilon_{K e} & \epsilon_{K \mu} & \epsilon_{K p} & \epsilon_{d d} \\
 	\end{pmatrix}.
 \end{equation}
+
+Each cell in a row represents the probability of a particle of that row's class being identified as the particle of that column's class. The diagonal of the matrix contains the identification efficiencies for a particle species.
+
+The definition generalizes to non-normed matrices, e.g., resulting from non-exclusive cuts. Although, reading the matrix is less intuitive. Comparing matrices in this case becomes ambiguous as a particle might belong to multiple classes.
 
 In general, values on the diagonal should be close to $1$ while non-diagonal entries should vanish for a good classification approach. Bear in mind that the efficiency of a particle classification is always normed by the abundance of the particle and as such each row may have a different normalization. This is especially important when calculating the overall efficiency which is the fraction of all correctly classified tracks relative to all available tracks. In this case, each efficiency on the diagonal has to be weighted with the abundance of the particle.
 
@@ -120,7 +120,7 @@ In case of event~$\pmb{x}$ being a detector response, the likelihood $\mathcal{L
 \subsection{Neyman-Pearson}
 \label{subsec:likelihood_ratios_neyman_pearson}
 
-The Neyman-Pearson lemma is useful for evaluating the goodness of separating two models which have no unknown parameters. It states that a test on the likelihood ratio has the highest probability of correctly rejecting the original hypothesis if the alternative hypothesis is indeed true. In other words: A test on the likelihood ratio provides the highest purity at a given efficiency.
+The Neyman-Pearson lemma is useful for evaluating the goodness of separating two models which have no unknown parameters. It states that a test on the likelihood ratio has the highest probability of correctly rejecting the original hypothesis at a given significance level. In other words: A test on the likelihood ratio provides the highest purity at a given efficiency.
 
 The purity of a selection is defined as the proportion of correctly classified particles relative to all the identified ones. Its definition is identical to the PPV and as such will be used as synonym throughout the thesis.
 
@@ -136,7 +136,7 @@ Hence, one expects to observe a monotonically increasing function by plotting th
 \section{Neural network}
 \label{sec:neural_network}
 
-An artificial neural network or simply neural network is a class of algorithms inspired by the central nerve system of biological beings. Instead of electrical signals being passed on from neuron to neuron with complex biological processes involved, an artificial neural network passes on numbers with functions representing neurons.
+An artificial neural network or simply neural network is a class of algorithms inspired by the central nervous system of biological beings. Instead of electrical signals being passed on from neuron to neuron with complex biological processes involved, an artificial neural network passes on numbers with functions representing neurons.
 
 Despite only employing simplistic building blocks, a neural network is able to model any continues function arbitrarily well using one layer and an infinite number of neurons~\cite{NeuralNetwork:UniversalApproximation}. It is used in hopes of discovering hidden relations between variables and to utilize high dimensional correlations not otherwise obvious.
 

@@ -173,18 +173,18 @@ In order to understand the observed effect in \autoref{fig:likelihood_ratio_prot
 		\includegraphics[width=0.35\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for KLM detector}}}
 	}
 
-	\caption{Relative abundance (purity) of the proton in proton likelihood ratio bins for all available detectors.}
+	\caption{Relative abundance (purity) of the proton in proton likelihood ratio equal height bins for all available detectors.}
 	\label{fig:likelihood_ratio_proton_by_detector}
 \end{figure}
 
 The response of the SVD is in perfect agreement with the expectation. However, the CDC shows the same kink, merely shifted a little to the left. The TOP is in agreement again. The ARICH, ECL and KLM have an insufficient statistics and/or the likelihoods do not fill the whole range. The error is underestimate at multiple points close to a purity of $0$. Hence, the ECL seems like the only viable cause of the unexpected kink in the plot of the proton purity over likelihood ratio. The observed shift to the left is due to the likelihood of a single detector being lower in general than the likelihood of all detectors combined.
 
-Next, the $p_t$ dependency in the CDC detector is analysed as depicted in \autoref{fig:likelihood_ratio_proton_by_pt}. As sampling method three equal height bins are chosen. Using rather few bins with the same number of particles in each one, provides good statistics and allows for fair comparisons. Analyzing the picture, it becomes obvious that especially low to medium transverse momentum protons constitute to the effect.
+Next, the $p_t$ dependency in the CDC detector is analysed as depicted in \autoref{fig:likelihood_ratio_proton_by_pt}. The transverse momentum is chosen as it is easily measurable and has a significant influence on the identification process. As sampling method three equal height bins are chosen. Using rather few bins with the same number of particles in each one, provides good statistics and allows for fair comparisons. Analyzing the picture, it becomes obvious that especially low to medium transverse momentum protons constitute to the effect.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{{{../res/charged 01/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector for equal size pt bins}}}
-	\caption{Relative abundance of the proton in likelihood ratio bins for different transverse momentum ranges in units of $GeV/c$ for the CDC detector.}
+	\caption{Relative abundance of the proton in likelihood ratio bins for different transverse momentum equal height bins in units of $GeV/c$ for the CDC detector.}
 	\label{fig:likelihood_ratio_proton_by_pt}
 \end{figure}
 
@@ -219,7 +219,7 @@ with $P(Signal|A)$ being the previously discussed likelihoods of the signal usin
 
 The absolute particle abundance of a sample taken from the Monte Carlo simulation of the charged decay of the $B$-mesons can be seen in \autoref{fig:charged_decay_true_particle_abundance}. In this example the bias towards pions and kaons is clearly observable.
 
-The approach depends on the detector yielding decay-agnostic results. Hence the detector shall be assumed to always output the likelihood of measuring the received signal given a specific particle hypothesis regardless of prior probabilities. Furthermore the approach assumes a bias in the abundance towards one or a few particles in the data since otherwise the a priori probabilities would be flat and would have no effect.
+The approach depends on the detector yielding decay-agnostic results. Hence the detector shall be assumed to always output the likelihood of measuring the received signal given a specific particle hypothesis regardless of prior probabilities. Furthermore the approach assumes a bias in the abundance towards one or a few particle species in the data. Otherwise the a priori probabilities would be flat and result in the same values given by the global PID.
 
 Thankfully both of those requirements are fulfilled: The detector can be assumed to behave independently of the relative particle abundance and the measured data shows a clear predominance of one or a few particle species. This is not surprising in itself as the branching fractions are not equally distributed.
 
@@ -320,7 +320,7 @@ A comparison between the univariate Bayesian approach and the legacy PID is redu
 	\label{fig:diff_heatmap_via_global_pid_via_univariate_bayes}
 \end{figure}
 
-Lastly, the \textbf{multivariate Bayes}ian approach is tested. The TPR and PPV for every particle specie are very similar to the univariate approach --- neglecting effects below a maximal relative change of $2 \%$. Negative effects in the TPR and PPV are always below a threshold of $0.3 \cdot 10^{-3}$ while the PPV for the muon identification is slightly boosted by $2 \%$ boosted at one point.
+Lastly, the \textbf{multivariate Bayes}ian approach is tested. The TPR and PPV for every particle specie are very similar to the univariate approach --- neglecting effects below a maximal relative change of $2 \%$. Negative effects in the TPR and PPV are always below a threshold of $0.3 \cdot 10^{-3}$ while the PPV for the muon identification is slightly boosted by $2 \%$ at one point.
 The similarity of the multivariate and univariate approach is also reflected in the efficiencies of the row-wised normed confusion matrix being virtually identical. Comparing the approach to the legacy PID, global PID or simple Bayes would duplicate the comparison which are outlined for the univariate Bayesian approach.
 
 The global efficiencies over all particle species are displayed in~\autoref{tab:overall_efficiencies}. It emphasizes the quasi non-existing performance improvement of the multivariate Bayesian approach relative to the univariate Bayesian one. Furthermore, it highlights the previously discussed overall improvements in the various other approaches.
@@ -359,7 +359,7 @@ Additionally, overlapping boundaries either from the current approach or introdu
 
 In the following discussion a neural networking consisting of sequential layers is chosen. As software library, Keras~\cite{chollet2015keras} is used with TensorFlow~\cite{tensorflow2015-whitepaper} as back-end.
 
-As for the design of the design of the neural network, eight layers are found to perform best without over-fitting the data. Hereby, two different concepts for layers are used; On the one hand a so called \textit{dense} layer connects all inputs with each node in the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a rather high number of free parameters depending on the function used in a node. On the other hand a so called \textit{dropout} layer is employed which as its name suggests drops a certain percentage of inputs by chance. It enforces the weight adaption on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters (see~\cite{MachineLearning:DeepLearning}) as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit.
+As for the design of the neural network, eight layers are found to perform best without over-fitting the data. Hereby, two different concepts for layers are used; On the one hand a so called \textit{dense} layer connects all inputs with each node in the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a rather high number of free parameters depending on the function used in a node. On the other hand a so called \textit{dropout} layer is employed which as its name suggests drops a certain percentage of inputs by chance. It enforces the weight adaption on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters (see~\cite{MachineLearning:DeepLearning}) as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit.
 
 Three different approaches for the choice of input parameters are evaluated. First the unaltered global PID variables for each detector are used as a baseline. As second approach a rich mixture of variables are used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the global PID variables for each detector. The third approach uses the same initial inputs as the second one, however prior to passing the values to the network, a Principal Component Analysis (see~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData}) on the standardized data is performed. The standardization step centers the data by removing the mean and scales the value so that the standard deviation becomes one. It is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
 
