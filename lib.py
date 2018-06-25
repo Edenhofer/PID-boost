@@ -585,7 +585,7 @@ class ParticleFrame(dict):
                     plt.setp(plt.gca().get_yticklabels(), visible=False)
                 plt.xlabel(r'$\mathcal{LR}($%s$)$'%(current_format), fontsize=fontsize)
 
-                likelihood_ratio_bins, intervals = pd.cut(particle_data_charged[selection][cutting_columns[p]], nbins, labels=range(nbins), retbins=True)
+                likelihood_ratio_bins, intervals = pd.cut(particle_data_charged[selection][cutting_columns[p]], np.linspace(0., 1., nbins+1), labels=range(nbins), retbins=True)
                 abundance_ratio = np.zeros(nbins)
                 y_err = np.zeros(nbins)
                 for i in range(nbins):
