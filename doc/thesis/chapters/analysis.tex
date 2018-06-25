@@ -36,15 +36,15 @@ As seen in \autoref{fig:true_particle_abundance} the decays are dominated by kao
 		\includegraphics[width=0.43\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
 	}
 	\hspace{2em}
-	\subcaptionbox{Sample\label{fig:sample_decay_true_particle_abundance}}{
+	\subcaptionbox{Non-generic sample\label{fig:sample_decay_true_particle_abundance}}{
 		\includegraphics[width=0.43\textwidth,height=\textheight,keepaspectratio]{{{../res/sample/General Purpose Statistics: True Particle Abundances in the K+-Data}}}
 	}
-	\caption{True particle abundance in various simulated decays with particle on the $x$-axis sorted by their frequency. \textit{NaN} stands for an invalid translation\protect\footnotemark from the particles' PDG code to an actual particle.}
+	\caption{True particle abundance in various simulated decays with particle on the $x$-axis sorted by their frequency. \textit{NaN} stands for an invalid translation\protect\footnotemark from the unique identification code of the particle species to an actual particle.}
 	\label{fig:true_particle_abundance}
 \end{figure}
-\footnotetext{The error occurs due to the PDG code in the ROOT file being saved as \lstinline|float32|. However, some PDG codes of particles exceed this limitation. Notably this effects the deuteron and its anti-particle.}
+\footnotetext{The error occurs due to the Particle Data Group code in the ROOT file being saved as \lstinline|float32|. However, some codes for particles exceed this limitation. Notably this effects the deuteron and its anti-particle.}
 
-Prior to evaluating the data, it is stripped of falsely identified and poorly defined tracks. First the transverse momentum is limited to the range of $0.05 \mathrm{~GeV/c}$ to $5.29 \mathrm{~GeV/c}$. This removes very slow and very fast particles as both provide badly described tracks. Next, the transverse distance of the closest point of the track to the point of interaction is limited to $2 \mathrm{~cm}$, respectively $5 \mathrm{~cm}$ for the longitudinal distance. Lastly, tracks with no PDG code assigned to them are pruned. Such tracks are considered falsely reconstructed as a majority of hits of the track do not belong to the true simulated particle. Including those kinds of tracks would have suggested the particle identification process shall identify non-particles tracks. Overall the effect of tracks with no PDG code does not influence the final result in any significant way. The tracks are merely excluded for the purpose of clarity.
+Prior to evaluating the data, it is stripped of falsely identified and poorly defined tracks. First the transverse momentum is limited to the range of $0.05 \mathrm{~GeV/c}$ to $5.29 \mathrm{~GeV/c}$. This removes very slow and very fast particles as both provide badly described tracks. Next, the transverse distance of the closest point of the track to the point of interaction is limited to $2 \mathrm{~cm}$, respectively $5 \mathrm{~cm}$ for the longitudinal distance. Lastly, tracks with no Monte Carlo truth information assigned to them are pruned. Such tracks are considered falsely reconstructed as a majority of detector hits of the track do not belong to a simulated particle. Including those kinds of tracks would have suggested the particle identification process shall identify non-particles tracks. Overall the effect of tracks with no truth infromation does not influence the final result in any significant way. The tracks are merely excluded for the purpose of clarity.
 
 Each generic decay file features $100,000$ initial $B \bar{B}$ events and about ten times as many identified tracks. The non-generic decay contains $10,000$ initial events and about $40,000$ tracks.
 
@@ -58,7 +58,7 @@ In the following analysis, the generic decay files are used. The number of sampl
 
 The current particle identification approach consists of variables calculated via ratios of likelihoods. A particle identification is performed by applying a selection on the variables via a cut.
 
-As of \formatdate{28}{06}{2018}, the current approach is to take the likelihood of the desired particle and divide it by itself plus the likelihood of the pion. To construct the ID of the pion the kaon likelihood is used as second summand in the denominator. \autoref{tab:legacy_particleid_variables} shows the definition of the ID for each of the six particle species of interest. In the future it will be replaced by the global PID approach, described in \autoref{subsec:pid_variables_global_pid}.
+Prior to version 2 of the Belle~\RN{2} software, the default particle identification approach is to take the likelihood of the desired particle and divide it by itself plus the likelihood of the pion. To construct the ID of the pion the kaon likelihood is used as second summand in the denominator. \autoref{tab:legacy_particleid_variables} shows the definition of the ID for each of the six particle species of interest. In the future it will be replaced by the global PID approach, described in \autoref{subsec:pid_variables_global_pid}.
 
 \begin{table}[ht]
 	\centering
@@ -330,11 +330,11 @@ The global efficiencies over all particle species are displayed in~\autoref{tab:
 	\begin{tabular}{l|l}
 		Particle identification approach & Overall identification efficiency \\
 		\hline
-		legacy PID & $(844 \pm 4) \permille$ \\ % 0.841650, 0.840713, 0.841381, 0.840628, 0.848190, 0.848589, 0.848208, 0.848342
-		global PID & $(792 \pm 2) \permille$ \\ % 0.790291, 0.790009, 0.790600, 0.790581, 0.793814, 0.793484, 0.794605, 0.793748
-		simple Bayes & $(882 \pm 2) \permille$ \\ % 0.880800, 0.880086, 0.880715, 0.880286, 0.884530, 0.884318, 0.884664, 0.884109
-		univariate Bayes & $(885 \pm 3) \permille$ \\ % 0.882854, 0.882183, 0.882980, 0.882411, 0.886828, 0.886719, 0.887014, 0.886597
-		multivariate Bayes & $(885 \pm 3) \permille$ % 0.882964, 0.882461, 0.883159, 0.882591, 0.886961, 0.887016, 0.887171, 0.886819
+		legacy PID & $(84.4 \pm 0.4) \%$ \\ % 0.841650, 0.840713, 0.841381, 0.840628, 0.848190, 0.848589, 0.848208, 0.848342
+		global PID & $(79.2 \pm 0.2) \%$ \\ % 0.790291, 0.790009, 0.790600, 0.790581, 0.793814, 0.793484, 0.794605, 0.793748
+		simple Bayes & $(88.2 \pm 0.2) \%$ \\ % 0.880800, 0.880086, 0.880715, 0.880286, 0.884530, 0.884318, 0.884664, 0.884109
+		univariate Bayes & $(88.5 \pm 0.3) \%$ \\ % 0.882854, 0.882183, 0.882980, 0.882411, 0.886828, 0.886719, 0.887014, 0.886597
+		multivariate Bayes & $(88.5 \pm 0.3) \%$ % 0.882964, 0.882461, 0.883159, 0.882591, 0.886961, 0.887016, 0.887171, 0.886819
 	\end{tabular}
 	\caption{Overall efficiencies for various particle identical approaches with their statistical error. Errors are estimated using four charged and four mixed generic decay files.}
 	\label{tab:overall_efficiencies}
@@ -494,11 +494,11 @@ Using upsampling, slightly decreases the pion identification efficiency and incr
 Possible causes for the complete disregard of the electron, muon and proton might be that the network is over-fitting the particles of rather low abundance. However, this would not explain the high identification efficiency for the proton. One possible explanation as to why it still identifies it and classifies the deuterons as proton as well, might be due to them being comparably heavy. The mass of a particle significantly influences the detector responses and might be easy to `learn'.
 Furthermore, the batch size might be one of the causes for the indifference towards pions and kaons as it low particles of low abundance are not represented properly in each weight adaption step.
 
-Overall the classification efficiency of the network using biased sampling is $856 \permille$ compared to $801 \permille$ for the network using upsampling. The final overall efficiencies can be compared with further approaches from~\autoref{tab:overall_efficiencies}. When doing so, it is revealed that both neural networks perform significantly worse than the legacy PID and any of the Bayesian approaches. In comparison to the global PID approach the neural network perform slightly better at the cost of loosing the ability to identify anything but the kaon, pion and proton.
+Overall the classification efficiency of the network using biased sampling is $85.6 \%$ compared to $80.1 \%$ for the network using upsampling. The final overall efficiencies can be compared with further approaches from~\autoref{tab:overall_efficiencies}. When doing so, it is revealed that both neural networks perform significantly worse than the legacy PID and any of the Bayesian approaches. In comparison to the global PID approach the neural network perform slightly better at the cost of loosing the ability to identify anything but the kaon, pion and proton.
 
 \subsection{Summary and outlook}
 \label{subsc:neural_network_summary}
 
-The overall efficiencies of a neural network are promising as they reach $80\%$ by just using a simple design in combination with a high batch size and an appropriate optimizer. However, a bias in the form of different abundances for different particle species complicates the learning process significantly. Upsampling does not provide the necessary boost in performance for particles of low abundance. Although it helps against the dominance of the pion. Certain particles like the proton are classified with a high efficiency regardless. In general, both approaches heavily favor particles with a high abundance. This is not surprising in itself as the training accuracy and therefore the function which is to be optimized can be easily improved by doing so.
+The overall efficiencies of a neural network are promising as they reach $80 \%$ by just using a simple design in combination with a high batch size and an appropriate optimizer. However, a bias in the form of different abundances for different particle species complicates the learning process significantly. Upsampling does not provide the necessary boost in performance for particles of low abundance. Although it helps against the dominance of the pion. Certain particles like the proton are classified with a high efficiency regardless. In general, both approaches heavily favor particles with a high abundance. This is not surprising in itself as the training accuracy and therefore the function which is to be optimized can be easily improved by doing so.
 
 As an outlook, further research in this field seems promising as even a simple neural network is able to achieve an overall acceptable efficiency. Instead of using the generic decay, it might make more sense to generate events which produce particles with equal abundance while otherwise sharing the characteristics of a generic decay. This would completely circumvent the need for upsampling. In addition to an overall good classification of generic data, such a network could be further trained again briefly on decay specific parameters. This would bring the best of both approaches as a generic classifier can be used as fallback with a decay specific network being employed whenever possible. Furthermore the unique classification could be extended to a probability assignment for each particle specie. Hereby, the full output of the softmax activation could be used.
