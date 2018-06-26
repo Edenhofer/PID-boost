@@ -50,6 +50,10 @@
 	}
 	\makeatother
 
+	% Use bold subcaption references
+	\DeclareCaptionLabelFormat{bold}{\textbf{#2}}
+	\captionsetup{subrefformat=bold}
+
 	\pagestyle{headings}
 	\oddsidemargin0.8cm		% Left spacing for pages with an uneven number only relevant for \twoside
 	\evensidemargin0.2cm		% Left spacing for pages with an even number only relevant for \twoside
