@@ -212,7 +212,7 @@ y = np.exp(x)
 title = 'Neyman-Pearson Visualization'
 
 plt.xlabel(r'$\mathcal{LR}(\pi)$')
-plt.ylabel(r'$\frac{\#\pi}{\sum_{p}{\# p}}$')
+plt.ylabel(r'$\frac{\#\pi}{\sum_{a}{\# A}}$')
 plt.errorbar(x, y/y.max(), xerr=0.05, capsize=0., elinewidth=1, marker='o', markersize=4, markeredgewidth=1, markerfacecolor='None', linestyle='--', linewidth=0.1)
 plt.savefig(os.path.join('./doc/res/', title + '.' + 'pdf'), bbox_inches='tight', format='pdf')
 plt.title(title)
@@ -284,11 +284,14 @@ done; \
 
 ```bash
 NN_PARAMS=('--info' '--add-dropout' '--batch-size=256' '--training-fraction=0.80' '--ncomponents=70' '--epochs=25' '--gpu=0' '--log-dir=/dev/null');
-event_nn.py --non-interactive -i charged.root/task04/ -o res/"charged 04" ${NN_PARAMS[@]} --apply --input-module "model_checkpoint_pca_ncomponents90_fair_nLayers8_Optimizeradadelta_LearningRateNone_nEpochs15_BatchSize256.h5" --input-pca "pca_ncomponents90.pkl"
+event_nn.py --non-interactive -i charged.root/task04/ -o res/"charged 04" ${NN_PARAMS[@]} --apply --input-module "model_checkpoint_pca_ncomponents90_biased_nAdditionalLayers1_Optimizeradamax_LearningRateNone_nEpochs25_BatchSize256.h5" --input-pca "pca_ncomponents90.pkl"
 
 PARAMS=('--info' '--mc-best' '--exclusive-cut' '--nbins=10' '--ncuts=40' '--holdings' 'pt' 'cosTheta' '--norm' 'pi+');
 tasks=('--diff pid nn' '--diff pidProbability nn' '--diff flat_bayes nn' '--diff univariate_bayes nn' '--diff multivariate_bayes nn')
-for i in "${tasks[@]}"; do >&2 echo "$(echo ${i})" && event_metrics.py --non-interactive -o doc/res/"charged 04" ${PARAMS[@]} --input-pickle "res/charged 04/ParticleFrame_applyPidProbability_biased_nLayers8_Optimizeradamax_LearningRateNone_nEpochs25_BatchSize256.pkl" $(echo ${i}); done; \
+for i in "${tasks[@]}"; do
+  >&2 echo "$(echo ${i})" \
+  && event_metrics.py --non-interactive -o doc/res/"charged 04" ${PARAMS[@]} --input-pickle "res/charged 04/ParticleFrame_applypca_ncomponents90_biased_nAdditionalLayers1_Optimizeradamax_LearningRateNone_nEpochs25_BatchSize256.pkl" $(echo ${i});
+done; \
 ```
 
 * Neural network model visualization
