@@ -52,16 +52,20 @@ savefile_suffix = ' ' + history['savefile_suffix']
 plt.figure()
 for key, label in [('val_loss', 'Validation'), ('loss', 'Training')]:
     plt.plot(history['epoch'], history['history'][key], label=label)
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
+plt.xticks(fontsize='large')
+plt.yticks(fontsize='large')
+plt.xlabel('Epoch', fontsize='larger')
+plt.ylabel('Loss', fontsize='larger')
 plt.legend()
 data.pyplot_sanitize_show('Loss', savefig_prefix='Neural Network Model: ', savefig_suffix=savefile_suffix)
 
 plt.figure()
 for key, label in [('val_acc', 'Validation'), ('acc', 'Training')]:
     plt.plot(history['epoch'], history['history'][key], label=label)
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
+plt.xticks(fontsize='large')
+plt.yticks(fontsize='large')
+plt.xlabel('Epoch', fontsize='larger')
+plt.ylabel('Accuracy', fontsize='larger')
 plt.legend()
 data.pyplot_sanitize_show('Accuracy', savefig_prefix='Neural Network Model: ', savefig_suffix=savefile_suffix)
 
