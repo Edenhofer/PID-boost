@@ -73,7 +73,7 @@ Usually the points on the left are of most interest as they represent a selectio
 
 The identification efficiency is defined as the proportion of correctly classified particles of a class relative to all of the available particles belonging to it. Hence, it directly represents the TPR. Both terms will be used as synonyms throughout the thesis.
 
-The $\epsilon_{PID}$-matrix is the confusion matrix normed by row for an exclusive particle classification. The term `exclusive' in this context denotes that each track is labeled with exactly one particle hypothesis. Such a classification can be achieved by, e.g., assigning the track the label of the highest identification variable. This idea is used throughout the analysis.
+The $\epsilon_{PID}$-matrix is the confusion matrix normalized by row for an exclusive particle classification. The term `exclusive' in this context denotes that each track is labeled with exactly one particle hypothesis. Such a classification can be achieved by, e.g., assigning the track the label of the highest identification variable. This idea is used throughout the analysis.
 
 The values of the matrix are given by the fraction of particles $i$ classified as $j$ over the true abundance of particle $i$. Hence, its values are
 
@@ -94,9 +94,9 @@ The matrix has the shape of a $6 \times 6$ matrix when listing the confusion pro
 	\end{pmatrix}.
 \end{equation}
 
-The definition generalizes to non-normed matrices, e.g., resulting from non-exclusive cuts. Although, reading the matrix is less intuitive. Comparing matrices in this case becomes ambiguous as a particle might belong to multiple classes.
+The definition generalizes to non-normalized matrices, e.g., resulting from non-exclusive cuts. Although, reading the matrix is less intuitive. Comparing matrices in this case becomes ambiguous as a particle might belong to multiple classes.
 
-The diagonal of the matrix contains the identification efficiencies for a particle species. In general, its values should be close to one while non-diagonal entries should vanish for a good classification approach. Bearing in mind that the efficiency of a particle classification is always normed by the abundance of the particle and as such each row may have a different normalization. This is especially important when calculating the overall efficiency which is the fraction of all correctly classified tracks relative to all available tracks. In this case, each efficiency on the diagonal has to be weighted with the abundance of the particle.
+The diagonal of the matrix contains the identification efficiencies for a particle species. In general, its values should be close to one while non-diagonal entries should vanish for a good classification approach. Bearing in mind that the efficiency of a particle classification is always normalized by the abundance of the particle and as such each row may have a different normalization. This is especially important when calculating the overall efficiency which is the fraction of all correctly classified tracks relative to all available tracks. In this case, each efficiency on the diagonal has to be weighted with the abundance of the particle.
 
 \section{Likelihood}
 \label{sec:likelihood}

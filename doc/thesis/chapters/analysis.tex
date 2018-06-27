@@ -74,7 +74,7 @@ Prior to version 2 of the Belle~\RN{2} software, the default particle identifica
 	\label{tab:legacy_particleid_variables}
 \end{table}
 
-The identification efficiencies for pions and kaons are rather good as the approach is able to properly differentiate between both classes. However, it has obvious limitations in identifying rare particles as the fraction is dominated by the high abundance of the pions.
+The identification efficiencies for pions and kaons are high as the approach is able to properly differentiate between both classes. However, it has obvious limitations in identifying rare particles as the fraction is dominated by the high abundance of the pions.
 
 The differences in the TPR for identifying the pion and the electron can be seen in \autoref{fig:legacy_pid_particle_identification}. The pion is used as a representative of a particle species with a high abundance, while the electron is used as one of the low abundance particle species. A high efficiency in selecting particles is achieved quickly. However, the purity of the sample clearly demonstrates the preference towards pion identification.
 
@@ -91,12 +91,12 @@ The differences in the TPR for identifying the pion and the electron can be seen
 	\label{fig:legacy_pid_particle_identification}
 \end{figure}
 
-This unbalanced classification is further reinforced by analyzing the identification efficiencies. \autoref{fig:legacy_pid_epsilon_pid}~shows the row-wise normed confusion matrix for the legacy PID approach (see~\autoref{sec:efficiency}). The matrix clearly highlights the bias of the classification towards kaons and pions. Regardless of the actual particle's identity, there is a high chance of it being identified as kaon or pion. Particle species of low abundance such as the electron, muon, proton and deuteron each have an identification efficiency below $40\%$.
+This unbalanced classification is further reinforced by analyzing the identification efficiencies. \autoref{fig:legacy_pid_epsilon_pid}~shows the row-wise normalized confusion matrix for the legacy PID approach (see~\autoref{sec:efficiency}). The matrix clearly highlights the bias of the classification towards kaons and pions. Regardless of the actual particle's identity, there is a high chance of it being identified as kaon or pion. Particle species of low abundance such as the electron, muon, proton and deuteron each have an identification efficiency below $40\%$.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Particle ID Approach: Heatmap of epsilonPID Matrix for an exclusive Cut}}}
-	\caption{Matrix of $\epsilon$ values for the legacy particle ID approach. Its values represent the row-wise normed confusion matrix. Each particle species is assigned a probability of being identified as another kind of particle.}
+	\caption{Matrix of $\epsilon$ values for the legacy particle ID approach. Its values represent the row-wise normalized confusion matrix. Each particle species is assigned a probability of being identified as another kind of particle.}
 	\label{fig:legacy_pid_epsilon_pid}
 \end{figure}
 
@@ -179,7 +179,7 @@ In order to understand the observed effect in \autoref{fig:likelihood_ratio_prot
 
 The response of the SVD is in perfect agreement with the expectations. However, the CDC shows the same kink, merely shifted a little to lower values. The TOP is in agreement again. The ARICH, ECL and KLM have insufficient statistics and/or the likelihoods do not fill the whole range. The error is underestimated at multiple points close to a purity of zero. Hence, the CDC seems like the only viable cause of the unexpected kink in the plot. The observed shift to the left is due to the likelihood of a single detector being lower in general than the likelihood of all detectors combined.
 
-In addition, the $p_t$ dependency in the CDC detector is analysed as depicted in \autoref{fig:likelihood_ratio_proton_by_pt}. The transverse momentum is chosen as it is easily measurable and has a significant influence on the identification process. As sampling method three equal height bins are chosen. Using rather few bins with the same number of particles in each one, provides good statistics and allows for balanced comparisons. Analyzing the results, it becomes obvious that especially low to medium transverse momentum protons contribute to the effect.
+In addition, the $p_t$ dependency in the CDC detector is analysed as depicted in \autoref{fig:likelihood_ratio_proton_by_pt}. The transverse momentum is chosen as it is easily measurable and has a significant influence on the identification process. As sampling method three equal height bins are chosen. Using few bins with the same number of particles in each one, provides good statistics and allows for balanced comparisons. Analyzing the results, it becomes obvious that especially low to medium transverse momentum protons contribute to the effect.
 
 \begin{figure}[ht]
 	\centering
@@ -190,7 +190,7 @@ In addition, the $p_t$ dependency in the CDC detector is analysed as depicted in
 
 Analyzing the dependency of the likelihood on the angle between the beampipe and track reveals nothing of interest. The variable is important for the identification process as well.
 
-In conclusion, there seem to be some problems with the proton likelihood returned by the CDC detector as it does not behave like a likelihood. As part of this work the findings have been communicated to the experts but has yet to be resolved.
+In conclusion, there seem to be some problems with the proton likelihood returned by the CDC detector as it does not behave like a likelihood. As part of this work the findings have been communicated to the experts but have yet to be resolved.
 Overall, it does not affect the results presented in the following sections as the proton does not play a significant role.
 
 \section{Bayesian approach}
@@ -227,7 +227,7 @@ Thankfully both of those requirements are fulfilled: The detector can be assumed
 \subsection{Univariate Bayes}
 \label{sec:bayesian_approach_univariate_bayes}
 
-The univariate Bayesian approach adds a further dependency in the form of a detector variable to the a priori probabilities of the Bayesian approach. Hence, instead of having the a priori probability depend only on the particle overall abundance, the univariate approach additionally varies the values. Namely the abundance is made dependant on, e.g., the transverse momentum and the angle between the beampipe and track $\Theta$. Those two variables play a significant role in the track fitting process and are dominant factors for the particle classification process outlined in~\autoref{subsec:particle_identification}. In the following, the cosine of $\Theta$ is used in order to even out the distribution.
+The univariate Bayesian approach adds a further dependency in the form of a detector variable to the a priori probabilities of the Bayesian approach. Hence, instead of having the a priori probability depend only on the particle overall abundance, the univariate approach additionally varies the values. Namely the abundance is made dependant on, e.g., the transverse momentum and the angle between the beampipe and track $\Theta$. Those two variables play a significant role in the track fitting process and are dominant factors for the particle classification process outlined in~\autoref{sec:particle_identification}. In the following, the cosine of $\Theta$ is used in order to even out the distribution.
 
 \begin{figure}[ht]
 	\centering
@@ -275,24 +275,28 @@ As an example, the abundance of kaons relative to the abundance of pions is show
 \subsection{Comparison}
 \label{sec:bayesian_approach_comparison}
 
+\autoref{fig:diff_stats_pi_identification_via_pid_via_simple_bayes} shows a comparison of the \textbf{legacy PID} approach to the \textbf{simple Bayesian} one for identifying pions. The simple Bayesian approach is able to achieve a higher efficiency at a low FPR. In addition, the new approach provides a very high purity at a very low FPR in a range where the legacy PID approach is not even able to identify pions. For a high FPR both approaches converge into similar shapes with rate ratios close to one.
+The described effect can be seen for all six particle species studied and is not limited to the pion. However, the comparison of the pion identification is a conservative choice as the legacy PID approach favors high abundance particles and should have put it at an advantage. The identification of particle species like the electron or muon performs consistently better using the new approach even at false positive rates above $50\%$.
+
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Diff Statistics: pi Identification via legacy PID, via simple Bayes}}}
-	\caption{Comparison of PPV, TPR and FPR for simple Bayes with legacy PID approach for identifying pions. The upper graph shows both rates of each approach separately using different colors, while the lower visualizes the ratio between the PPV's respectively the TPR's.}
+	\caption[Comparison of PPV, TPR and FPR for the simple Bayesian with the legacy PID approach for identifying pions.]{
+		Comparison of PPV, TPR and FPR for the simple Bayesian with the legacy PID approach for identifying pions. The upper graph shows both rates of each approach separately using different colors, while the lower visualizes the ratio between the PPV's respectively the TPR's.
+
+		In order to get a smooth curve for the rate ratios, more values than actually present are interpolated for both approaches. This interpolation is vetted for points with a high FPR as with sufficiently fine grained cuts the interpolated value could be achieved. However, the gap between the two leftmost values can often not be filled with additional cuts. Hence, no interpolation is performed between the first and second point.
+	}
 	\label{fig:diff_stats_pi_identification_via_pid_via_simple_bayes}
 \end{figure}
 
-\autoref{fig:diff_stats_pi_identification_via_pid_via_simple_bayes} shows a comparison of the \textbf{legacy PID} approach to the \textbf{simple Bayes}ian one for identifying pions. The simple Bayesian approach is able to achieve a higher efficiency at a low FPR. In addition, the new approach provides a very high purity at a very low FPR in a range where the legacy PID approach is not even able to identify pions. For a high FPR both approaches converge into similar shapes with rate ratios close to one.
-The described effect can be seen for every particle with an ID and is not limited to the pion. However, the comparison of the pion identification is a rather conservative choice as the legacy PID approach favors high abundance particles and should have put it at an advantage. The identification of particle species like the electron or muon performs consistently better using the new approach even at false positive rates above $50\%$.
+The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However, in general the simple Bayesian approach is less prone to confusing particles with one another as seen in~\autoref{fig:diff_heatmap_via_pid_via_simple_bayes}.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via legacy PID, via simple Bayes}}}
-	\caption{Comparison of the row-wised normed confusion matrix for the legacy PID approach with the simple Bayesian one.}
+	\caption{Comparison of the row-wised normalized confusion matrix for the legacy PID approach with the simple Bayesian one.}
 	\label{fig:diff_heatmap_via_pid_via_simple_bayes}
 \end{figure}
-
-The improvements in the identification efficiencies are less obvious for an exclusive cut on the identifying variables. However, in general the simple Bayesian approach is less prone to confusing particle with one another as seen in~\autoref{fig:diff_heatmap_via_pid_via_simple_bayes}.
 
 The differences are less pronounced in comparison to the \textbf{global PID} variables. Both approaches misidentify only a low percentage of each particle species. The global PID approach classifies muons with a higher efficiency while the simple Bayesian approach is better at identifying pions. The efficiencies for the kaon, electron and proton identification remain more or less unchanged. Both have a lower efficiency for the kaon and pion identification than the legacy PID approach has. Especially the pion identification takes a steep decline. Note that the pion is the particle of highest abundance.
 
@@ -311,18 +315,18 @@ Overall, simple Bayes achieves a higher efficiency than the legacy and global PI
 	\label{fig:diff_abundances_via_pid_via_global_pid_via_simple_bayes}
 \end{figure}
 
-Introducing more degrees of freedom in the form of the \textbf{univariate Bayes}ian approach reveals merely small differences in comparison to the simple Bayesian approach. \autoref{fig:diff_heatmap_via_global_pid_via_univariate_bayes}~shows a comparison of the global PID approach with the univariate Bayesian one. The observed changes are predominantly inherited from the simple Bayesian one. The slight loss in efficiencies of low abundance particles is more than compensated by the gain in the pion identification efficiency. Between the simple Bayesian approach and the univariate one, only changes of $0.01$ are seen in the particle identification efficiencies. The univariate Bayesian approach boosts the kaon and proton identification by this amount at the cost of a reduced efficiency for the muon.
+Introducing more degrees of freedom in the form of the \textbf{univariate Bayesian} approach reveals merely small differences in comparison to the simple Bayesian approach. \autoref{fig:diff_heatmap_via_global_pid_via_univariate_bayes}~shows a comparison of the global PID approach with the univariate Bayesian one. The observed changes are predominantly inherited from the simple Bayesian one. The slight loss in efficiencies of low abundance particles is more than compensated by the gain in the pion identification efficiency. Between the simple Bayesian approach and the univariate one, only changes of $1 \text{~percentage~point}$ are seen in the particle identification efficiencies. The univariate Bayesian approach boosts the kaon and proton identification by this amount at the cost of a reduced efficiency for the muon.
 A comparison between the univariate Bayesian approach and the legacy PID is redundant due to the similarity between the simple Bayesian and univariate Bayesian approach.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 01/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut via global PID, via univariate Bayes}}}
-	\caption{Comparison of the row-wised normed confusion matrix for the global PID approach with the univariate Bayesian one.}
+	\caption{Comparison of the row-wised normalized confusion matrix for the global PID approach with the univariate Bayesian one.}
 	\label{fig:diff_heatmap_via_global_pid_via_univariate_bayes}
 \end{figure}
 
-Lastly, the \textbf{multivariate Bayes}ian approach is tested. The TPR and PPV for every particle species are very similar to ones from the univariate approach -- neglecting effects below a maximal relative change of $2 \%$. Negative effects are always below a threshold of $0.3 \cdot 10^{-3}$ while the PPV for the muon identification is slightly boosted by $2 \%$ at one point.
-The similarity of the multivariate and univariate approach is also reflected in the efficiencies of the row-wised normed confusion matrix being virtually identical. Comparing the approach to the legacy PID, global PID or simple Bayes would duplicate the comparison which are outlined for the univariate Bayesian approach.
+Lastly, the \textbf{multivariate Bayesian} approach is tested. The TPR and PPV for every particle species are very similar to ones from the univariate approach -- neglecting effects below a maximal relative change of $2 \%$. Negative effects are always below a threshold of $0.4 \%$ while the PPV for the muon identification is slightly boosted by $2 \%$ at one point.
+The similarity of the multivariate and univariate approach is also reflected in the efficiencies of the row-wised normalized confusion matrix being virtually identical. Comparing the approach to the legacy PID, global PID or simple Bayes would duplicate the comparison which are outlined for the univariate Bayesian approach.
 
 The global efficiencies over all particle species are displayed in~\autoref{tab:overall_efficiencies}. The efficiencies underline the quasi non-existing performance improvement of the multivariate Bayesian approach relative to the univariate Bayesian one. Furthermore, it highlights the previously discussed overall improvements in the various other approaches.
 
@@ -337,14 +341,14 @@ The global efficiencies over all particle species are displayed in~\autoref{tab:
 		univariate Bayes & $(88.5 \pm 0.3) \%$ \\ % 0.882854, 0.882183, 0.882980, 0.882411, 0.886828, 0.886719, 0.887014, 0.886597
 		multivariate Bayes & $(88.5 \pm 0.3) \%$ % 0.882964, 0.882461, 0.883159, 0.882591, 0.886961, 0.887016, 0.887171, 0.886819
 	\end{tabular}
-	\caption{Overall efficiencies for various particle identical approaches with their statistical error. Errors are estimated using four charged and four mixed generic decay files.}
+	\caption{Mean overall efficiencies for the discussed particle identification approaches with their statistical error. Errors are estimated using four charged and four mixed generic decay data sets.}
 	\label{tab:overall_efficiencies}
 \end{table}
 
 \subsection{Summary and outlook}
 \label{subsc:bayesian_approach_summary}
 
-In comparison to the legacy PID approach the positive effect introduced by the Bayesian approaches are mainly due to the inclusion of further particle likelihoods. Both the global PID approach as well as the Bayesian one decrease the rate at which particles of high abundance are identified. However, both kinds of approaches in turn increase the identical efficiencies of particles with a low abundance significantly. Hereby, the Bayesian approaches are able improve upon the global PID as they correctly classify more pions in the charged generic decay at the cost of a reduced identification rate for some particles of lower abundance.
+In comparison to the legacy PID approach the positive effect introduced by the Bayesian approaches are mainly due to the inclusion of further particle likelihoods. Both the global PID approach as well as the Bayesian one decrease the rate at which particles of high abundance are identified. However, both kinds of approaches in turn increase the identification efficiencies of particles with a low abundance significantly. Hereby, the Bayesian approaches are able improve upon the global PID as they correctly classify more pions in the charged generic decay at the cost of a reduced identification rate for some particles of lower abundance.
 
 The difference among the simple Bayesian, the univariate Bayesian and the multivariate Bayesian approach is slim. Neither the overall identification efficiencies differ significantly, nor does the identification rate of certain particles get boosted. Slight overall gains are measurable only for the univariate Bayesian approach.
 
@@ -360,9 +364,9 @@ Additionally, overlapping boundaries either from the current approach or introdu
 
 A neural networking consisting of sequential layers is chosen for the following discussion. As software library, Keras~\cite{chollet2015keras} is used with TensorFlow~\cite{tensorflow2015-whitepaper} as back-end.
 
-As for the design of the neural network, eight layers are found to perform best without over-fitting the data. Hereby, two different concepts for layers are used. On the one hand a so called \textit{dense} layer connects all inputs with each node in the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a rather high number of free parameters depending on the function used in a node. On the other hand a so called \textit{dropout} layer is employed which as its name suggests drops a certain percentage of inputs by chance. It enforces the weight adaption on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters (see~\cite{MachineLearning:DeepLearning}) as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit.
+It is found that eight layers perform reasonably well without over-fitting the data. As for the layers themselves, two different concepts are used. On the one hand a so called \textit{dense} layer connects all inputs with each node within the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a high number of free parameters depending on the function used in a node. On the other hand a so called \textit{dropout} layer is employed which as its name suggests drops a certain percentage of inputs by chance. It enforces the weight adaption on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters (see~\cite{MachineLearning:DeepLearning}) as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit.
 
-Three different approaches for the choice of input parameters are evaluated. First the unaltered global PID variables for each detector are used as a baseline. As second approach a rich mixture of variables is used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the global PID variables for each detector. The third approach uses the same initial inputs as the second one. However, prior to passing the values to the network, a Principal Component Analysis~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData} on the standardized data is performed. The standardization step centers the data by removing the mean and scales the value so that the standard deviation becomes one. This is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
+Three different approaches for the choice of input parameters are evaluated. First the unaltered global PID variables for each detector are used as a baseline. As second approach a rich mixture of variables is used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the global PID variables for each detector. The third approach uses the same initial inputs as the second one. However, prior to passing the values to the network, a \textbf{P}rincipal \textbf{C}omponent \textbf{A}nalysis~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData} (PCA) on the standardized data is performed. The standardization step centers the data by removing the mean and scales the value so that the standard deviation becomes one. This is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
 
 The output, i.e., the actual classification, is done in the final step of the network via the previously discussed softmax algorithm. The gradient of the cross-entropy is used for weight adaption. In order to get a unique classification, the class with the highest softmax value is selected. The six long-living particle species are used as targets for the classification. In addition, a zeroth class is added. It is used for classifying particles which do not belong to the six other classes. Although this class merely contains a fractional amount of particles, it is important nevertheless as each track on which the network is supposed to learn is required to have a target associated with it.
 
@@ -389,17 +393,17 @@ The output, i.e., the actual classification, is done in the final step of the ne
 \subsection{Performance}
 \label{sec:neural_network_performance}
 
-The accuracy is used as performance measurement. It is the fraction of correctly classified tracks relative to all available ones. In the discussed case it is synonymous to the overall efficiency. Note that the sample on which the network is training does not represent the same sample which is used for the comparison of the various Bayesian approaches.
+The accuracy is used as performance measurement. It is the fraction of correctly classified tracks relative to all available ones. In the discussed case it is synonymous to the overall efficiency.
 
 Testing and validation is done using a fixed split between training and validation data (\textit{holdout method}). It is important to separate those two samples in order to spot networks which over-fit the data instead of actually `learning'. The training data is a random sample containing $80\%$ the number of tracks as the original data. This does not necessarily need to actually be $80\%$ of the data as some tracks can be picked multiple times. The remaining tracks are used for validating the actual learning process. Both training set and validation set are used to compute the accuracy, however, only the training sample is used to adapt weights. If the network does not over-fit, the validation accuracy fluctuates around the training accuracy.
 
-Furthermore, two approaches for sampling the data are analysed. One approach picks all tracks at random with equal weights and hence in theory has a bias towards particle species with a higher abundance (\textit{biased sampling}). The other approach weights tracks in a way which makes every particle species equally likely to be picked (\textit{upsampling}). The idea behind this approach is to force the network to not focus too much on the particles of high abundance.
+Furthermore, two approaches for sampling the data are analysed. One approach picks all tracks at random with equal weights and hence in theory has a bias towards particle species with a higher abundance (\textit{biased sampling}). The other approach weights tracks in a way which makes every particle species equally likely to be picked (\textit{upsampling}). The idea behind this approach is to force the network to focus less on the particles of high abundance.
 
 Each training is performed with a batch size of $256$. Smaller batch sizes turn out to perform poorly as the weights are adapted too frequently and the accuracy fluctuates without increasing overall. The batch size is found via iteratively picking higher values until finding a rate at which it changes only gradually.
 
-Furthermore, several optimizers -- algorithms describing the process of weight adaption -- are tested. In the end Adadelta~\cite{DBLP:journals/corr/abs-1212-5701} and Adamax~\cite{DBLP:journals/corr/KingmaB14} prove to have the best performance with the least fluctuations in the validation accuracy. Hence, the following discussion will focus on only those two weight adaption approaches.
+Furthermore, several optimizers -- algorithms describing the process of weight adaption -- are tested. In the end Adadelta~\cite{DBLP:journals/corr/abs-1212-5701} and Adamax~\cite{DBLP:journals/corr/KingmaB14} prove to have the best performance with the least fluctuations in the validation accuracy. Hence, the following discussion will focus only on those two weight adaption approaches.
 
-\autoref{fig:neural_network_all_biased}~shows the two optimizers in comparison. Both yield rather similar results, especially considering the scaling of the accuracy. It is important to note that both are able to `learn' the classification problem rather quickly. Within the first epoch they are able to achieve accuracies of about $90\%$. However, they level off rather quickly. After approximately $5$ to $10$ iterations no noticeable change in the training accuracy can be observed. The validation accuracy follows the general trend of the training accuracy but as expected it shows a lot more fluctuation. The Adadelta algorithm performs slightly better if selecting everything as feature. The performance of the training accuracy of the adadelta algorithm is slightly better. The validation accuracy on the other hand is almast the same for the two approaches after about $10$ epochs.
+\autoref{fig:neural_network_all_biased}~shows the two optimizers in comparison. Both yield similar results, especially considering the scaling of the accuracy. It is important to note that both are able to `learn' the classification problem quickly. Within the first epoch they are able to achieve accuracies of about $90\%$. However, they level off fast. After approximately $5$ to $10$ iterations no noticeable change in the training accuracy can be observed. The validation accuracy follows the general trend of the training accuracy but as expected it shows a lot more fluctuation. The Adadelta algorithm performs slightly better if selecting everything as feature. The performance of the training accuracy of the Adadelta algorithm is slightly better. The validation accuracy on the other hand is almost the same for the two approaches after about $10$ epochs.
 
 \begin{figure}[ht]
 	\centering
@@ -410,11 +414,13 @@ Furthermore, several optimizers -- algorithms describing the process of weight a
 	\subcaptionbox{Adamax\label{fig:neural_network_all_biased_adamax}}{
 		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 01/Neural Network Model: Accuracy all biased nLayers8 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
 	}
-	\caption{Accuracy of the neural network using the Adadelta and Adamax optimizer with everything selected as features. The values are displayed for a biased sampling approach.}
+	\caption[Accuracy of the neural network using the Adadelta and Adamax optimizer with everything selected as features.]{Accuracy of the neural network using the Adadelta and Adamax optimizer with everything selected as features. The values are displayed for a biased sampling approach.
+
+	Note that the sample on which the network is training does not represent the same sample which is used for the comparison of the various Bayesian approaches as tracks can be picked multiple times. Hence, the accuracies given here are not comparable to the ones presented for the other particle identification approaches.}
 	\label{fig:neural_network_all_biased}
 \end{figure}
 
-\autoref{fig:neural_network_global_pid_by_sampling_method}~compares the two sampling approaches using the global PID variables as input. The graph employs the Adamax optimizer, however Adadelta behaves similarly. The network which receives the tracks of the particles in proportion to their abundance is able to outperform the network which is trained on data using upsampling. The final difference in validation accuracy is about $0.03$. Using only the global PID improves the results slightly for the biased approach in comparison to selecting everything as feature.
+\autoref{fig:neural_network_global_pid_by_sampling_method}~compares the two sampling approaches using the global PID variables as input. The graph employs the Adamax optimizer, however Adadelta behaves similarly. The network which receives the tracks of the particles in proportion to their abundance is able to outperform the network which is trained on data using upsampling. The final difference in validation accuracy is about $3 \text{~percentage~points}$. Using only the global PID improves the results slightly for the biased approach in comparison to selecting everything as feature.
 
 \begin{figure}[ht]
 	\centering
@@ -429,7 +435,7 @@ Furthermore, several optimizers -- algorithms describing the process of weight a
 	\label{fig:neural_network_global_pid_by_sampling_method}
 \end{figure}
 
-In~\autoref{fig:neural_network_pca_all} the PCA feature selection approach is shown next to the `all' approach for upsampling. The term `all' in this context denotes that every available variable is selected as feature. As seen in the graphs, the accuracy increases with the number of components and easily surpasses the selection of all components. However, further increasing the number of inputs beyond the depicted value does not reveal significant changes. The `all' approach in combination with upsampling is rather mediocre. Its training accuracy is consistently lower than that of any other approach. In general, the accuracy of the networks which use upsampling are lower in comparison to the biased selection.
+In~\autoref{fig:neural_network_pca_all} the PCA feature selection approach is shown next to the `all' approach for upsampling. The term `all' in this context denotes that every available variable is selected as feature. As seen in the graphs, the accuracy increases with the number of components and easily surpasses the selection of all components. However, further increasing the number of inputs beyond the depicted value does not reveal significant changes. The `all' approach in combination with upsampling performs poorly. Its training accuracy is consistently lower than that of any other approach. In general, the accuracy of the networks which use upsampling are lower in comparison to the biased selection.
 
 \begin{figure}[ht]
 	\centering
@@ -448,9 +454,9 @@ In~\autoref{fig:neural_network_pca_all} the PCA feature selection approach is sh
 	\label{fig:neural_network_pca_all}
 \end{figure}
 
-Using the PCA components as feature for the biased sampling approach yields very similar results to just using all variables as feature. In the end the training and validation accuracy is higher by about $0.01$.
+Using the PCA components as feature for the biased sampling approach yields very similar results to just using all variables as feature. In the end the training and validation accuracy is higher by about $1 \text{~percentage~point}$.
 
-Overall it can observed that the high slope at which the accuracy initially increases is independently of the sampling method and the feature selection. All approaches are able to structure the data in a way to improve the classification while training. The number of samples which the training process requires before the training accuracy levels of is similar for all approaches. Overall, selecting about $90$ principal components yields the highest accuracies independently of the sampling approach. The best performers for both sampling methods are rather close in training accuracy but the validation accuracy is superior for the biased sampling approach.
+Independent of the sampling method and the feature selection, it can be observed that the slope at which the accuracy initially increases is high. All approaches are able to structure the data in a way to improve the classification while training. The number of samples which the training process requires before the training accuracy levels of is similar for all approaches. Overall, selecting about $90$ principal components yields the highest accuracies independently of the sampling approach. The best performers for both sampling methods are close in training accuracy but the validation accuracy is superior for the biased sampling approach.
 
 \subsection{Comparison}
 \label{sec:neural_network_comparison}
@@ -460,13 +466,13 @@ The following figures are based on data from a different charged generic decay t
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 04/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut by pt & cos(Theta), via NN applypca ncomponents90 biased nAdditionalLayers1 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
-	\caption{Comparison of the row-wised normed confusion matrix for the multivariate Bayesian approach by $p_t$ and $\cos(\Theta)$ and a neural network using the $90$ most principal components as features and employing biased sampling.}
+	\caption{Comparison of the row-wised normalized confusion matrix for the multivariate Bayesian approach by $p_t$ and $\cos(\Theta)$ and a neural network using the $90$ most principal components as features and employing biased sampling.}
 	\label{fig:diff_heatmap_via_pt_and_costheta_via_nn_biased_global_pid}
 \end{figure}
 
-\autoref{fig:diff_heatmap_via_pt_and_costheta_via_nn_biased_global_pid}~shows the comparison of the identification efficiencies for the best performing network using biased sampling. Of note is the predominance of particles of high abundance. The network completely focusses on kaons and pions. Additionally, protons are identified rather good as well. Electrons, muons and deuterons on the other hand are disregarded completely. By comparing the neural network to the multivariate Bayesian approach, a rather harsh comparison is made as the multivariate Bayesian approach is able to achieve a good classification for particles of high abundance without disregarding particles of lower abundance. The neural network is not able to classify particle of low abundance. Therefore, it is worse in comparison to any other approach in this regard.
+\autoref{fig:diff_heatmap_via_pt_and_costheta_via_nn_biased_global_pid}~shows the comparison of the identification efficiencies for the best performing network using biased sampling. Of note is the predominance of particles of high abundance. The network completely focusses on kaons and pions. Additionally, protons are identified properly as well. Electrons, muons and deuterons on the other hand are disregarded completely. By comparing the neural network to the multivariate Bayesian approach, a harsh comparison is made as the multivariate Bayesian approach is able to achieve a good classification for particles of high abundance without disregarding particles of lower abundance. The neural network is not able to classify particle of low abundance. Therefore, it is worse in comparison to any other approach in this regard.
 
-The identification efficiency of the proton behaves contrary to the efficiencies of other particles of low abundance. Of special note is that the deuteron is classified as a proton as well. Hence, heavier particles are predominantly categorized as protons. Further analysis shows that the purity of the selected sample is rather low. The performed selection categorizes nearly all true protons as such but it also categorizes a lot of other particles as being a proton as well. However, in comparison to the Bayesian approach the purity is still higher.
+The identification efficiency of the proton behaves contrary to the efficiencies of other particles of low abundance. Of special note is that the deuteron is classified as a proton as well. Hence, heavier particles are predominantly categorized as protons. Further analysis shows that the purity of the selected sample is low. The performed selection categorizes nearly all true protons as such but it also categorizes a lot of other particles as being a proton as well. However, in comparison to the Bayesian approach the purity is still higher.
 
 \begin{figure}[ht]
 	\centering
@@ -481,18 +487,18 @@ The identification efficiency of the proton behaves contrary to the efficiencies
 	\label{fig:neural_network_via_pt_and_costheta_via_nn_fair_ppv_tpr}
 \end{figure}
 
-The classification in~\autoref{fig:neural_network_via_pt_and_costheta_via_nn_fair_ppv_tpr} shows the purity over the efficiency for the kaon and pion identification. The network is able to outperform the multivariate Bayesian approach as the dot representing the network lies above the line for the Bayesian approach. However, the improvements are limited to those particle species plus the proton as discussed previously.
+The classification in~\autoref{fig:neural_network_via_pt_and_costheta_via_nn_fair_ppv_tpr} shows the purity over the efficiency for the kaon and pion identification. The network is able to outperform the multivariate Bayesian approach as the point representing the network lies above the line for the Bayesian approach. However, the improvements are limited to those particle species plus the proton as discussed previously.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.3\textheight,keepaspectratio]{{{../res/charged 04/Diff Heatmap: Heatmap of epsilonPID Matrix for an exclusive Cut by pt & cos(Theta), via NN applypca ncomponents90 fair nAdditionalLayers1 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
-	\caption{Comparison of the row-wised normed confusion matrix for multivariate Bayesian approach by $p_t$ and $\cos(\Theta)$, and a neural network using the $90$ most principal components as features and employing fair sampling.}
+	\caption{Comparison of the row-wised normalized confusion matrix for multivariate Bayesian approach by $p_t$ and $\cos(\Theta)$, and a neural network using the $90$ most principal components as features and employing fair sampling.}
 	\label{fig:diff_heatmap_via_pt_and_costheta_via_nn_fair_global_pid}
 \end{figure}
 
 Using upsampling, slightly decreases the pion identification efficiency and increases the efficiency in identifying kaons as seen in~\autoref{fig:diff_heatmap_via_pt_and_costheta_via_nn_fair_global_pid}. Hence, the network was successfully adapted to treat particle species more evenly but was unsuccessful in enabling it to identify electrons, muons or deuterons.
 
-Possible causes for the complete disregard of the electron, muon and proton might be that the network is over-fitting the particles of rather low abundance. However, this would not explain the high identification efficiency for the proton. One possible explanation as to why it still identifies it and classifies the deuterons as proton as well, might be due to them being comparably heavy. The mass of a particle significantly influences the detector responses and might be easy to `learn'.
+Possible causes for the complete disregard of the electron, muon and proton might be that the network is over-fitting the particles of low abundance. However, this would not explain the high identification efficiency for the proton. One possible explanation as to why it still identifies it and classifies the deuterons as proton as well, might be due to them being comparably heavy. The mass of a particle significantly influences the detector responses and might be easy to `learn'.
 Furthermore, the batch size might be one of the causes for the indifference towards pions and kaons as it low particles of low abundance are not represented properly in each weight adaption step.
 
 Overall, the classification efficiency of the network using biased sampling is $85.6 \%$ compared to $80.1 \%$ for the network using upsampling. Those efficiencies can be compared with further approaches from~\autoref{tab:overall_efficiencies}. When doing so, it is revealed that both neural networks perform significantly worse than the legacy PID and any of the Bayesian approaches. In comparison to the global PID approach the neural network performs slightly better at the cost of loosing the ability to identify anything but kaons, pions and protons.
