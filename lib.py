@@ -531,10 +531,10 @@ class ParticleFrame(dict):
         for (j, i), label in np.ndenumerate(epsilonPIDs_approach):
             plt.text(i, j, r'$%.2f$'%(label), ha='center', va='center', fontsize='small', color=str(np.piecewise(label, [label < 0.5, label >= 0.5], [1, 0])))
         plt.grid(b=False, axis='both')
-        plt.xlabel('Predicted Particle', fontsize='larger')
-        plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles], fontsize='large')
-        plt.ylabel('True Particle', fontsize='larger')
-        plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles], fontsize='large')
+        plt.xlabel('Predicted Particle', fontsize='xx-large')
+        plt.xticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles], fontsize='x-large')
+        plt.ylabel('True Particle', fontsize='xx-large')
+        plt.yticks(range(len(ParticleFrame.particles)), [ParticleFrame.particle_base_formats[p] for p in ParticleFrame.particles], fontsize='x-large')
         plt.colorbar()
         self.pyplot_sanitize_show(**kwargs)
 
@@ -569,9 +569,9 @@ class ParticleFrame(dict):
                 fontsize = 'medium'
             else:
                 plt.figure()
-                plt.xticks(fontsize='large')
-                plt.yticks(fontsize='large')
-                fontsize = 'larger'
+                plt.xticks(fontsize='x-large')
+                plt.yticks(fontsize='x-large')
+                fontsize = 'xx-large'
 
             for i in range(len(category_intervals) - 1):
                 selection = (categories == i)
@@ -648,9 +648,9 @@ class ParticleFrame(dict):
                 grid = plt.GridSpec(3, 1, hspace=0.1)
                 fontsize = None
             else:
-                plt.xticks(fontsize='large')
-                plt.yticks(fontsize='large')
-                fontsize = 'larger'
+                plt.xticks(fontsize='x-large')
+                plt.yticks(fontsize='x-large')
+                fontsize = 'xx-large'
 
             colors = iter(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])
 
@@ -674,7 +674,10 @@ class ParticleFrame(dict):
             else:
                 plt.ylabel('Particle Rate', fontsize=fontsize)
             if len(stats_approaches) > 1 or len(y_multi_axis) > 1:
-                plt.legend()
+                if ratios:
+                    plt.legend()
+                else:
+                    plt.legend(fontsize='large')
             plt.ylim(y_lim)
 
             if ratios:
@@ -728,9 +731,10 @@ class ParticleFrame(dict):
             plt.errorbar(range(len(particles_of_interest)), abundance[sorted_range], xerr=0.5, marker='None', linestyle='None', alpha=0.8, color=drawing[0].get_color(), label=title_suffixes[i].lstrip() + ' (absolute, true)')
             logging.info('Overall efficiency%s: %.6f'%(title_suffixes[i], abundance_correct.sum()/abundance.sum()))
 
-        plt.legend()
+        plt.legend(fontsize='large')
         sorted_particles = np.array(particles_of_interest)[sorted_range]
-        plt.xticks(range(len(particles_of_interest)), [self.particle_base_formats[p] for p in sorted_particles], fontsize='large')
-        plt.xlabel('Particle Specie', fontsize='larger')
-        plt.ylabel('Abundance', fontsize='larger')
+        plt.xticks(range(len(particles_of_interest)), [self.particle_base_formats[p] for p in sorted_particles], fontsize='x-large')
+        plt.yticks(fontsize='x-large')
+        plt.xlabel('Particle Specie', fontsize='xx-large')
+        plt.ylabel('Abundance', fontsize='xx-large')
         self.pyplot_sanitize_show('Particle Abundances in the %s-Data'%(ParticleFrame.particle_formats[norm]), **kwargs)
