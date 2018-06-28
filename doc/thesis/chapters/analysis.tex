@@ -4,9 +4,9 @@
 \section{Data sample}
 \label{sec:data_sample}
 
-In order to validate a particle identification approach and to make sure it is behaving as expected, it is mandatory to measure the performance on the Monte Carlo simulated data. Events are simulated in accordance with the current understanding of the Standard Model. The software framework EvtGen~\cite{LANGE2001152} is used for the purpose of simulating the production and the decay of the $\Upsilon(4S)$. After the simulation of the particles and their various properties, the detector responses are emulated using GEANT4~\cite{AGOSTINELLI2003250}. Hits in the various components are simulated and finally the veracity of a track identification is calculated. The process of matching the identification with the truth is not possible for real data, as the true properties of a particle are not known in the experiment. However, for testing purposes it is a valuable tool as it allows to compare the performance of new approaches.
+In order to validate a particle identification approach and to make sure it is behaving as expected, it is mandatory to measure the performance on Monte Carlo simulated data. Events are generated in accordance with the current understanding of the Standard Model. The software framework EvtGen~\cite{LANGE2001152} is used for the purpose of simulating the production and the decay of the $\Upsilon(4S)$. After the simulation of the particles and their various properties, the detector responses are emulated using GEANT4~\cite{AGOSTINELLI2003250}. Hits in the various components are simulated and finally the veracity of a track identification is calculated. The process of matching the identification with the truth is not possible for real data, as the true properties of a particle are not known in the experiment. However, for testing purposes it is a valuable tool as it allows to compare the performance of new approaches.
 
-Throughout the thesis several decays are discussed, most notably the decay of the charged $B$ mesons. The initially created $\Upsilon(4S)$ decays in $(51.4 \pm 0.6) \%$ of cases into the charged $B^+$ and $B^-$. Therefore it represents a good sample of the overall particle species which are to be expected. Observations seen in this generic charged decay are validated using data of the `mixed' decay of the $B$ meson into $B^0$ and $\bar{B}^0$ which has a branching ratio of $(48.6 \pm 0.6) \%$. Both samples are generic decays and not specific to one single analysis only. A complete list of possible decay as well as the above mentioned branching fractions can be found in~\cite{Patrignani:2016xqp}.
+Throughout the thesis several decays are discussed, most notably the decay of the charged $B$ mesons. The initially created $\Upsilon(4S)$ decays in $(51.4 \pm 0.6) \%$ of cases into the charged $B^+$ and $B^-$. It represents a good sample of the overall particle species which are to be expected. Observations seen in this generic charged decay are validated using data of the mixed decay of the $B$ meson into $B^0$ and $\bar{B^0}$ which has a branching ratio of $(48.6 \pm 0.6) \%$. Both samples are generic decays and not specific to one single analysis only. A complete list of possible decay as well as the above mentioned branching fractions can be found in~\cite{Patrignani:2016xqp}.
 
 Additionally a decay of the $B^+ B^-$ with non-generic properties is simulated. Its parameters are outlined in \autoref{tab:simulated_decay}. It allows a fast processing of tests due to its simplicity and helps in differentiating between decay specific observations and generic ones. The data from this decay is not used for visualizations in this thesis as it does not translate to an appropriate application.
 
@@ -28,7 +28,7 @@ Additionally a decay of the $B^+ B^-$ with non-generic properties is simulated. 
 	\label{tab:simulated_decay}
 \end{table}
 
-As seen in \autoref{fig:true_particle_abundance} the decays are dominated by kaons and pions. However, the overall distribution is much more peaked for the charged generic decay. Furthermore the non-generic sample decay features a lot more $\mu^+$ relatively speaking in comparison to the charged generic decay. The abundances of the mixed generic decay are not explicitly shown in the figures due to their distinct similarity to the charged decay.
+As seen in \autoref{fig:true_particle_abundance} the decays are dominated by kaons and pions. However, the overall distribution is much more peaked for the charged generic decay. Furthermore the non-generic sample decay features a lot more $\mu^+$ relatively speaking in comparison to the charged generic decay. The abundances of the mixed generic decay are not explicitly shown in the figure due to their distinct similarity to the charged decay.
 
 \begin{figure}[ht]
 	\centering
@@ -44,7 +44,7 @@ As seen in \autoref{fig:true_particle_abundance} the decays are dominated by kao
 \end{figure}
 \footnotetext{The error occurs due to the Particle Data Group code in the ROOT file being saved as \lstinline|float32|. However, some codes for particles exceed this limitation. Notably this effects the deuteron and its anti-particle.}
 
-Falsely identified and poorly defined tracks are removed prior to evaluating the data. First the transverse momentum is limited to the range of $0.05 \mathrm{~GeV/c}$ to $5.29 \mathrm{~GeV/c}$. This removes very slow and very fast particles because both types provide insufficiently described tracks. Next, the transverse distance of the closest point of the track to the point of interaction is limited to $2 \mathrm{~cm}$, respectively $5 \mathrm{~cm}$ for the longitudinal distance. Finally, tracks with no Monte Carlo truth information assigned to them are pruned. Such tracks are considered falsely reconstructed as a majority of detector hits of the track do not belong to a simulated particle. Including such false tracks would require the particle identification process to identify non-particles tracks. Anyway the effect of tracks with no truth information does not influence the final result in any significant way. The tracks are merely excluded for the purpose of clarity.
+Falsely identified and poorly defined tracks are removed prior to evaluating the data. First the transverse momentum is limited to the range of $0.05 \mathrm{~GeV/c}$ to $5.29 \mathrm{~GeV/c}$. This removes very slow and very fast particles because both types provide insufficiently described tracks. Next, the transverse distance of the closest point of the track to the point of interaction is limited to $2 \mathrm{~cm}$, respectively $5 \mathrm{~cm}$ for the longitudinal distance. Finally, tracks with no Monte Carlo truth information assigned to them are pruned. Such tracks are considered falsely reconstructed as a majority of detector hits of the track do not belong to a simulated particle. Including such false tracks would require the particle identification process to identify non-particles tracks. Anyway, the effect of tracks with no truth information does not influence the final result in any significant way. The tracks are merely excluded for the purpose of clarity.
 
 Each generic decay data set features $100,000$ initial $B \bar{B}$ events and about ten times as many identified tracks. The non-generic decay contains $10,000$ initial events and about $40,000$ tracks.
 
@@ -58,7 +58,7 @@ In the following analysis, the generic decay data sets are used. The number of e
 
 The current particle identification approach consists of variables calculated via ratios of likelihoods. A particle identification is performed by applying a selection criterion on the variables via a cut.
 
-Prior to version 2 of the Belle~\RN{2} software, the default particle identification approach is to take the likelihood of the desired particle and divide it by itself plus the likelihood of the pion. To construct the ID of the pion, the kaon likelihood is used as second summand in the denominator. \autoref{tab:legacy_particleid_variables} shows the definition of the ID for each of the six particle species of interest. In the future it will be replaced by the global PID approach, described in \autoref{sec:pid_variables_global_pid}.
+Prior to version 2 of the Belle~\RN{2} software, the default particle identification approach is to take the likelihood of the desired particle and divide it by itself plus the likelihood of the pion. To construct the ID of the pion, the kaon likelihood is used as second summand in the denominator. \autoref{tab:legacy_particleid_variables} shows the definition of the IDs for each of the six particle species of interest. In the future it will be replaced by the global PID approach, described in \autoref{sec:pid_variables_global_pid}.
 
 \begin{table}[ht]
 	\centering
@@ -76,7 +76,7 @@ Prior to version 2 of the Belle~\RN{2} software, the default particle identifica
 
 The identification efficiencies for pions and kaons are high as the approach is able to properly differentiate between both classes. However, it has obvious limitations in identifying rare particles as the fraction is dominated by the high abundance of the pions.
 
-The differences in the TPR for identifying the pion and the electron can be seen in \autoref{fig:legacy_pid_particle_identification}. The pion is used as a representative of a particle species with a high abundance, while the electron is used as one of the low abundance particle species. A high efficiency in selecting particles is achieved quickly. However, the purity of the sample clearly demonstrates the preference towards pion identification.
+The differences in the TPR for identifying the pion and the electron can be seen in \autoref{fig:legacy_pid_particle_identification}. The pion is used as a representative of a particle species with a high abundance, while the electron is used as one of the low abundance particle species. A high efficiency in selecting particles is achieved quickly. However, the purity of the sample clearly shows the preference towards the pion identification.
 
 \begin{figure}[ht]
 	\centering
@@ -91,7 +91,7 @@ The differences in the TPR for identifying the pion and the electron can be seen
 	\label{fig:legacy_pid_particle_identification}
 \end{figure}
 
-This unbalanced classification is further reinforced by analyzing the identification efficiencies. \autoref{fig:legacy_pid_epsilon_pid}~shows the row-wise normalized confusion matrix for the legacy PID approach (see~\autoref{sec:efficiency}). The matrix clearly highlights the bias of the classification towards kaons and pions. Regardless of the actual particle's identity, there is a high chance of it being identified as kaon or pion. Particle species of low abundance such as the electron, muon, proton and deuteron each have an identification efficiency below $40\%$.
+This unbalanced classification is further demonstrated by analyzing the identification efficiencies. \autoref{fig:legacy_pid_epsilon_pid}~shows the row-wise normalized confusion matrix for the legacy PID approach (see~\autoref{sec:efficiency}). The matrix clearly highlights the bias of the classification towards kaons and pions. Regardless of the actual particle's identity, there is a high chance of it being identified as kaon or pion. Particle species of low abundance such as the electron, muon, proton and deuteron each have an identification efficiency below $40\%$.
 
 \begin{figure}[ht]
 	\centering
@@ -103,7 +103,7 @@ This unbalanced classification is further reinforced by analyzing the identifica
 \subsection{Global PID}
 \label{sec:pid_variables_global_pid}
 
-The global PID approach is the upcoming approach to be used as new default variable with which to select particle samples. Instead of having the likelihood of the pion fixed in the denominator of every particle's ID, it is replaced by the sum over all the other particle likelihoods. Hence, the global PID of the kaon is now represented by the likelihood of the kaon divided by the sum of all the likelihoods of every other particle including the kaon itself. The complete list of the definition for each particle can be seen in \autoref{tab:global_pid_variables}.
+The global PID approach is the upcoming approach to be used as new default variable with which to select particle samples. Instead of having the likelihood of the pion fixed in the denominator of every particle's ID, it is replaced by the sum over all the other particle likelihoods. Hence, the global PID of the kaon is now represented by the likelihood of the kaon divided by the sum of all the likelihoods of every other particle including the kaon itself. The complete list of the definition for each particle can be seen in~\autoref{tab:global_pid_variables}.
 
 \begin{table}[ht]
 	\centering
@@ -128,7 +128,7 @@ The approach does not favor kaons and pions but has a more balanced classificati
 
 In order to ensure the global PID variables are properly defined, a likelihood ratio test based on the Neyman-Pearson lemma as outlined in \autoref{sec:likelihood_ratios_neyman_pearson} is performed. The lemma states that the highest purity for a given efficiency is to be expected for each selection on the likelihood ratio as seen in \autoref{fig:neyman_pearson_visualization}.
 
-For the following analysis the data is sampled into $10$ bins of equal height as to provide a balanced statistics for each bin. The error is calculated via gaussian error propagation under the assumption that the counting of the events follows a Poisson distribution. Thereby the assumption is made that the number of desired particles in a bin and the number of undesired particles are independent. The error is underestimated for a purity of $0$ and $1$ as gaussian error propagation does not apply.
+For the following analysis the data is sampled into ten bins of equal width. The error is calculated via gaussian error propagation under the assumption that the counting of the events follows a Poisson distribution. Thereby the assumption is made that the number of desired particles in a bin and the number of undesired particles are independent. The error is underestimated for a purity of zero and unity as gaussian error propagation does not apply.
 
 When applying the previously discussed approach to the data, the goodness of the likelihoods can be validated as seen in \autoref{fig:likelihood_ratio_kaon_all}. The purity of the kaon sample in the bins increases with a stricter likelihood cut and the uncertainty is low due to the high statistics. \autoref{fig:likelihood_ratio_proton_all}~shows a completely different picture. The purity peaks at a likelihood ratio of about $0.35$, while the following values are far lower. However, this effect is unique to the proton and can not be observed in any other of the six particle species of interest. This means that the likelihoods for the kaon, pion, electron, muon and deuteron are properly defined and actually behave like probabilities under this test.
 
@@ -145,7 +145,7 @@ When applying the previously discussed approach to the data, the goodness of the
 	\label{fig:likelihood_ratio_all}
 \end{figure}
 
-In order to understand the observed effect in \autoref{fig:likelihood_ratio_proton_all} it is important to pin down its cause. Since the likelihoods are values which are returned by each detector, a natural conclusion might be that it is caused by one poorly defined detector response. \autoref{fig:likelihood_ratio_proton_by_detector} shows the relative abundance of the proton in likelihood ratio bins for various detector components.
+In order to understand the observed effect in \autoref{fig:likelihood_ratio_proton_all} it is important to pin down its cause. Since the likelihoods are values which are returned by each detector, a natural conclusion might be that it is caused by one poorly defined detector response. \autoref{fig:likelihood_ratio_proton_by_detector}~shows the relative abundance of the proton in likelihood ratio bins for various detector components.
 
 \begin{figure}[ht]
 	\centering
@@ -177,9 +177,9 @@ In order to understand the observed effect in \autoref{fig:likelihood_ratio_prot
 	\label{fig:likelihood_ratio_proton_by_detector}
 \end{figure}
 
-The response of the SVD is in perfect agreement with the expectations. However, the CDC shows the same kink, merely shifted a little to lower values. The TOP is in agreement again. The ARICH, ECL and KLM have insufficient statistics and/or the likelihoods do not fill the whole range. The error is underestimated at multiple points close to a purity of $0$. Hence, the CDC seems like the only viable cause of the unexpected kink in the plot. The observed shift to the left is due to the likelihood of a single detector being lower in general than the likelihood of all detectors combined.
+The response of the SVD is in perfect agreement with the expectations. However, the CDC shows the same kink, merely shifted a little to lower values. The TOP is in agreement again. The ARICH, ECL and KLM have insufficient statistics and/or the likelihoods do not fill the whole range. The error is underestimated at multiple points close to a purity of zero. Hence, the CDC seems like the only viable cause of the unexpected kink in the plot. The observed shift to the left is due to the likelihood of a single detector being lower in general than the likelihood of all detectors combined.
 
-In addition, the $p_t$ dependency in the CDC detector is analysed as depicted in \autoref{fig:likelihood_ratio_proton_by_pt}. The transverse momentum is chosen as it is easily measurable and has a significant influence on the identification process. As sampling method three equal height bins are chosen. Using few bins with the same number of particles in each one, provides good statistics and allows for balanced comparisons. Analyzing the results, it becomes obvious that especially low to medium transverse momentum protons contribute to the effect.
+In addition, the $p_t$ dependency in the CDC detector is analysed as depicted in \autoref{fig:likelihood_ratio_proton_by_pt}. The transverse momentum is chosen as it is easily measurable and has a significant influence on the identification process. As sampling method for $p_t$ three equal height bins are chosen. Using few bins with the same number of particles in each one, provides good statistics and allows for balanced comparisons. Analyzing the results, it becomes obvious that especially low to medium transverse momentum protons contribute to the effect.
 
 \begin{figure}[ht]
 	\centering
@@ -188,7 +188,7 @@ In addition, the $p_t$ dependency in the CDC detector is analysed as depicted in
 	\label{fig:likelihood_ratio_proton_by_pt}
 \end{figure}
 
-Analyzing the dependency of the likelihood on the angle between the beampipe and track reveals nothing of interest. The variable is important for the identification process as well.
+Analyzing the dependency of the likelihood on the angle between the beampipe and track reveals nothing of interest. Although, the angle is important for the identification process as well.
 
 In conclusion, there seem to be some problems with the proton likelihood returned by the CDC detector as it does not behave like a likelihood. As part of this work the findings have been communicated to the experts but have yet to be resolved.
 Overall, it does not affect the results presented in the following sections as the proton does not play a significant role.
@@ -201,7 +201,7 @@ Overall, it does not affect the results presented in the following sections as t
 
 The idea for this approach is inspired by the work of the ALICE collaboration as outlined in~\cite{Adam:2016acv} and~\cite{Belikov:2005zz}.
 
-The goal of a Bayesian approach is to weight the probability of a particle by the abundance of the species in the sample. This process increases the likelihood of a particle being identified as belonging to a species with a higher abundance and decreases the likelihood of being identified as belonging to one with a lower abundance.
+The goal of the simple Bayesian approach is to weight the probability of a particle by the abundance of the species in the sample. This process increases the likelihood of a particle being identified as belonging to a species with a higher abundance and decreases the likelihood of being identified as belonging to one with a lower abundance.
 
 Bayes theorem provides the mathematical foundation:
 \begin{equation}\label{eq:bayes_theorem_and_application}
@@ -216,18 +216,18 @@ The variable $P(e|Signal)$ is the probability of the track being from an electro
 \end{equation}
 with $P(Signal|A)$ being the previously discussed likelihood of the signal using the particle hypothesis $A$.
 
-The normalization of the a priori probabilities $P(A)$ is not important as it appears in both the nominator and the denominator of~\autoref{eq:bayes_theorem_and_application}. Only the proportions between $P(A)$ for the particle species matter as any common factor contained within the variables cancels itself out. Therefore, it makes no difference if the value of the abundance of particle species $A$ is used directly in place of $P(A)$ in the calculation.
+The normalization of the a priori probabilities $P(A)$ is not important as it appears in both the nominator and the denominator of~\autoref{eq:bayes_theorem_and_application}. Only the proportions between $P(A)$ of the particle species matter as any common factor contained within the variables cancels itself out. Therefore, it makes no difference if the value of the abundance of particle species $A$ is used directly in place of $P(A)$ in the calculation.
 
 The absolute particle abundance of a sample taken from the Monte Carlo simulation of the charged decay of the $B$ mesons can be seen in \autoref{fig:charged_decay_true_particle_abundance}. Both particle and anti-particle abundances for each species are summed up when calculating the values for $P(A)$. In this example the bias towards pions and kaons is obvious.
 
 The approach depends on the detector yielding decay-agnostic results. Hence, the detector shall be assumed to always output the likelihood of measuring the received signal given a specific particle hypothesis regardless of prior probabilities. Additionally the approach assumes a bias in the abundance towards one or a few particle species in the data. Otherwise the a priori probabilities would be flat and result in the same values as those given by the global PID.
 
-Thankfully both of those requirements are fulfilled: The detector can be assumed to behave independently of the relative particle abundance and the measured data shows a clear predominance of one or a few particle species. This is not surprising in itself as the branching fractions are not equally distributed.
+Thankfully both of those assumptions are fulfilled: The detector can be assumed to behave independently of the relative particle abundance and the measured data shows a clear predominance of one or a few particle species. This is not surprising in itself as the branching fractions are not equally distributed.
 
 \subsection{Univariate Bayes}
 \label{sec:bayesian_approach_univariate_bayes}
 
-The univariate Bayesian approach adds a further dependency in the form of a detector variable to the a priori probabilities of the Bayesian approach. Hence, instead of having the a priori probability depend only on the particle overall abundance, the univariate approach additionally varies the values. Namely the abundance is made dependant on, e.g., the transverse momentum and the angle between the beampipe and track $\Theta$. Those two variables play a significant role in the track fitting process and are dominant factors for the particle classification process outlined in~\autoref{sec:particle_identification}. In the following, the cosine of $\Theta$ is used in order to even out the distribution.
+The univariate Bayesian approach adds a further dependency in the form of a detector variable to the a priori probabilities of the Bayesian approach. Hence, instead of having the a priori probability depend only on the overall abundance of the particle, the univariate approach additionally varies the values. Namely the abundance is made dependant on, e.g., the transverse momentum and the angle between the beampipe and the track $\Theta$. Those two variables play a significant role in the track fitting process and are dominant factors for the particle identification process outlined in~\autoref{sec:particle_identification}. Instead of just $\Theta$, the cosine of it is used in order to even out the distribution.
 
 \begin{figure}[ht]
 	\centering
@@ -257,16 +257,16 @@ The multivariate approach extends the univariate one by further increasing the n
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: Multi-axes Histogram of pt, cosTheta for e, K, pi}}}
-	\caption{Scatter plot with tracks represented as opaque points depending on $p_t$ and $\cos(\Theta)$ which is accompanied by two histograms showing the distribution in transverse momentum and the cosine of the angle between beampipe and track. The color encodes the species of the particle.}
+	\caption{Scatter plot with tracks represented as opaque points depending on $p_t$ and $\cos(\Theta)$ which is accompanied by two histograms showing the distribution in transverse momentum and the cosine of the angle between the beampipe and the track. The color encodes the species of the particle.}
 	\label{fig:multivariate_bayes_multi_axis_histogram_by_pt_by_costheta}
 \end{figure}
 
-Enabling the a priori probability to depend on those measurements allows the multivariate Bayesian approach to pick more fine grained priors. The a priori probabilities are estimated in accordance with the Monte Carlo information for each combination of variables. In order to achieve this the variable $p_t$ and $\cos(\Theta)$ are each distributed across equal height bins. Next, the abundances of particle species relative to the pion are calculated for every combination of $p_t$ and $\cos(\Theta)$ bins.
+Enabling the a priori probability to depend on those measurements allows the multivariate Bayesian approach to pick more fine grained priors. The a priori probabilities are estimated in accordance with the Monte Carlo information for each combination of variables. In order to achieve this the variable $p_t$ and $\cos(\Theta)$ are each distributed independently across equal height bins. Next, the abundances of particle species relative to the pion are calculated for every combination of $p_t$ and $\cos(\Theta)$ bins.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/charged 01/Multivariate Bayesian Approach: K Spectra Ratios Relative to pi}}}
-	\caption{Relative kaon abundance in equal height transverse momentum and cosine of $\Theta$ bins.}
+	\caption{Relative kaon abundance in intersected bins of the transverse momentum and cosine~of~$\Theta$. The bins are of equal height for each variable separately. The tick labels at the axes denote the centers of the bins.}
 	\label{fig:multivariate_bayes_k_spectra_relative_to_pi}
 \end{figure}
 
@@ -276,7 +276,7 @@ As an example, the abundance of kaons relative to the abundance of pions is show
 \label{sec:bayesian_approach_comparison}
 
 \autoref{fig:diff_stats_pi_identification_via_pid_via_simple_bayes} shows a comparison of the \textbf{legacy PID} approach to the \textbf{simple Bayesian} one for identifying pions. The simple Bayesian approach is able to achieve a higher efficiency at a low FPR. In addition, the new approach provides a very high purity at a very low FPR in a range where the legacy PID approach is not even able to identify pions. For a high FPR both approaches converge into similar shapes with rate ratios close to unity.
-The described effect can be seen for all six particle species studied and is not limited to the pion. However, the comparison of the pion identification is a conservative choice as the legacy PID approach favors high abundance particles and should have put it at an advantage. The identification of particle species like the electron or muon performs consistently better using the new approach even at false positive rates above $50\%$.
+The described effect can be seen for all six particle species studied and is not limited to the pion. However, the comparison of the pion identification is a conservative choice as the legacy PID approach favors high abundance particles and should put it at an advantage.
 
 \begin{figure}[ht]
 	\centering
@@ -298,7 +298,7 @@ The improvements in the identification efficiencies are less obvious for an excl
 	\label{fig:diff_heatmap_via_pid_via_simple_bayes}
 \end{figure}
 
-The differences are less pronounced in comparison to the \textbf{global PID} variables. Both approaches misidentify only a low percentage of each particle species. The global PID approach classifies muons with a higher efficiency while the simple Bayesian approach is better at identifying pions. The efficiencies for the kaon, electron and proton identification remain more or less unchanged. Both have a lower efficiency for the kaon and pion identification than the legacy PID approach has. Especially the pion identification takes a steep decline. Note that the pion is the particle of highest abundance.
+The differences are less pronounced in comparison to the \textbf{global PID} variables. Both approaches misidentify only a low percentage of each particle species. The global PID approach classifies muons with a higher efficiency while the simple Bayesian approach is better at identifying pions. The efficiencies for the kaon, electron and proton identification remain more or less unchanged. Both have a lower efficiency for the kaon and pion identification than the legacy PID approach. Especially the pion identification takes a steep decline. Note that the pion is the particle of highest abundance.
 
 Overall, simple Bayes achieves a higher efficiency than the legacy and global PID approaches. Hence, in general it classifies more tracks correctly as seen in~\autoref{fig:diff_abundances_via_pid_via_global_pid_via_simple_bayes}. The good agreement between predicted and true particle abundances for the simple Bayesian approach is of special interest. It emphasizes that the idea behind simple Bayes is taking effect.
 
@@ -315,7 +315,7 @@ Overall, simple Bayes achieves a higher efficiency than the legacy and global PI
 	\label{fig:diff_abundances_via_pid_via_global_pid_via_simple_bayes}
 \end{figure}
 
-Introducing more degrees of freedom in the form of the \textbf{univariate Bayesian} approach reveals merely small differences in comparison to the simple Bayesian approach. \autoref{fig:diff_heatmap_via_global_pid_via_univariate_bayes}~shows a comparison of the global PID approach with the univariate Bayesian one. The observed changes are predominantly inherited from the simple Bayesian one. The slight loss in efficiencies of low abundance particles is more than compensated by the gain in the pion identification efficiency. Between the simple Bayesian approach and the univariate one, only changes of $1 \text{~percentage~point}$ are seen in the particle identification efficiencies. The univariate Bayesian approach boosts the kaon and proton identification by this amount at the cost of a reduced efficiency for the muon.
+Introducing more degrees of freedom in the form of the \textbf{univariate Bayesian} approach reveals merely small differences in comparison to the simple Bayesian approach. \autoref{fig:diff_heatmap_via_global_pid_via_univariate_bayes}~shows a comparison of the global PID approach with the univariate Bayesian one. The observed changes are predominantly inherited from the simple Bayesian one. The slight loss in efficiencies of low abundance particles is more than compensated by the gain in the pion identification efficiency. Between the simple Bayesian approach and the univariate one, only changes of one~percentage~point are seen in the particle identification efficiencies. The univariate Bayesian approach boosts the kaon and proton identification by this amount at the cost of a reduced efficiency for the muon.
 A comparison between the univariate Bayesian approach and the legacy PID is redundant due to the similarity between the simple Bayesian and univariate Bayesian approach.
 
 \begin{figure}[ht]
@@ -325,7 +325,7 @@ A comparison between the univariate Bayesian approach and the legacy PID is redu
 	\label{fig:diff_heatmap_via_global_pid_via_univariate_bayes}
 \end{figure}
 
-Lastly, the \textbf{multivariate Bayesian} approach is tested. The TPR and PPV for every particle species are very similar to ones from the univariate approach -- neglecting effects below a maximal relative change of $2 \%$. Negative effects are always below a threshold of $0.4 \%$ while the PPV for the muon identification is slightly boosted by $2 \%$ at one point.
+Lastly, the \textbf{multivariate Bayesian} approach is tested. The TPR and PPV for every particle species are very similar to the ones from the univariate approach -- neglecting effects below a maximal relative change of $2 \%$. Negative effects are always below a threshold of $0.4 \%$ while the PPV for the muon identification is slightly boosted by $2 \%$ at one point.
 The similarity of the multivariate and univariate approach is also reflected in the efficiencies of the row-wised normalized confusion matrix being virtually identical. Comparing the approach to the legacy PID, global PID or simple Bayes would duplicate the comparison which are outlined for the univariate Bayesian approach.
 
 The global efficiencies over all particle species are displayed in~\autoref{tab:overall_efficiencies}. The efficiencies underline the quasi non-existing performance improvement of the multivariate Bayesian approach relative to the univariate Bayesian one. Furthermore, it highlights the previously discussed overall improvements in the various other approaches.
@@ -341,7 +341,11 @@ The global efficiencies over all particle species are displayed in~\autoref{tab:
 		univariate Bayes & $(88.5 \pm 0.3) \%$ \\ % 0.882854, 0.882183, 0.882980, 0.882411, 0.886828, 0.886719, 0.887014, 0.886597
 		multivariate Bayes & $(88.5 \pm 0.3) \%$ % 0.882964, 0.882461, 0.883159, 0.882591, 0.886961, 0.887016, 0.887171, 0.886819
 	\end{tabular}
-	\caption{Mean overall efficiencies for the discussed particle identification approaches with their statistical error. Errors are estimated using four charged and four mixed generic decay data sets.}
+	\caption[Mean overall efficiencies for the discussed particle identification approaches with their statistical error.]{
+		Mean overall efficiencies of the discussed particle identification approaches with their statistical error. Errors are estimated using four charged and four mixed generic decay data sets.
+
+		The result of the univariate Bayesian approach is calculated using $p_t$-bins and the multivariate Bayesian approach utilizes $p_t$- and $\cos(\Theta)$-bins.
+	}
 	\label{tab:overall_efficiencies}
 \end{table}
 
@@ -350,9 +354,9 @@ The global efficiencies over all particle species are displayed in~\autoref{tab:
 
 In comparison to the legacy PID approach the positive effect introduced by the Bayesian approaches are mainly due to the inclusion of further particle likelihoods. Both the global PID approach as well as the Bayesian one decrease the rate at which particles of high abundance are identified. However, both kinds of approaches in turn increase the identification efficiencies of particles with a low abundance significantly. Hereby, the Bayesian approaches are able improve upon the global PID as they correctly classify more pions in the charged generic decay at the cost of a reduced identification rate for some particles of lower abundance.
 
-The difference among the simple Bayesian, the univariate Bayesian and the multivariate Bayesian approach is slim. Neither the overall identification efficiencies differ significantly, nor does the identification rate of certain particles get boosted. Slight overall gains are measurable only for the univariate Bayesian approach.
+The difference among the simple Bayesian, the univariate Bayesian and the multivariate Bayesian approach are slim. Neither the overall identification efficiencies differ significantly, nor does the identification rate of certain particles get boosted. Slight overall gains are measurable only for the univariate Bayesian approach.
 
-As an outlook, further studies concerning the cell structure of the a priori probabilities are worth considering. The current approach of selecting equal height bins has been shown to be useful. Nevertheless, it has its limitations. Especially if used in conjunction with multiple other variables. Two intervals on separate variables, each containing a certain percentage of the data, are not guaranteed to contain the same amount of data if intersected. A possible extension could be to implement a proper two dimensional clustering using, e.g., Voronoi cells (see~\cite{KnowledgeDiscoveryInDatabases1:Clustering}) instead of interval boundaries. Density based clustering algorithms such as DBSCAN~\cite{KnowledgeDiscoveryInDatabases1:Clustering} and OPTICS~\cite{KnowledgeDiscoveryInDatabases1:Clustering} might also be worth considering. Those approaches could further extend the a priori probabilities of the two dimensional cells of the multivariate Bayesian approach to density connected clusters.
+As an outlook, further studies concerning the cell structure of the a priori probabilities are worth considering. The current approach of selecting equal height bins has been shown to be useful. Nevertheless, it has its limitations. Especially if used in conjunction with multiple other variables. Two intervals on separate variables, each containing a certain percentage of the data, are not guaranteed to contain the same amount of data if intersected. A possible extension could be to implement a proper two dimensional clustering using, e.g., Voronoi cells instead of interval boundaries. Density based clustering algorithms such as DBSCAN~\cite{Ester:1996:DAD:3001460.3001507} and OPTICS~\cite{Ankerst99optics:ordering} might also be worth considering. Those approaches could further extend the a priori probabilities of the two dimensional cells of the multivariate Bayesian approach to density connected clusters.
 
 Additionally, overlapping boundaries either from the current approach or introduced by new clustering algorithms could be used to weight multiple a priori probabilities. Instead of relying on one exclusive boundary, the mean of several a priori probabilities could be used instead.
 
@@ -364,9 +368,9 @@ Additionally, overlapping boundaries either from the current approach or introdu
 
 A neural networking consisting of sequential layers is chosen for the following discussion. As software library, Keras~\cite{chollet2015keras} is used with TensorFlow~\cite{tensorflow2015-whitepaper} as back-end.
 
-It is found that eight layers perform reasonably well without over-fitting the data. As for the layers themselves, two different concepts are used. On the one hand a so called \textit{dense} layer connects all inputs with each node within the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a high number of free parameters depending on the function used in a node. On the other hand a so called \textit{dropout} layer is employed which as its name suggests drops a certain percentage of inputs by chance. It enforces the weight adaption on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters (see~\cite{MachineLearning:DeepLearning}) as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit.
+It is found that eight layers perform reasonably well without over-fitting the data. As for the layers themselves, two different concepts are used. On the one hand a so called \textit{dense} layer connects all inputs with each node within the layers, as seen in~\autoref{fig:sample_neural_network_design}. It usually has a high number of free parameters depending on the function used in a node. On the other hand a so called \textit{dropout} layer is employed which as its name suggests drops a certain percentage of inputs by chance. It enforces the weight adaption on only the remaining nodes. It is commonly used to counteract the effect of having a lot of free parameters~\cite{Goodfellow:DeepLearning} as it randomly disregards values and therefore possibly drops nodes which would otherwise start to over-fit.
 
-Three different approaches for the choice of input parameters are evaluated. First the unaltered global PID variables for each detector are used as a baseline. As second approach a rich mixture of variables is used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PIDs as well as the global PID variables for each detector. The third approach uses the same initial inputs as the second one. However, prior to passing the values to the network, a \textbf{P}rincipal \textbf{C}omponent \textbf{A}nalysis~\cite{BigDataManagementAndAnalytics:TextProcessingAndHigh-DimensionalData} (PCA) on the standardized data is performed. The standardization step centers the data by removing the mean and scales the value so that the standard deviation becomes unity. This is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
+Three different approaches for the choice of input parameters are evaluated. First the unaltered global PID variables for each detector are used as a baseline. As second approach a rich mixture of variables is used, containing information on the momentum, the angle between the beampipe and the track, the distance of the vertex to the interaction point, the energy, the curvature of the track, the charge, the legacy PID as well as the global PID variables for each detector. The third approach uses the same initial inputs as the second one. However, prior to passing the values to the network, a \textbf{P}rincipal \textbf{C}omponent \textbf{A}nalysis~\cite{Pearson:LinesAndPlanes} (PCA) on the standardized data is performed. The standardization step centers the data by removing the mean and scales the value so that the standard deviation becomes unity. This is an important pre-processing step as it counteracts the effect of having different units and scales for each variable.
 
 The output, i.e., the actual classification, is done in the final step of the network via the previously discussed softmax algorithm. The gradient of the cross-entropy is used for weight adaption. In order to get a unique classification, the class with the highest softmax value is selected. The six long-living particle species are used as targets for the classification. In addition, a zeroth class is added. It is used for classifying particles which do not belong to the six other classes. Although this class merely contains a fractional amount of particles, it is important nevertheless as each track on which the network is supposed to learn is required to have a target associated with it.
 
@@ -403,7 +407,7 @@ Each training is performed with a batch size of $256$. Smaller batch sizes turn 
 
 Furthermore, several optimizers -- algorithms describing the process of weight adaption -- are tested. In the end Adadelta~\cite{DBLP:journals/corr/abs-1212-5701} and Adamax~\cite{DBLP:journals/corr/KingmaB14} prove to have the best performance with the least fluctuations in the validation accuracy. Hence, the following discussion will focus only on those two weight adaption approaches.
 
-\autoref{fig:neural_network_all_biased}~shows the two optimizers in comparison. Both yield similar results, especially considering the scaling of the accuracy. It is important to note that both are able to `learn' the classification problem quickly. Within the first epoch they are able to achieve accuracies of about $90\%$. However, they level off fast. After approximately $5$ to $10$ iterations no noticeable change in the training accuracy can be observed. The validation accuracy follows the general trend of the training accuracy but as expected it shows a lot more fluctuation. The Adadelta algorithm performs slightly better if selecting everything as feature. The performance of the training accuracy of the Adadelta algorithm is slightly better. The validation accuracy on the other hand is almost the same for the two approaches after about $10$ epochs.
+\autoref{fig:neural_network_all_biased}~shows the two optimizers in comparison. Both yield similar results, especially considering the scaling of the accuracy. It is important to note that both are able to `learn' the classification problem quickly. Within the first epoch they are able to achieve accuracies of nearly $90\%$. However, they level off fast. After approximately five to ten iterations no noticeable change in the training accuracy can be observed. The validation accuracy follows the general trend of the training accuracy but as expected it shows a lot more fluctuation. The performance of the training accuracy of the Adadelta algorithm is slightly better. The validation accuracy on the other hand is almost the same for the two approaches after about ten epochs.
 
 \begin{figure}[ht]
 	\centering
@@ -420,7 +424,7 @@ Furthermore, several optimizers -- algorithms describing the process of weight a
 	\label{fig:neural_network_all_biased}
 \end{figure}
 
-\autoref{fig:neural_network_global_pid_by_sampling_method}~compares the two sampling approaches using the global PID variables as input. The graph employs the Adamax optimizer, however Adadelta behaves similarly. The network which receives the tracks of the particles in proportion to their abundance is able to outperform the network which is trained on data using upsampling. The final difference in validation accuracy is about $3 \text{~percentage~points}$. Using only the global PID improves the results slightly for the biased approach in comparison to selecting everything as feature.
+\autoref{fig:neural_network_global_pid_by_sampling_method}~compares the two sampling approaches using the global PID variables as input. The graph employs the Adamax optimizer, however Adadelta behaves similarly. The network which receives the tracks of the particles in proportion to their abundance is able to outperform the network which is trained on data using upsampling. The final difference in validation accuracy is about three~percentage~points. Using only the global PID improves the results slightly for the biased approach in comparison to selecting everything as feature.
 
 \begin{figure}[ht]
 	\centering
@@ -454,7 +458,7 @@ In~\autoref{fig:neural_network_pca_all} the PCA feature selection approach is sh
 	\label{fig:neural_network_pca_all}
 \end{figure}
 
-Using the PCA components as feature for the biased sampling approach yields very similar results to just using all variables as feature. In the end the training and validation accuracy is higher by about $1 \text{~percentage~point}$.
+Using the PCA components as feature for the biased sampling approach yields very similar results to just using all variables as feature. In the end the training and validation accuracy is higher by about one~percentage~point.
 
 Independent of the sampling method and the feature selection, it can be observed that the slope at which the accuracy initially increases is high. All approaches are able to structure the data in a way to improve the classification while training. The number of samples which the training process requires before the training accuracy levels of is similar for all approaches. Overall, selecting about $90$ principal components yields the highest accuracies independently of the sampling approach. The best performers for both sampling methods are close in training accuracy but the validation accuracy is superior for the biased sampling approach.
 
@@ -470,7 +474,7 @@ The following figures are based on data from a different charged generic decay t
 	\label{fig:diff_heatmap_via_pt_and_costheta_via_nn_biased_global_pid}
 \end{figure}
 
-\autoref{fig:diff_heatmap_via_pt_and_costheta_via_nn_biased_global_pid}~shows the comparison of the identification efficiencies for the best performing network using biased sampling. Of note is the predominance of particles of high abundance. The network completely focusses on kaons and pions. Additionally, protons are identified properly as well. Electrons, muons and deuterons on the other hand are disregarded completely. By comparing the neural network to the multivariate Bayesian approach, a harsh comparison is made as the multivariate Bayesian approach is able to achieve a good classification for particles of high abundance without disregarding particles of lower abundance. The neural network is not able to classify particle of low abundance. Therefore, it is worse in comparison to any other approach in this regard.
+\autoref{fig:diff_heatmap_via_pt_and_costheta_via_nn_biased_global_pid}~shows the comparison of the identification efficiencies for the best performing network using biased sampling. Of note is the predominance of particles of high abundance. The network focusses on kaons and pions. Additionally, protons are identified properly as well. Electrons, muons and deuterons on the other hand are disregarded completely. By comparing the neural network to the multivariate Bayesian approach, a harsh comparison is made as the multivariate Bayesian approach is able to achieve a good classification for particles of high abundance without disregarding particles of lower abundance. Except for the proton, the neural network is not able to classify particle of low abundance at all. Therefore, it is worse in comparison to any other approach in this regard.
 
 The identification efficiency of the proton behaves contrary to the efficiencies of other particles of low abundance. Of special note is that the deuteron is classified as a proton as well. Hence, heavier particles are predominantly categorized as protons. Further analysis shows that the purity of the selected sample is low. The performed selection categorizes nearly all true protons as such but it also categorizes a lot of other particles as being a proton as well. However, in comparison to the Bayesian approach the purity is still higher.
 
@@ -483,7 +487,7 @@ The identification efficiency of the proton behaves contrary to the efficiencies
 	\subcaptionbox{Pion\label{fig:neural_network_via_pt_and_costheta_via_nn_fair_pca90_pion_ppv_tpr}}{
 		\includegraphics[width=0.4\textwidth,height=\textheight,keepaspectratio]{{{../res/charged 04/Diff Statistics: pi Identification PPV over TPR (without Ratios) by pt & cos(Theta), via NN applypca ncomponents90 biased nAdditionalLayers1 Optimizeradamax LearningRateNone nEpochs25 BatchSize256}}}
 	}
-	\caption{Purity over efficiency comparison for the kaon and pion identification using the multivariate Bayesian approach by $p_t$ and $\cos(\Theta)$, and a neural network using the $90$ principal components as feature and employing upsampling.}
+	\caption{Purity over efficiency comparison for the kaon and pion identification using the multivariate Bayesian approach by $p_t$ and $\cos(\Theta)$, and a neural network using the $90$ principal components as feature and employing biased sampling.}
 	\label{fig:neural_network_via_pt_and_costheta_via_nn_fair_ppv_tpr}
 \end{figure}
 
@@ -496,16 +500,16 @@ The classification in~\autoref{fig:neural_network_via_pt_and_costheta_via_nn_fai
 	\label{fig:diff_heatmap_via_pt_and_costheta_via_nn_fair_global_pid}
 \end{figure}
 
-Using upsampling, slightly decreases the pion identification efficiency and increases the efficiency in identifying kaons as seen in~\autoref{fig:diff_heatmap_via_pt_and_costheta_via_nn_fair_global_pid}. Hence, the network was successfully adapted to treat particle species more evenly but was unsuccessful in enabling it to identify electrons, muons or deuterons.
+Using upsampling, slightly decreases the pion identification efficiency and increases the efficiency in identifying kaons as seen in~\autoref{fig:diff_heatmap_via_pt_and_costheta_via_nn_fair_global_pid}. Hence, the approach was successfully in adapting the network  to treat particle species more evenly but was unsuccessful in enabling it to identify electrons, muons or deuterons.
 
-Possible causes for the complete disregard of the electron, muon and proton might be that the network is over-fitting the particles of low abundance. However, this would not explain the high identification efficiency for the proton. One possible explanation as to why it still identifies it and classifies the deuterons as proton as well, might be due to them being comparably heavy. The mass of a particle significantly influences the detector responses and might be easy to `learn'.
-Furthermore, the batch size might be one of the causes for the indifference towards pions and kaons as it low particles of low abundance are not represented properly in each weight adaption step.
+A possible cause for the complete disregard of the electron, muon and proton might be that the network is over-fitting the particles of low abundance. However, this would not explain the high identification efficiency for the proton. One possible explanation as to why it still identifies it and classifies the deuterons as proton as well, might be due to them being comparably heavy. The mass of a particle significantly influences the detector responses and might be easy to `learn'.
+Furthermore, the batch size might be an additional cause for the indifference towards pions and kaons as it particles of low abundance are not represented properly in each weight adaption step.
 
-Overall, the classification efficiency of the network using biased sampling is $85.6 \%$ compared to $80.1 \%$ for the network using upsampling. Those efficiencies can be compared with further approaches from~\autoref{tab:overall_efficiencies}. When doing so, it is revealed that both neural networks perform significantly worse than the legacy PID and any of the Bayesian approaches. In comparison to the global PID approach the neural network performs slightly better at the cost of loosing the ability to identify anything but kaons, pions and protons.
+Overall, the classification efficiency of the network using biased sampling is $85.6 \%$ compared to $80.1 \%$ for the network using upsampling. Those efficiencies can be compared with further approaches from~\autoref{tab:overall_efficiencies}. When doing so, it is revealed that both neural networks perform significantly worse than any of the Bayesian approaches. In comparison to the global PID approach the neural networks perform slightly better at the cost of loosing the ability to identify anything but kaons, pions and protons. The network which uses biased sampling additionally outperforms the legacy PID approach in terms of overall efficiency.
 
 \subsection{Summary and outlook}
 \label{subsc:neural_network_summary}
 
 The overall efficiencies of the neural networks are promising as they reach $80 \%$ by just using a simple design in combination with a high batch size and an appropriate optimizer. However, a bias in the form of different abundances for different particle species complicates the learning process significantly. Upsampling does not provide the necessary boost in performance for particles of low abundance, although it helps against the dominance of the pion. Certain particles like the proton are classified with a high efficiency despite being of low abundance. In general, both approaches heavily favor particles with a high abundance. This is not surprising in itself as the training accuracy and therefore the function which is to be optimized can be easily improved by disregarding particles of low abundance.
 
-As an outlook, further research in this field seems promising as even a simple neural network is able to achieve an overall acceptable efficiency. Instead of using the generic decay, it might make more sense to generate events which produce particles with equal abundance while otherwise sharing the characteristics of a generic decay. This would completely circumvent the need for upsampling the data. In addition to an overall good classification of generic events, such a network could be further trained briefly on decay specific parameters. In an optimal scenario both approaches could be combined: a decay specific network being employed whenever possible and a generic classifier being used as fallback. Furthermore the unique classification could be extended to a probability assignment for each particle species. Hereby, the full output of the softmax activation could be used.
+As an outlook, further research in this field seems promising as even a simple neural network is able to achieve an overall acceptable efficiency. Instead of using the generic decay, it might make more sense to generate events which produce particles with equal abundance while otherwise sharing the characteristics of a generic decay. This would completely circumvent the need for upsampling the data. In addition to an overall good classification of generic events, such a network could be further trained briefly on decay specific parameters. In an optimal scenario both approaches could be combined: a decay specific network being employed whenever possible and a generic classifier being used as fallback. Furthermore the unique classification could be extended to a probability assignment for each particle species. Hereby, the full output of the softmax activation could be utilized.
