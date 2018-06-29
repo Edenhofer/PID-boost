@@ -1,4 +1,4 @@
-\chapter{Statistics for particle analysis}
+\chapter{Statistics for Particle Analysis}
 \label{chap:statistics}
 
 \section{Classification functions}
@@ -60,8 +60,8 @@ Multiple methods can therefore be compared by assessing the value and the slope 
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/Sample Receiver Operating Characteristic (ROC) curve}}}
-	\caption{Sample ROC curve for a binary classification problem with each outcome being equally likely.}
+	\includegraphics[width=\textwidth,height=0.38\textheight,keepaspectratio]{{{../res/Sample Receiver Operating Characteristic (ROC) curve}}}
+	\caption{ROC curves for a binary classification problem with each outcome being equally likely.}
 	\label{fig:sample_roc_curve}
 \end{figure}
 
@@ -121,12 +121,12 @@ The Neyman-Pearson lemma is useful for evaluating the goodness of separating two
 
 The purity of a selection is defined as the proportion of correctly classified particles relative to all the identified ones. Its definition is identical to the PPV and as such will be used synonymously throughout the thesis.
 
-Hence, by plotting the purity over the likelihood ratio, a monotonically increasing function is to be expected. An idealized version of such a graph is depicted in \autoref{fig:neyman_pearson_visualization}. Since the underlying data may not be assumed to be a continues stream, the likelihood ratio has been binned as it better represents the actual expected shape.
+Hence, by plotting the purity over the likelihood ratio, a monotonically increasing function is to be expected. An idealized version of such a graph is depicted in \autoref{fig:neyman_pearson_visualization}. Since the underlying data may not be assumed to be a continues stream, the likelihood ratio is binned as it better represents the actual expected shape.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{{{../res/Neyman-Pearson Visualization}}}
-	\caption{Visualization of a test on the likelihood ratio. A monotonically increasing function should be expected on the basis of the Neyman-Pearson lemma. The small horizontal lines indicate likelihood ratio bins, while the curve represents the overall trend. The pion likelihood relative to the other particle likelihoods on the $y$ axis is merely used to emphasize the connection to particle physics.}
+	\includegraphics[width=\textwidth,height=0.38\textheight,keepaspectratio]{{{../res/Neyman-Pearson Visualization}}}
+	\caption{Visualization of a test on the likelihood ratio. A monotonically increasing function should be expected on the basis of the Neyman-Pearson lemma. The small horizontal lines indicate likelihood ratio bins, while the curve represents the overall trend. The pion purity and likelihood ratio is merely used to emphasize the connection to particle physics.}
 	\label{fig:neyman_pearson_visualization}
 \end{figure}
 
@@ -146,9 +146,9 @@ A simple approach is to stack multiple layers of neurons (\textit{nodes}) on top
 	\label{fig:sample_neural_network_design}
 \end{figure}
 
-A simple feed-forward network is depicted in \autoref{fig:sample_neural_network_design}. Each line between two nodes represents a connection. In other words, the output of the node at the bottom is passed to the node at the top. The function used for calculating the various values of $z_i$ is called ReLU~\cite{Hahnloser:NeuralComputation} and takes the form of $relu(h) = max(0, h)$. In terms of a biological system it can be thought of as a boundary which has to be overcome prior to a signal being passed on.
+A simple feed-forward network is depicted in \autoref{fig:sample_neural_network_design}. Each line between two nodes represents a connection. In other words, the output of the node at the bottom is passed to the node at the top. The function used for calculating the various values of $z_i$ is called ReLU~\cite{Hahnloser:NeuralComputation} and takes the form of $relu(h) = \max(0, h)$. In terms of a biological system it can be thought of as a boundary which has to be overcome prior to a signal being passed on.
 
-Layers not representing the input or output are called hidden layers (blue nodes from~\autoref{fig:sample_neural_network_design}). The dimensions of the input (green nodes) are also referred to as features. A function of a node is called \textit{activation function} ($z_i$). The term \textit{learning} or \textit{training} in the context of neural network refers to the process of adapting parameters or so called \textit{weights} ($V$ and $w$) of a node. The number of individual data points an iteration of weight adaption contains is described by the \textit{batch size}\footnotemark. Each weight is altered according to a gradient which optimizes the desired function. Often weights include a \textit{bias} which is a constant offset not influenced by any previous neuron. The desired function which is to be optimized is referred to as \textit{loss function}. It measures the predictive power of the classification. The duty of the \textit{optimizer} is to adapt the weights in a way which minimizes the function, a task usually done via propagating the error back through the network in a schema called \textit{back propagation}.
+Layers not representing the input or output are called hidden layers (blue nodes from~\autoref{fig:sample_neural_network_design}). The dimensions of the input (green nodes) are also referred to as features. A function of a node is called \textit{activation function} ($z_i$). \textit{Learning} or \textit{training} in the context of neural networks refers to the process of adapting parameters or so called \textit{weights} ($V$ and $w$) of a node. The process of adapting them is performed in batches. The \textit{batch size} describes the number of individual data points contained within a batch.\footnotemark{} Each weight is altered according to a gradient which optimizes the desired function. Often weights include a \textit{bias} which is a constant offset not influenced by any previous neuron. The desired function which is to be optimized is referred to as \textit{loss function}. It measures the predictive power of the classification. The duty of the \textit{optimizer} is to adapt the weights in a way which minimizes the function, a task usually done via propagating the error back through the network in a schema called \textit{back propagation}.
 \footnotetext{The last batch may be smaller if the total number of samples is not divisible by the batch size.}
 
 It is important to avoid making the network too dependent on the specific characteristics of the training data. Otherwise it will simply \textit{over-fit} the given events without learning the more general concept. Hence, the neurons of an over-fitted network are perfectly adjusted to the input which it has already seen. However, the system fails upon receiving anything it has not already seen in this exact form.
