@@ -130,7 +130,7 @@ if args.run_stats:
         plt.figure()
         plt.grid(b=False, axis='x')
         plt.errorbar(range(len(unique_particles)), true_abundance, xerr=0.5, fmt='o')
-        plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles], fontsize='x-large')
+        plt.xticks(range(len(unique_particles)), [ParticleFrame.particle_formats[lib.pdg_to_name_faulty(k)] for k in unique_particles], fontsize='large') # NOTE: Dirty inconsistency in the fontsize to make this graph look better
         plt.yticks(fontsize='x-large')
         plt.xlabel('Particle Specie', fontsize='xx-large')
         plt.ylabel('Abundance', fontsize='xx-large')
