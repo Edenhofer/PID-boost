@@ -1,0 +1,195 @@
+\documentclass{beamer}
+	\usepackage[utf8]{inputenc}		% required for umlauts
+	\usepackage[english]{babel}		% language
+	%\usepackage[sfdefault]{roboto}	% enable sans serif font roboto
+	%\usepackage{libertine}			% enable this on Windows to allow for microtype
+	\usepackage[T1]{fontenc}		% required for output of umlauts in PDF
+
+	\usepackage{mathtools}		% required for formulas
+
+	\usepackage{caption}		% Customize caption aesthetics
+	\usepackage{tcolorbox}		% fancy colored boxes
+	\usepackage{xcolor}			% Highlighting
+	\usepackage{soul}
+
+	\usepackage{listings}		% Insert programming code
+	\usepackage{graphicx}		% required to insert images
+	\usepackage{subcaption}		% enable sub-figure
+	\usepackage[space]{grffile} % insert images baring a filename which contains spaces
+	\usepackage{float}			% allow to forcefully set the location of an object
+
+	\usepackage[tracking=true]{microtype} % required to change character spacing
+
+	\usepackage[style=numeric,backend=biber]{biblatex}
+	\usepackage{hyperref}		% insert clickable references
+
+	\usepackage{datetime}		% flexible date specification
+	\newcommand{\leadingzero}[1]{\ifnum#1<10 0\the#1\else\the#1\fi}
+	\newcommand{\todayddmmyyyy}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+	\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+
+	\usepackage{geometry}
+	\usepackage{scrextend}		% allow arbitrary indentation
+
+	\usepackage{color}
+
+	\setbeamercolor{title}{fg=orange}
+	\setbeamertemplate{title}{
+		\color{orange}
+		\textbf{\inserttitle}
+	}
+	\setbeamercolor{tableofcontents}{fg=orange}
+	\setbeamercolor{section in toc}{fg=black}
+	\setbeamercolor{subsection in toc}{fg=black}
+	\setbeamertemplate{frametitle}{
+		%\vspace{0.5em}
+		\color{orange}
+		\begin{center}
+			\textbf{\insertframetitle} \\
+			{\small \insertframesubtitle}
+		\end{center}
+	}
+	\setbeamertemplate{footline}[text line]{
+		\parbox{\linewidth}{
+			\color{gray}
+			\vspace*{-1em}
+			BA 2018
+			\hfill
+			Gordian (\href{mailto:gordian.edenhofer@gmail.com}{gordian.edenhofer@gmail.com})
+			\hfill
+			\insertpagenumber
+		}
+	}
+	\setbeamertemplate{navigation symbols}{}
+	\setbeamertemplate{itemize item}{\color{black}$\bullet$}
+	\setbeamertemplate{itemize subitem}{\color{black}$\circ$}
+	\setbeamercolor{block title}{fg=black}
+	\captionsetup{font=scriptsize,labelfont={bf,scriptsize}}
+
+	\lstset{basicstyle=\ttfamily,breaklines=true,showstringspaces=false,commentstyle=\color{red},keywordstyle=\color{blue}}
+
+	\title{Bachelor Thesis in `Optimization~of~Particle~Identification'}
+	\subtitle{Test on the likelihood ratio based on the Neyman Pearson lemma for different CDC detector settings}
+	\author[Edenhofer]{\href{mailto:gordian.edenhofer@gmail.com}{Gordian Edenhofer}}
+	\institute[LMU]{
+		Working Group of Prof.~Dr.~Kuhr \\
+		Faculty of Physics \\
+		Excellence Cluster Universe
+	}
+	\date[BA Thesis 2018]{\today}
+	\subject{Particle Physics}
+
+
+\begin{document}
+
+\section{Neyman Pearson}
+\subsection{Intuition}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{columns}[T]
+		\begin{column}{.45\textwidth}
+			\vspace{2.5em}
+			\begin{itemize}
+				\item Increasingly strict $\mathcal{LR}$ criteria on x-axis
+				\item Relative particle abundance for the given $\mathcal{LR}$ on y-axis
+				\item \textbf{Ideally a monotonically increasing function}
+			\end{itemize}
+		\end{column}
+		\begin{column}{.55\textwidth}
+			\begin{figure}
+				\centering
+				\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{{{../res/Neyman-Pearson Visualization}}}
+				\caption{Idealized example for relative $\pi$ Abundance over Likelihood Ratio.}
+			\end{figure}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\section{Neyman Pearson}
+\subsection{Anomalies}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.68\textheight,keepaspectratio]{{{../res/charged 01/General Purpose Statistics: Relative p Abundance in Likelihood Ratio Bins for ALL detector}}}
+		\caption{Relative $p$ Abundance in Likelihood Ratio Bins for the `ALL' detector.}
+	\end{figure}
+\end{frame}
+
+\subsection{Applied Prior Selections}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{itemize}
+		\item Disregard false identifications
+		\item Ignore imprecise tracks
+	\end{itemize}
+
+	\begin{itemize}
+		\item $0.05 < p_t < 5.29$
+		\item $|z0| < 5$
+		\item $|d0| < 2$
+		\item $mcPDG \neq 0$
+	\end{itemize}
+\end{frame}
+
+\subsection{Without \lstinline|BELLE2_CONDB_GLOBALTAG|}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/unset/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector for equal size pt bins}}}
+		\caption{Relative $p$ Abundance in Likelihood Ratio Bins for the CDC detector using \textit{equal~height} $p_t$ bins.}
+	\end{figure}
+\end{frame}
+
+\subsection{With \lstinline|BELLE2_CONDB_GLOBALTAG|}
+\begin{frame}
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{{{../res/set/pidProbability Approach: Relative p Abundance in Likelihood Ratio Bins for CDC detector for equal size pt bins}}}
+		\caption{Relative $p$ Abundance in Likelihood Ratio Bins for the CDC detector using \textit{equal~height} $p_t$ bins.}
+	\end{figure}
+\end{frame}
+
+\section{Appendix}
+\subsection{Event Generation using \lstinline|basf2|}
+\begin{frame}[fragile]
+	\frametitle{\insertsection}
+	\framesubtitle{\insertsubsection}
+
+	\begin{itemize}
+		\item MDST files are generated in accordance with MC9 campaign
+		\item Adapted version of the original script may be found at \href{https://github.com/Edenhofer/PID-boost/blob/master/generate_charged.py}{GitHub:Edenhofer/PID-boost}
+	\end{itemize}
+
+	\begin{lstlisting}[language=bash,xleftmargin=-0.16\textwidth,basicstyle=\ttfamily\tiny]
+		#!/bin/bash
+
+		source ~/setup_belle2.sh release-01-00-03
+
+		unset BELLE2_CONDB_GLOBALTAG
+		for n in {0..10}; do
+			&>unset_$n.log \
+			basf2 generate_charged.py -n 10000 -o unset_$n.mdst.root &
+		done
+
+		export BELLE2_CONDB_GLOBALTAG="Calibration_Offline_Development"
+		for n in {0..10}; do
+			&>set_$n.log \
+			basf2 generate_charged.py -n 10000 -o set_$n.mdst.root &
+		done
+	\end{lstlisting}
+\end{frame}
+
+\end{document}
